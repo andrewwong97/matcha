@@ -5,26 +5,21 @@ var BundleTracker = require('webpack-bundle-tracker')
 module.exports = {
   context: __dirname,
 
-  entry: {
-    // Add as many entry points as you have container-react-components here
-    App: './react/App',
-    vendors: ['react'],
-  },
+  entry: './server.js', // entry point of our app. assets/js/index.js should require other js modules and dependencies it needs
 
   output: {
-      path: path.resolve('./djreact/static/bundles/local/'),
-      filename: "[name]-[hash].js"
+      path: path.resolve('./assets/bundles/'),
+      filename: "[name]-[hash].js",
   },
 
-  externals: [
-  ], // add all vendor libs
-
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
-  ], // add all common plugins here
+    new BundleTracker({filename: './webpack-stats-local.json'}),
+  ],
 
   module: {
-    loaders: [] // add all common loaders here
+    loaders: [
+      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader'}, // to transform JSX into JS
+    ],
   },
 
   resolve: {
