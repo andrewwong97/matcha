@@ -1,4 +1,3 @@
-# Andrew Wong, Anthony Garay, Tucker Chapin, Alex Sharata
 # Matcha - OOSE Group 16
 JHU Object Oriented Software Engineering - Fall 2017
 
