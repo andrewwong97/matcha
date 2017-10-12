@@ -1,0 +1,1 @@
+{"status":"error","error":"ModuleBuildError","message":"Module build failed: SyntaxError: Unexpected token (9:8)\n\n   7 |   render() {\n   8 |     return (\n>  9 |         <AppContainer />\n     |         ^\n  10 |     )\n  11 |   }\n  12 | }\n","publicPath":"http://127.0.0.1:3000/assets/bundles/"}
