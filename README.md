@@ -12,6 +12,9 @@ mkvirtualenv matcha
 pip install -r requirements
 npm install -g yarn
 yarn
+./manage.py runserver # run django server
+node server.js # run react
+
 ```
 
 Not first time:
