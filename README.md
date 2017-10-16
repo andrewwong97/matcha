@@ -13,7 +13,8 @@ Package managers:
 
 ## To run:
 
-Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS
+Note: this assumes you have the required dependencies to create virtual environments, Python, pip, NodeJS
+
 First time:
 ```
 cd matcha/matcha
