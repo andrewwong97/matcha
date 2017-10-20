@@ -1,7 +1,8 @@
 from flask import Flask, render_template, session, request, redirect, url_for
 from flask_pymongo import PyMongo
-import bcrypt
 
+import bcrypt
+from bson.json_util import dumps
 import random
 
 app = Flask(__name__)
@@ -45,17 +46,13 @@ def register():
 
 
 
-@app.route('/listings/all', methods=['GET'])
+@app.route('/v1/listings/all', methods=['GET'])
 def show_job_listings():
 	listings = mongo.db.listings.find({})  # all listings
-
-	result = ''
-	for i in listings:
-		result += '<li>Role: {}, Salary: {}</li>'.format(i['name'], i['salary'])
 	
-	return result
+	return dumps(listings)
 
-@app.route('/listings/new')
+@app.route('/v1/listings/new')
 def create_job_listing():
     listings = mongo.db.listings  # collection
     salary = random.randint(5000, 10000)
