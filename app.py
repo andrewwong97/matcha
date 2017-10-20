@@ -13,18 +13,13 @@ app.config['MONGO_URI'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha
 
 mongo = PyMongo(app)
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
 	if 'email' in session:  # user email identifier
 		return 'You are logged in as {}'.format(session['email'])
 
 	return render_template('index.html')
-
-
-# Basic Login
-@app.route('/login')
-def login():
-	return ''
 
 
 # Basic Register

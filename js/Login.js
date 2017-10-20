@@ -7,6 +7,7 @@ export default class Login extends React.Component {
 
 	handleLogin(e) {
 		// should probably encrypt the password from client side
+		const url = window.location.origin + '/login';
 		const email = e.target.email;
 		const pass = e.target.password;
 		const formData = JSON.stringify({ email, pass });
@@ -22,8 +23,8 @@ export default class Login extends React.Component {
 		return (
 			<div className="Login">
 				<form onSubmit={this.handleLogin.bind(this)}>
-					<input name="email" type="text" />
-					<input name="password" type="password" />
+					<input name="email" placeholder="Email" type="text" />
+					<input name="password" placeholder="Password" type="password" />
 					<input type="submit" value="Login" />
 				</form>
 			</div>

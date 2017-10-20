@@ -1,7 +1,15 @@
-var webpack = require('webpack');  
+var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const extractSass = new ExtractTextPlugin({
+    filename: 'static/[name].bundle.css',
+    allChunks: true,
+    disable: process.env.NODE_ENV === "development"
+});
+
 module.exports = {  
   entry: [
-    "./js/app.js"
+    "./js/app.js", "./scss/main.scss"
   ],
   output: {
     path: __dirname + '/static',
@@ -9,16 +17,27 @@ module.exports = {
   },
   module: {
     loaders: [
-      {
+      { // js, jsx
         test: /\.js?$/,
         loader: 'babel-loader',
         query: {
           presets: ['es2015', 'react']
         },
         exclude: /node_modules/
+      },
+      {
+        test: /\.scss$/,
+          use: [{
+              loader: "style-loader" // creates style nodes from JS strings
+          }, {
+              loader: "css-loader" // translates CSS into CommonJS
+          }, {
+              loader: "sass-loader" // compiles Sass to CSS
+          }]
       }
     ]
   },
   plugins: [
-  ]
+    extractSass
+  ],
 };
