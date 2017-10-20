@@ -45,7 +45,7 @@ def register():
 
 
 
-@app.route('/listings/display', methods=['GET'])
+@app.route('/listings/all', methods=['GET'])
 def show_job_listings():
 	listings = mongo.db.listings.find({})  # all listings
 

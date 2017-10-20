@@ -20,7 +20,7 @@ cd matcha/matcha
 pip install virtualenvwrapper
 
 mkvirtualenv matcha             # the name of your virtual environment
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 npm install -g yarn
 npm install -g webpack
 yarn install                    # we use Yarn to install js dependencies
@@ -35,6 +35,9 @@ workon matcha
 python app.py                   # in current tab
 webpack --watch                 # in another tab
 ```
+
+### Common Errors in Setup:
+`no module named <module-name>`: We're running Flask on Python 3, so make sure you install the module using `pip3` if you installed using `pip` and are still receiving this error. 
 
 ## DB Access - MongoDB
 

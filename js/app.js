@@ -1,6 +1,20 @@
-import Hello from './Hello';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-ReactDOM.render(<Hello/>, document.getElementById('reactEntry'));
+import AppRouter from './routes';
+import Main from './Main';
+import Nav from './Nav';
+
+const App = () => (
+	<div>
+		<Nav />
+		<Main />
+	</div>
+);
+
+ReactDOM.render((
+	<AppRouter>
+		<App />
+	</AppRouter>
+), document.getElementById('react-root'));
 
