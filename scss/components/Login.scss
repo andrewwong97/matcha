@@ -1,0 +1,32 @@
+.Login {
+	display: block;
+	margin: 0 auto;
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+
+
+	input {
+		display: block;
+		padding: 20px;
+		margin: 10px 0;
+		font-size: 14pt;
+		font-weight: 200;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	input[type="submit"] {
+		padding: 10px;
+		border-radius: 5px;
+		font-weight: 200;
+		font-size: 12pt;
+		background-color: #fff;
+		border: 1px solid #cccccc;
+	}
+}
