@@ -1,4 +1,6 @@
-from flask import Flask, render_template, session, request, redirect, url_for
+from flask import (Flask, Response, 
+	render_template, session, request, 
+	redirect, url_for, jsonify)
 from flask_pymongo import PyMongo
 
 import bcrypt
@@ -16,14 +18,24 @@ mongo = PyMongo(app)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-	if 'email' in session:  # user email identifier
-		return 'You are logged in as {}'.format(session['email'])
-
 	return render_template('index.html')
 
 
 # Basic Register
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/v1/login', methods=['POST'])
+def login():
+	if request.method == 'POST':
+		u = mongo.db.users.find_one({'email': request.form['email']})
+
+		if u is None:
+			session['email'] = None
+			return redirect(url_for('index'))
+		else:
+			session['email'] = request.form['email']
+
+
+# Basic Register
+@app.route('/v1/register', methods=['GET', 'POST'])
 def register():
 	if request.method == 'POST':
 		users = mongo.db.users
@@ -44,7 +56,6 @@ def register():
 @app.route('/v1/listings/all', methods=['GET'])
 def show_job_listings():
 	listings = mongo.db.listings.find({})  # all listings
-	
 	return dumps(listings)
 
 @app.route('/v1/listings/new')

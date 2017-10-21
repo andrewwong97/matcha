@@ -13,11 +13,16 @@ import Signup from './Signup';
 const AppRouter = () => (
   <Router>
     <div>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/login">Login</Link></li>
-        <li><Link to="/listings/display">Listings</Link></li>
-      </ul>
+      <div className="Nav-wrapper">
+        <div className="logo">
+          <h1>Matcha</h1>
+        </div>
+        <ul className="Nav">
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/listings/display">Listings</Link></li>
+        </ul>
+      </div>
 
       <Route exact path="/" component={Home} />
       <Route path="/login" component={Login} />

@@ -3,5 +3,11 @@ import ReactDOM from 'react-dom';
 
 import AppRouter from './routes';
 
-ReactDOM.render((<AppRouter></AppRouter>), document.getElementById('react-root'));
+const App = () => (
+	<div className="App">
+		<AppRouter />
+	</div>
+);
+
+ReactDOM.render(<App />, document.getElementById('react-root'));
 

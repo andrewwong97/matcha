@@ -2,7 +2,7 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const extractSass = new ExtractTextPlugin({
-    filename: 'static/[name].bundle.css',
+    filename: __dirname + 'static/bundle.css',
     allChunks: true,
     disable: process.env.NODE_ENV === "development"
 });

@@ -8,13 +8,18 @@ export default class Listings extends React.Component {
 		}
 	}
 
+	renderListings() {
+		return this.state.listings == null ? 'No Listings' : 
+			this.state.listings.map((listing) => <li>{listing.name} {listing.salary}</li>);
+	}
+
 	componentDidMount() {
 		const base = window.location.origin; // gets localhost:5000 or base url
-		console.log(base);
-		fetch(base + '/v1/listings/all')
-		.then((response) => {
-			console.log(response);
-			this.setState({listings: response})
+		fetch(base + '/v1/listings/all', {method: 'GET'})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data);
+			this.setState({listings: data});
 		});
 	}
 
@@ -22,7 +27,7 @@ export default class Listings extends React.Component {
 		return (
 			<div>
 				<h1>Listings</h1>
-				fjdlsfls
+				{this.renderListings()}
 			</div>
 		);
 	}
