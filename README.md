@@ -8,7 +8,7 @@ A platform that seamlessly connects employers and qualified candidates with matc
 
 Package managers:
 
-- `npm`
+- `npm`/`yarn`
 - `pip`
 
 ## To run:
@@ -17,12 +17,11 @@ Note: this assumes you have the required dependencies to create virtual environm
 First time:
 ```
 cd matcha/matcha
-pip install virtualenvwrapper
+pip install virtualenvwrapper   # only if you don't already have this
 
 mkvirtualenv matcha             # the name of your virtual environment
 pip3 install -r requirements.txt
-npm install -g yarn
-npm install -g webpack
+npm install -g yarn webpack     # only if you don't already have these
 yarn install                    # we use Yarn to install js dependencies
 python app.py                   # run flask server in current tab
 webpack --watch                 # run webpack server in another tab
