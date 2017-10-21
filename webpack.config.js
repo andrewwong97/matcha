@@ -13,7 +13,8 @@ module.exports = {
   ],
   output: {
     path: __dirname + '/static',
-    filename: "bundle.js"
+    filename: "bundle.js",
+    publicPath: '/'
   },
   module: {
     loaders: [
@@ -36,6 +37,9 @@ module.exports = {
           }]
       }
     ]
+  },
+  devServer: {
+    historyApiFallback: true,
   },
   plugins: [
     extractSass

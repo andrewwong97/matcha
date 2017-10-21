@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Listings extends React.Component {
+class Listings extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -18,7 +18,6 @@ export default class Listings extends React.Component {
 		fetch(base + '/v1/listings/all', {method: 'GET'})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log(data);
 			this.setState({listings: data});
 		});
 	}
@@ -32,3 +31,5 @@ export default class Listings extends React.Component {
 		);
 	}
 }
+
+export default Listings;
