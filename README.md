@@ -8,7 +8,7 @@ A platform that seamlessly connects employers and qualified candidates with matc
 
 Package managers:
 
-- `npm`
+- `npm`/`yarn`
 - `pip`
 
 ## To run:
@@ -18,12 +18,11 @@ Note: this assumes you have the required dependencies to create virtual environm
 First time:
 ```
 cd matcha/matcha
-pip install virtualenvwrapper
+pip install virtualenvwrapper   # only if you don't already have this
 
 mkvirtualenv matcha             # the name of your virtual environment
-pip install -r requirements.txt
-npm install -g yarn
-npm install -g webpack
+pip3 install -r requirements.txt
+npm install -g yarn webpack     # only if you don't already have these
 yarn install                    # we use Yarn to install js dependencies
 python app.py                   # run flask server in current tab
 webpack --watch                 # run webpack server in another tab
@@ -36,6 +35,9 @@ workon matcha
 python app.py                   # in current tab
 webpack --watch                 # in another tab
 ```
+
+### Common Errors in Setup:
+`no module named <module-name>`: We're running Flask on Python 3, so make sure you install the module using `pip3` if you installed using `pip` and are still receiving this error. 
 
 ## DB Access - MongoDB
 
