@@ -88,7 +88,7 @@ def edit_profile(username):
 
 @app.route('/v1/candidate/<string:candidate>/getCurrentMatches', methods=['GET'])
 def get_job_matches(candidate):
-    jobmatches = mongo.db.jobmatches.find({'candidate': candidate}, {'matches': 1, '_id': 0}) # return only job matches
+    jobmatches = mongo.db.profiles.find({'candidate': candidate}, {'matches': 1, '_id': 0}) # return only job matches
 	# TODO: Add any additional code
     return dumps(jobmatches) # TODO: change return value as needed
 
