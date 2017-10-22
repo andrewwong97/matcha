@@ -84,16 +84,23 @@ def get_profile(username):
 def edit_profile(username):
     profiles = mongo.db.profiles.find({'username': username})  # get document with given username
 	# TODO: Add code to update necessary profile fields
-    return dumps(profiles) # TODO: change return value as needed
+    return 'Success' # TODO: change return value as needed
 
-@app.route('/v1/candidate/<string:candidate>/getCurrentMatches', methods=['GET'])
-def get_job_matches(candidate):
-    jobmatches = mongo.db.profiles.find({'candidate': candidate}, {'matches': 1, '_id': 0}) # return only job matches
+@app.route('/v1/candidate/<string:username>/getCurrentMatches', methods=['GET'])
+def get_job_matches(username):
+    job_matches = mongo.db.profiles.find({'username': username}, {'matches': 1, '_id': 0}) # return only job matches
 	# TODO: Add any additional code
-    return dumps(jobmatches) # TODO: change return value as needed
+    return dumps(job_matches) # TODO: change return value as needed
 
+@app.route('/v1/candidate/<string:username>/declineJob/<string:job_name>', methods=['POST'])
+def decline_job(username, job_name):
+	# TODO: search employer job listing to remove candidate from matches
+    return 'Success'
 
-
+@app.route('/v1/candidate/<string:username>/favoriteJob/<string:job_name>', methods=['POST'])
+def favorite_job(username, job_name):
+	# TODO: add code to favorite job
+    return 'Success'
 
 if __name__ == '__main__':
     app.run(debug=True)
