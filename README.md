@@ -21,10 +21,10 @@ cd matcha/matcha
 pip install virtualenvwrapper   # only if you don't already have this
 
 mkvirtualenv matcha             # the name of your virtual environment
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 npm install -g yarn webpack     # only if you don't already have these
 yarn install                    # we use Yarn to install js dependencies
-python app.py                   # run flask server in current tab
+python app.py    w-               # run flask server in current tab
 webpack --watch                 # run webpack server in another tab
 ```
 Navigate to `localhost:5000` on your favorite browser.
