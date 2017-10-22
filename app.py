@@ -102,5 +102,15 @@ def favorite_job(username, job_name):
 	# TODO: add code to favorite job
     return 'Success'
 
+@app.route('/v1/candidate/<string:username>/createReminder', methods=['POST'])
+def create_reminder(username):
+	# TODO: add code to create a reminder
+    return 'Success'
+
+@app.route('/v1/candidate/<string:username>/deleteReminder/<string:reminder>', methods=['DELETE'])
+def delete_reminder(username, reminder):
+	# TODO: add code to delete reminder
+    return 'Success'
+
 if __name__ == '__main__':
     app.run(debug=True)
