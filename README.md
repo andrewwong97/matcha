@@ -20,7 +20,7 @@ cd matcha/matcha
 pip install virtualenvwrapper   # only if you don't already have this
 
 mkvirtualenv matcha             # the name of your virtual environment
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 npm install -g yarn webpack     # only if you don't already have these
 yarn install                    # we use Yarn to install js dependencies
 python app.py                   # run flask server in current tab
@@ -37,6 +37,11 @@ webpack --watch                 # in another tab
 
 ### Common Errors in Setup:
 `no module named <module-name>`: We're running Flask on Python 3, so make sure you install the module using `pip3` if you installed using `pip` and are still receiving this error. 
+
+## Running Tests
+
+1. Navigate to top level matcha directory
+2. Run `pytest tests` (runs `pytest` on all valid test functions inside the `tests/` directory)
 
 ## DB Access - MongoDB
 
