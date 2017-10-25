@@ -1,16 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-class Login extends React.Component {
+class Register extends React.Component {
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			email: '',
 			password: ''
 		}
-
-		this.handleLogin.bind(this);
 	}
 
 	handleChange(event) {
@@ -23,23 +20,10 @@ class Login extends React.Component {
 	    });
 	}
 
-	handleLogin() {
-		// should probably encrypt the password from client side
-		const url = window.location.origin + '/v1/login';
-		
-		const email = this.state.email;
-		const password = this.state.password;
-		const formData = JSON.stringify({ email, password });
-
-		fetch(url, {method: 'POST', body: formData})
-		.then((res) => res.json())
-		.then((data) => console.log(data));
-	}
-
 	render() {
 		return (
-			<div className="Login">
-				<h1>Login</h1>
+			<div className="Register">
+				<h1>Register</h1>
 				<input 
 					onChange={this.handleChange.bind(this)} 
 					name="email" 
@@ -56,11 +40,12 @@ class Login extends React.Component {
 					type="password" 
 				/>
 
-				<button className="submitLogin" onClick={this.handleLogin.bind(this)}>Submit</button>
-				<Link to="/register">Need an account? Register here</Link>
+				<p>Placeholder for Login via LinkedIn</p>
+
+				<button className="submitRegister">Sign Up</button>
 			</div>
 		);
 	}
 }
 
-export default Login;
+export default Register;

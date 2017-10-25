@@ -26,7 +26,6 @@ def index(path):
 def login():
 	if request.method == 'POST':
 		u = mongo.db.users.find_one({'email': request.form['email']})
-		print request.form
 		if u is None:
 			session['email'] = None
 			return redirect(url_for('index'))

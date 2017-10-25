@@ -1,4 +1,4 @@
-.Login {
+.Login, .Register {
 	display: block;
 	margin: 0 auto;
 
@@ -21,8 +21,10 @@
 		}
 	}
 
-	input[type="submit"] {
+	.submitLogin, .submitRegister {
+		display: block;
 		padding: 10px;
+		margin-bottom: 10px;
 		border-radius: 5px;
 		font-weight: 200;
 		font-size: 12pt;

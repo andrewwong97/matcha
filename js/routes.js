@@ -11,6 +11,7 @@ import {
 import Home from './components/Home';
 import Listings from './components/Listings';
 import Login from './components/Login';
+import Register from './components/Register';
 import Signup from './components/Signup';
 
 export default class AppRouter extends React.Component {
@@ -37,6 +38,7 @@ export default class AppRouter extends React.Component {
             <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             <Route path="/listings" component={Listings} />
+            <Route path="/register" component={Register} />
             </Switch>
           </div>
         </Router>
