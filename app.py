@@ -21,12 +21,12 @@ def index(path):
 	return render_template('index.html')
 
 
-# Basic Register
+# Basic Login
 @app.route('/v1/login', methods=['POST'])
 def login():
 	if request.method == 'POST':
 		u = mongo.db.users.find_one({'email': request.form['email']})
-
+		print request.form
 		if u is None:
 			session['email'] = None
 			return redirect(url_for('index'))
