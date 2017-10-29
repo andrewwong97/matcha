@@ -11,19 +11,27 @@ Package managers:
 - `npm`
 - `pip`
 
-## To run:
+## To run an automated production build:
 
-Note: this assumes you have the required dependencies to create virtual environments, Python, pip, NodeJS
+```
+mkvirtualenv matcha-prod
+bash startWebserver.sh    # Assumes you have NodeJS and npm. Installs all required dependencies and runs server on localhost 5000
+```
+
+## To run dev:
+
+Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS. We use `webpack --watch` for hot reloading of React components during dev, but for production we will just use a static bundle.
 
 First time:
 ```
-cd matcha/matcha
-pip install virtualenvwrapper
+git clone this repository to your local
+cd 2017-group-16
+
+pip install virtualenvwrapper   # only if you don't already have this
 
 mkvirtualenv matcha             # the name of your virtual environment
 pip install -r requirements.txt
-npm install -g yarn
-npm install -g webpack
+npm install -g yarn webpack     # only if you don't already have these
 yarn install                    # we use Yarn to install js dependencies
 python app.py                   # run flask server in current tab
 webpack --watch                 # run webpack server in another tab
@@ -36,6 +44,14 @@ workon matcha
 python app.py                   # in current tab
 webpack --watch                 # in another tab
 ```
+
+### Common Errors in Setup:
+`error traceback example`: _how to fix_
+
+## Running Tests
+
+1. Navigate to top level matcha directory
+2. Run `pytest tests` (runs `pytest` on all valid test functions inside the `tests/` directory)
 
 ## DB Access - MongoDB
 

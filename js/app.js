@@ -1,6 +1,22 @@
-import Hello from './Hello';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-ReactDOM.render(<Hello/>, document.getElementById('reactEntry'));
+import AppRouter from './routes';
+
+class App extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+	
+	render() {
+		return (
+			<div className="App">
+				<AppRouter />
+				{this.props.children}
+			</div>
+		);
+	}
+}
+
+ReactDOM.render(<App />, document.getElementById('react-root'));
 
