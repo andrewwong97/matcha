@@ -8,15 +8,25 @@ A platform that seamlessly connects employers and qualified candidates with matc
 
 Package managers:
 
-- `npm`/`yarn`
+- `npm`
 - `pip`
 
-## To run:
+## To run an automated production build:
 
-Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS
+```
+mkvirtualenv matcha-prod
+bash startWebserver.sh    # Assumes you have NodeJS and npm. Installs all required dependencies and runs server on localhost 5000
+```
+
+## To run dev:
+
+Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS. We use `webpack --watch` for hot reloading of React components during dev, but for production we will just use a static bundle.
+
 First time:
 ```
-cd matcha/matcha
+git clone this repository to your local
+cd 2017-group-16
+
 pip install virtualenvwrapper   # only if you don't already have this
 
 mkvirtualenv matcha             # the name of your virtual environment
@@ -36,7 +46,7 @@ webpack --watch                 # in another tab
 ```
 
 ### Common Errors in Setup:
-`no module named <module-name>`: We're running Flask on Python 3, so make sure you install the module using `pip3` if you installed using `pip` and are still receiving this error. 
+`error traceback example`: _how to fix_
 
 ## Running Tests
 
