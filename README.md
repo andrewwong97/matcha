@@ -46,7 +46,7 @@ webpack --watch                 # in another tab
 ```
 
 ### Common Errors in Setup:
-`no module named <module-name>`: We're running Flask on Python 3, so make sure you install the module using `pip3` if you installed using `pip` and are still receiving this error. 
+`error traceback example`: _how to fix_
 
 ## Running Tests
 
