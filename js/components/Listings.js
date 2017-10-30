@@ -9,7 +9,7 @@ class Listings extends React.Component {
 	}
 
 	renderListings() {
-		return this.state.listings == null ? 'No Listings' : 
+		return this.state.listings == null ? 'Loading listings...' : 
 			this.state.listings.map((listing) => <li>{listing.name} {listing.salary}</li>);
 	}
 
