@@ -159,11 +159,11 @@ def get_current_jobs(employer):
 	# TODO: Add any additional code
 	return dumps(job_listings) # TODO: change return value as needed
 
-@app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
-def get_current_jobs(employer):
-	job_listings = mongo.db.employers.find({'employer': employer}, {'jobs_listings': 1, '_id': 0}) # return only job matches
-	# TODO: Add any additional code
-	return dumps(job_listings) # TODO: change return value as needed
+# @app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
+# def get_current_jobs(employer):
+# 	job_listings = mongo.db.employers.find({'employer': employer}, {'jobs_listings': 1, '_id': 0}) # return only job matches
+# 	# TODO: Add any additional code
+# 	return dumps(job_listings) # TODO: change return value as needed
 
 @app.route('/v1/employer/<string:employer>/declineCandidate/<string:candidate>/<string:job_name>', methods=['POST'])
 def decline_candidate(employer, job_name, candidate):
