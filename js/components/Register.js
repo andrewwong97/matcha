@@ -43,6 +43,7 @@ class Register extends React.Component {
 				<p>Placeholder for Login via LinkedIn</p>
 
 				<button className="submitRegister">Sign Up</button>
+				<Link to="/login">Have an account? Login here</Link>
 			</div>
 		);
 	}
