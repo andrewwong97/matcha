@@ -18,6 +18,8 @@ mkvirtualenv matcha-prod
 bash startWebserver.sh    # Assumes you have NodeJS and npm. Installs all required dependencies and runs server on localhost 5000
 ```
 
+If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance.
+
 ## To run dev:
 
 Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS. We use `webpack --watch` for hot reloading of React components during dev, but for production we will just use a static bundle.
