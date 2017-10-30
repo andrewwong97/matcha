@@ -9,6 +9,7 @@ import json
 import random
 
 app = Flask(__name__)
+app.secret_key = 'matcha'
 
 app.config['MONGO_DBNAME'] = 'matcha'
 app.config['MONGO_URI'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha'
@@ -24,32 +25,51 @@ def index(path):
 
 
 # Basic Login
-@app.route('/v1/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
 	if request.method == 'POST':
-		u = mongo.db.users.find_one({'email': request.form['email']})
+		data = json.loads(request.data)
+
+		# u = mongo.db.users.find_one({'email': request.form['email']})
+		u = mongo.db.users.find_one({'email': data['email']})
 
 		if u is None:
 			session['email'] = None
-			return redirect(url_for('index'))
+			return dumps({'status': 404, 'reason': 'invalid email'}), 404
 		else:
-			session['email'] = request.form['email']
+			session['email'] = data['email']
+			return dumps({'email': data['email'], 'first_name': u['first_name'], 'last_name': u['last_name']}), 200
+
+	return redirect(url_for('index'))
+
+
+# Basic Logout
+@app.route('/logout')
+def logout():
+	session.pop('email', None)
+	return redirect(url_for('index'))
 
 
 # Basic Register
-@app.route('/v1/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
 	if request.method == 'POST':
 		users = mongo.db.users
 		u = users.find_one({'email': request.form['email']})
 
-		if u is None:  # no user exists for this email
-			hashpass = bcrypt.hashpw(request.form['password'].encode('utf8'), bcrypt.gensalt())
-			users.insert({'email': request.form['email'], 'password': hashpass})
-			session['email'] = request.form['email']
-			return redirect(url_for('index'))
+		f_name = data['first_name']
+		l_name = data['last_name']
+		email = data['email']
+		pwd = data['password'].encode('utf8')
 
-		return 'Email is already being used for another account'
+		if u is None:  # no user exists for this email
+			hashpass = bcrypt.hashpw(pwd, bcrypt.gensalt())
+			new_user = {'first_name': f_name, 'last_name': l_name, 'email': email, 'password': hashpass}
+			users.insert(new_user)
+			session['email'] = request.form['email']
+			return dumps(new_user), 200
+
+		return dumps({'reason': 'Email is already being used for another account'}), 200
 
 	return render_template('/index.html')
 
@@ -70,15 +90,12 @@ def create_job_listing():
 	try:
 		data = json.loads(request.data)
 	except AttributeError:
-		return Response(json.dumps({'status': 404}), status=404, mimetype='application/json')
-
-	# if 'name' or 'salary' not in data:
-	# 	return Response(json.dumps({'status': 404}), status=404, mimetype='application/json')
+		return dumps({'reason': 'malformed data'}), 404
 
 	new_listing = {'name': data['name'], 'salary': data['salary']}
 	listings.insert(new_listing)
 
-	return dumps(new_listing)
+	return dumps(new_listing), 200
 
 
 @app.route('/v1/createProfile')
