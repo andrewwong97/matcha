@@ -18,7 +18,7 @@ mkvirtualenv matcha-prod
 bash startWebserver.sh    # Assumes you have NodeJS and npm. Installs all required dependencies and runs server on localhost 5000
 ```
 
-If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance.
+If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
 
 ## To run dev:
 
