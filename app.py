@@ -11,10 +11,12 @@ import random
 app = Flask(__name__)
 app.secret_key = 'matcha'
 
+# Uncomment to use mLab db
 app.config['MONGO_DBNAME'] = 'matcha'
 app.config['MONGO_URI'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha'
-# UNSAFE, CHANGE IN PRODUCTION
 
+# app.config['MONGO_DBNAME'] = 'matcha'
+# app.config['MONGO_PORT'] = 27017
 mongo = PyMongo(app)
 
 
@@ -44,7 +46,7 @@ def login():
 
 
 # Basic Logout
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
 	session.pop('email', None)
 	return redirect(url_for('index'))
@@ -55,18 +57,19 @@ def logout():
 def register():
 	if request.method == 'POST':
 		users = mongo.db.users
-		u = users.find_one({'email': request.form['email']})
+		data = json.loads(request.data)
 
 		f_name = data['first_name']
 		l_name = data['last_name']
 		email = data['email']
 		pwd = data['password'].encode('utf8')
 
+		u = users.find_one({'email': email})
 		if u is None:  # no user exists for this email
 			hashpass = bcrypt.hashpw(pwd, bcrypt.gensalt())
 			new_user = {'first_name': f_name, 'last_name': l_name, 'email': email, 'password': hashpass}
 			users.insert(new_user)
-			session['email'] = request.form['email']
+			session['email'] = data['email']
 			return dumps(new_user), 200
 
 		return dumps({'reason': 'Email is already being used for another account'}), 200

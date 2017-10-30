@@ -8,8 +8,8 @@
 	transform: translate(-50%, -50%);
 
 
-
-	input {
+	// input fields
+	input[name="email"], input[name="password"], input[name="first_name"],input[name="last_name"] {
 		display: block;
 		padding: 20px;
 		margin: 10px 0;
@@ -31,4 +31,8 @@
 		background-color: #fff;
 		border: 1px solid #cccccc;
 	}
+}
+
+.select-control {
+	margin-bottom: 10px;
 }
