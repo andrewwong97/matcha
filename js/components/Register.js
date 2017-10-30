@@ -116,9 +116,11 @@ class Register extends React.Component {
 				<p>Placeholder for Login via LinkedIn</p>
 
 				<button
-                    className="submitRegister"
-                    onClick={this.register.bind(this)}
-                >Sign Up</button>
+            className="submitRegister"
+            onClick={this.register.bind(this)}
+        >Sign Up</button>
+				<button className="submitRegister">Sign Up</button>
+				<Link to="/login">Have an account? Login here</Link>
 			</div>
 		);
 	}
