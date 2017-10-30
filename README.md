@@ -57,7 +57,15 @@ webpack --watch                 # in another tab
 
 ## DB Access - MongoDB
 
-We have a MongoDB instance hosted on mLab, see db access details here. Since it's configured inside `app.py`, you will likely not need to access the db much. Here are the db user details, for the mLab account details please message Andrew Wong (awong52@jhu.edu) if necessary.
+We have a MongoDB instance hosted on mLab, see db access details here. Since it's configured inside `app.py`, you will likely not need to access the db much. 
+
+### mLab Login Details
+```
+user: oose-matcha
+pass: matcha17
+```
+
+### DB User Details
 ```
 dbname: matcha
 db user: oose
