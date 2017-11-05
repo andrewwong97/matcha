@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500,700');
 
 @import 'components/Login';
+@import 'components/Listings';
 @import 'base/Nav';
+@import 'pages/Home';
 
 body {
 	font-family: "Fira Sans", "Helvetica", "Arial", sans-serif;

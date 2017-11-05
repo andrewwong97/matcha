@@ -4,13 +4,24 @@ class Listings extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			listings: null
+			listings: []
 		}
 	}
 
 	renderListings() {
-		return this.state.listings == null ? 'Loading listings...' : 
-			this.state.listings.map((listing) => <li>{listing.name} {listing.salary}</li>);
+		return this.state.listings == null ? 'Loading listings...' :
+			this.state.listings.map((listing) =>
+				(
+					<li className="job-listing">
+						<div className="logo-placeholder"></div>
+						<div className="listing-text">
+							<p className="company">Company Name</p>
+							<p className="name">{listing.name}</p>
+							<p className="salary">{listing.salary}</p>
+						</div>
+					</li>
+				)
+			);
 	}
 
 	componentDidMount() {
@@ -24,9 +35,11 @@ class Listings extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className="Listings">
 				<h1>Listings</h1>
-				{this.renderListings()}
+				<div className="listing-container">
+                    {this.renderListings()}
+				</div>
 			</div>
 		);
 	}
