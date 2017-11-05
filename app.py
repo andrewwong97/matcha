@@ -2,6 +2,7 @@ from flask import (Flask, Response,
 				   render_template, session, request,
 				   redirect, url_for, jsonify)
 from flask_pymongo import PyMongo
+from flask_cors import CORS
 
 import bcrypt
 from bson.json_util import dumps
@@ -11,13 +12,14 @@ import random
 app = Flask(__name__)
 app.secret_key = 'matcha'
 
-# Uncomment to use mLab db
 app.config['MONGO_DBNAME'] = 'matcha'
 app.config['MONGO_URI'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha'
 
-# app.config['MONGO_DBNAME'] = 'matcha'
-# app.config['MONGO_PORT'] = 27017
 mongo = PyMongo(app)
+
+# For specific cors, uncomment
+# cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)
 
 
 @app.route('/', defaults={'path': ''})
