@@ -15,6 +15,19 @@ const selectExpertise = [
     {'value': 'Product', 'label': 'Product', 'name': 'expertise'},
 ];
 
+const selectVisaStatus = [
+    {'value': 'Citizen', 'label': 'U.S. citizen or resident', 'name': 'visaStatus'},
+    {'value': 'Visa', 'label': 'Require a visa to work in the U.S.', 'name': 'visaStatus'},
+];
+
+// TODO: use react-virtualized & react-virtualized-select to efficiently render 
+// large list of 1000 largest cities
+const selectCity = [
+    {'value': 'San Francisco', 'label': 'San Francisco', 'name': 'city'},
+    {'value': 'New York', 'label': 'New York', 'name': 'city'},
+    {'value': 'Baltimore', 'label': 'Baltimore', 'name': 'city'},
+];
+
 class Register extends React.Component {
 	constructor(props) {
 		super(props);
@@ -22,7 +35,9 @@ class Register extends React.Component {
 			email: '',
 			password: '',
             jobType: '',
-            expertise: ''
+            expertise: '',
+            visaStatus: '',
+            city: ''
 		}
 	}
 
@@ -50,6 +65,9 @@ class Register extends React.Component {
                 password: this.state.password,
                 jobType: this.state.jobType,
                 expertise: this.state.expertise
+                //visaStatus: this.state.visaStatus --> add to POST
+                //city: this.state.city
+                
 	        })
         };
 
@@ -112,14 +130,32 @@ class Register extends React.Component {
                     options={selectExpertise}
                     onChange={this.handleSelect.bind(this)}
                 />
+                
+                <Select
+                    name="visaStatus"
+                    value={this.state.visaStatus}
+                    placeholder="Visa status"
+                    options={selectVisaStatus}
+                    onChange={this.handleSelect.bind(this)}
+                />
+
+                <Select
+                    name="city"
+                    value={this.state.city}
+                    placeholder="Preferred city"
+                    options={selectCity}
+                    onChange={this.handleSelect.bind(this)}
+                />
 
 				<p>Placeholder for Login via LinkedIn</p>
 
+				<p>Placeholder for Login via GitHub</p>
+
 				<button
-            className="submitRegister"
-            onClick={this.register.bind(this)}
-        >Sign Up</button>
-				<button className="submitRegister">Sign Up</button>
+            		className="submitRegister"
+            		onClick={this.register.bind(this)}
+        		>Sign Up</button>
+        		
 				<Link to="/login">Have an account? Login here</Link>
 			</div>
 		);
