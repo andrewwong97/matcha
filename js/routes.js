@@ -11,8 +11,10 @@ import Listings from './components/Listings';
 import Login from './components/Login';
 import Register from './components/Register';
 import RegisterEmployer from './pages/RegisterEmployer';
+import StudentProfile from "./pages/StudentProfile";
 
 import history from './history';
+
 
 export default class AppRouter extends React.Component {
   handle() {
@@ -39,6 +41,7 @@ export default class AppRouter extends React.Component {
               <Route path="/listings" component={Listings} />
               <Route path="/register" component={Register} />
               <Route path="/register-employer" component={RegisterEmployer} />
+              <Route path="/profile/:profile_id" component={StudentProfile} />
             </Switch>
           </div>
         </Router>

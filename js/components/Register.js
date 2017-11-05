@@ -151,12 +151,15 @@ class Register extends React.Component {
 
 				<p>Placeholder for Login via GitHub</p>
 
-				<button
-            		className="submitRegister"
-            		onClick={this.register.bind(this)}
-        		>Sign Up</button>
-        		
-				<Link to="/login">Have an account? Login here</Link>
+				<div className="submit-wrapper">
+					<button
+						className="btn btn-submitRegister"
+						onClick={this.register.bind(this)}
+					>Sign Up</button>
+
+					<Link to="/login">Have an account? Login here</Link>
+				</div>
+
 			</div>
 		);
 	}
