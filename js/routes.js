@@ -10,7 +10,7 @@ import Home from './pages/Home';
 import Listings from './components/Listings';
 import Login from './components/Login';
 import Register from './components/Register';
-import RegisterEmployer from './pages/RegisterEmployer';
+import RegisterEmployer from './components/RegisterEmployer';
 import StudentProfile from "./pages/StudentProfile";
 
 import history from './history';
