@@ -73,4 +73,4 @@ password: letmein
 ```
 
 ## API
-[https://github.com/jhu-oose/2017-group-16/wiki/API](API Endpoint Documentation)
+https://github.com/jhu-oose/2017-group-16/wiki/API
