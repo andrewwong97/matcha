@@ -1,7 +1,7 @@
 from flask import (Flask, Response,
 				   render_template, session, request,
 				   redirect, url_for, jsonify)
-from flask_pymongo import PyMongo
+from flask.ext.mongoalchemy import MongoAlchemy
 from flask_cors import CORS
 
 import bcrypt
@@ -12,14 +12,17 @@ import random
 app = Flask(__name__)
 app.secret_key = 'matcha'
 
-app.config['MONGO_DBNAME'] = 'matcha'
-app.config['MONGO_URI'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha'
+app.config['MONGOALCHEMY_DATABASE'] = 'matcha'
+app.config['MONGOALCHEMY_CONNECTION_STRING'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha'
 
-mongo = PyMongo(app)
+mongo = MongoAlchemy(app)
 
 # For specific cors, uncomment
 # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 CORS(app)
+
+class Student(mongo.Document):
+	name = mongo.StringField()
 
 
 @app.route('/', defaults={'path': ''})
@@ -89,25 +92,45 @@ def show_job_listings():
 
 @app.route('/v1/listings/new', methods=['POST'])
 def create_job_listing():
-	''' Create a new listing '''
-	listings = mongo.db.listings
+	# ''' Create a new listing '''
+	# listings = mongo.db.listings
+    #
+	# try:
+	# 	data = json.loads(request.data)
+	# except AttributeError:
+	# 	return dumps({'reason': 'malformed data'}), 404
+    #
+	# new_listing = {'name': data['name'], 'salary': data['salary']}
+	# listings.insert(new_listing)
 
-	try:
-		data = json.loads(request.data)
-	except AttributeError:
-		return dumps({'reason': 'malformed data'}), 404
+	listings = mongo.db.student.find({})
+	print(listings)
 
-	new_listing = {'name': data['name'], 'salary': data['salary']}
-	listings.insert(new_listing)
-
-	return dumps(new_listing), 200
+	return 'success', 200
 
 
-@app.route('/v1/createProfile')
+@app.route('/v1/createProfile', methods=['POST'])
 def create_profile():
-	''' Create a new profile '''
-	profiles = mongo.db.profiles # create new profiles collection
-	profiles.insert({'username': 'Matcha'}) # TODO: Add code to create profiles and necessary fields
+	# req_data = request.get_json()
+    #
+	# first_name = req_data['first_name']
+	# last_name = req_data['last_name']
+	# email = req_data['email']
+	# linkedin_token = req_data['linkedin_token']
+	# github_token = req_data['github_token']
+	# skills = req_data['skills'] # list of strings
+	# need_visa = req_data['need_visa'] # boolean
+	# location = req_data['location'] # dict or tuple of city, state
+	# looking_for = req_data['looking_for'] # list
+	# job_matches = req_data['job_matches'] # list
+	# favorited_jobs = req_data['favorited_jobs'] # list
+
+	# profiles = mongo.db.profiles # create new profiles collection
+	test_student = Student(name='Anthony')
+	test_student.save()
+	print('test')
+
+	#profiles.insert({'username': 'Matcha'}) # TODO: Add code to create profiles and necessary fields
 	return 'Success'
 
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
