@@ -3,7 +3,10 @@ from flask import (Flask, Response,
 				   redirect, url_for, jsonify)
 from flask.ext.mongoalchemy import MongoAlchemy
 from flask_cors import CORS
-from mongoengine import *
+#from mongoengine import *
+from mongoalchemy.fields import *
+import simplejson
+from bson import json_util
 
 import bcrypt
 from bson.json_util import dumps
@@ -16,7 +19,7 @@ app.secret_key = 'matcha'
 app.config['MONGOALCHEMY_DATABASE'] = 'matcha'
 app.config['MONGOALCHEMY_CONNECTION_STRING'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha'
 
-connect('matcha', host='mongodb://oose:letmein@ds015962.mlab.com:15962/matcha') # connect MongoEngine
+#connect('matcha', host='mongodb://oose:letmein@ds015962.mlab.com:15962/matcha') # connect MongoEngine
 
 mongo = MongoAlchemy(app)
 
@@ -82,21 +85,39 @@ def register():
 	return render_template('/index.html')
 
 
-class Student(Document):
+class Student(mongo.Document):
 
-	username = StringField()
-	first_name = StringField()
-	last_name = StringField()
-	email = EmailField()
-	linkedin_token = StringField()
-	github_token = StringField()
-	skills = ListField(StringField())
-	need_visa = BooleanField() # boolean
-	location = DictField() # dict or tuple of city, state
-	looking_for = ListField(StringField()) # list
-	job_matches = ListField(StringField()) # list
-	favorited_jobs = ListField(StringField()) # list
+	username = mongo.StringField()
+	first_name = mongo.StringField()
+	last_name = mongo.StringField()
+	email = mongo.StringField()
+	linkedin_token = mongo.StringField()
+	github_token = mongo.StringField()
+	skills = mongo.ListField(mongo.StringField())
+	location = mongo.DictField(mongo.StringField(), mongo.StringField()) # dict or tuple of city, state
+	need_visa = mongo.StringField()
+	looking_for = mongo.ListField(mongo.StringField()) # list
+	job_matches = mongo.ListField(mongo.StringField()) # list
+	favorited_jobs = mongo.ListField(mongo.StringField()) # list
 
+
+def student_to_dict(st):
+
+	student = dict()
+	student['username'] = st.username
+	student['first_name'] = st.first_name
+	student['last_name'] = st.last_name
+	student['email'] = st.email
+	student['linkedin_token'] = st.linkedin_token
+	student['github_token'] = st.github_token
+	student['skills'] = st.skills  # list of strings
+	student['need_visa'] = st.need_visa  # boolean
+	student['location'] = st.location  # dict or tuple of city, state
+	student['looking_for'] = st.looking_for  # list
+	student['job_matches'] = st.job_matches  # list
+	student['favorited_jobs'] = st.favorited_jobs  # list
+
+	return student
 
 @app.route('/v1/createProfile', methods=['POST'])
 def create_profile():
@@ -123,10 +144,10 @@ def create_profile():
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
 def get_profile(username):
 
-	students = Student.query.all()
-	# print(student.last_name)
+ 	st = Student.query.filter(Student.username == username).first()
+	student = student_to_dict(st)
 
-	return 'Success'
+	return dumps(student)
 
 @app.route('/v1/editProfile/<string:username>', methods=['POST'])
 def edit_profile(username):
