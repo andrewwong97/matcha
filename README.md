@@ -18,7 +18,7 @@ mkvirtualenv matcha-prod
 bash startWebserver.sh    # Assumes you have NodeJS and npm. Installs all required dependencies and runs server on localhost 5000
 ```
 
-If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance.
+If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
 
 ## To run dev:
 
@@ -57,9 +57,20 @@ webpack --watch                 # in another tab
 
 ## DB Access - MongoDB
 
-We have a MongoDB instance hosted on mLab, see db access details here. Since it's configured inside `app.py`, you will likely not need to access the db much. Here are the db user details, for the mLab account details please message Andrew Wong (awong52@jhu.edu) if necessary.
+We have a MongoDB instance hosted on mLab, see db access details here. Since it's configured inside `app.py`, you will likely not need to access the db much. 
+
+### mLab Login Details
+```
+user: oose-matcha
+pass: matcha17
+```
+
+### DB User Details
 ```
 dbname: matcha
 db user: oose
 password: letmein
 ```
+
+## API
+https://github.com/jhu-oose/2017-group-16/wiki/API

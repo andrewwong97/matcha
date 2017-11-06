@@ -1,34 +1,45 @@
-.Login, .Register {
-	display: block;
+.Login, .Register, .RegisterEmployer {
+	display: flex;
 	margin: 0 auto;
 
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: center;
 
-
-
-	input {
-		display: block;
+	input[name="email"],
+	input[name="password"],
+	input[name="first_name"],
+	input[name="last_name"],
+	input[name="company_name"]{
+		flex: 1 30%;
+		margin: 1% 35%;
 		padding: 20px;
-		margin: 10px 0;
 		font-size: 14pt;
 		font-weight: 200;
+		border: 1px #ccc solid;
+		transition: border-color 150ms ease-in;
 
 		&:focus {
 			outline: none;
+			border: 1px #1cbd6a solid;
 		}
 	}
 
-	.submitLogin, .submitRegister {
-		display: block;
-		padding: 10px;
-		margin-bottom: 10px;
-		border-radius: 5px;
+	.Select {
+		flex: 1 50%;
+		margin: 10px 35%;
+		font-size: 14pt;
+		font-family: "Fira Sans", "Helvetica", "Arial", sans-serif;
 		font-weight: 200;
-		font-size: 12pt;
-		background-color: #fff;
-		border: 1px solid #cccccc;
+	}
+
+	p {
+		flex: 1 50%;
+		margin: 10px 35%;
+	}
+
+	.submit-wrapper {
+		flex: 1 100%;
+		margin: 10px 35%;
 	}
 }

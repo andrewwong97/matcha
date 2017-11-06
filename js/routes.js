@@ -1,18 +1,20 @@
 import React from 'react';
 import {
-  BrowserRouter as Router,
-  browserHistory,
+  Router,
   Route,
   Link,
-  withRouter,
   Switch
 } from 'react-router-dom';
 
-import Home from './components/Home';
+import Home from './pages/Home';
 import Listings from './components/Listings';
 import Login from './components/Login';
 import Register from './components/Register';
-import Signup from './components/Signup';
+import RegisterEmployer from './pages/RegisterEmployer';
+import StudentProfile from "./pages/StudentProfile";
+
+import history from './history';
+
 
 export default class AppRouter extends React.Component {
   handle() {
@@ -22,7 +24,7 @@ export default class AppRouter extends React.Component {
   render() {
     return (
       <div className="AppRouter">
-        <Router history={browserHistory}>
+        <Router history={history}>
           <div>
             <div className="Nav-wrapper">
               <div className="logo">
@@ -31,14 +33,15 @@ export default class AppRouter extends React.Component {
               <ul className="Nav" onClick={this.handle.bind(this)}>
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/login">Login</Link></li>
-                <li><Link to="/listings">Listings</Link></li>
               </ul>
             </div>
             <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/login" component={Login} />
-            <Route path="/listings" component={Listings} />
-            <Route path="/register" component={Register} />
+              <Route exact path="/" component={Home} />
+              <Route path="/login" component={Login} />
+              <Route path="/listings" component={Listings} />
+              <Route path="/register" component={Register} />
+              <Route path="/register-employer" component={RegisterEmployer} />
+              <Route path="/profile/:profile_id" component={StudentProfile} />
             </Switch>
           </div>
         </Router>

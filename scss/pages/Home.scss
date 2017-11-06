@@ -1,0 +1,26 @@
+.Home {
+    text-align: center;
+}
+
+
+.Hero {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+
+    .signup-switch {
+        flex: 0 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-flow: row wrap;
+        margin-bottom: 10px;
+        .btn {
+            flex: 0 10%;
+            text-align: center;
+        }
+    }
+
+    margin-bottom: 40px;
+}
