@@ -3,26 +3,26 @@ from flask import (Flask, Response,
 				   redirect, url_for, jsonify)
 from flask.ext.mongoalchemy import MongoAlchemy
 from flask_cors import CORS
+from mongoengine import *
 
 import bcrypt
 from bson.json_util import dumps
 import json
-import random
 
 app = Flask(__name__)
 app.secret_key = 'matcha'
 
+# configure Alchemy
 app.config['MONGOALCHEMY_DATABASE'] = 'matcha'
 app.config['MONGOALCHEMY_CONNECTION_STRING'] = 'mongodb://oose:letmein@ds015962.mlab.com:15962/matcha'
+
+connect('matcha', host='mongodb://oose:letmein@ds015962.mlab.com:15962/matcha') # connect MongoEngine
 
 mongo = MongoAlchemy(app)
 
 # For specific cors, uncomment
 # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 CORS(app)
-
-class Student(mongo.Document):
-	name = mongo.StringField()
 
 
 @app.route('/', defaults={'path': ''})
@@ -82,63 +82,51 @@ def register():
 	return render_template('/index.html')
 
 
-# Listings for testing purposes
+class Student(Document):
 
-@app.route('/v1/listings/all', methods=['GET'])
-def show_job_listings():
-	listings = mongo.db.listings.find({})  # all listings
-	return dumps(listings)
-
-
-@app.route('/v1/listings/new', methods=['POST'])
-def create_job_listing():
-	# ''' Create a new listing '''
-	# listings = mongo.db.listings
-    #
-	# try:
-	# 	data = json.loads(request.data)
-	# except AttributeError:
-	# 	return dumps({'reason': 'malformed data'}), 404
-    #
-	# new_listing = {'name': data['name'], 'salary': data['salary']}
-	# listings.insert(new_listing)
-
-	listings = mongo.db.student.find({})
-	print(listings)
-
-	return 'success', 200
+	username = StringField()
+	first_name = StringField()
+	last_name = StringField()
+	email = EmailField()
+	linkedin_token = StringField()
+	github_token = StringField()
+	skills = ListField(StringField())
+	need_visa = BooleanField() # boolean
+	location = DictField() # dict or tuple of city, state
+	looking_for = ListField(StringField()) # list
+	job_matches = ListField(StringField()) # list
+	favorited_jobs = ListField(StringField()) # list
 
 
 @app.route('/v1/createProfile', methods=['POST'])
 def create_profile():
-	# req_data = request.get_json()
-    #
-	# first_name = req_data['first_name']
-	# last_name = req_data['last_name']
-	# email = req_data['email']
-	# linkedin_token = req_data['linkedin_token']
-	# github_token = req_data['github_token']
-	# skills = req_data['skills'] # list of strings
-	# need_visa = req_data['need_visa'] # boolean
-	# location = req_data['location'] # dict or tuple of city, state
-	# looking_for = req_data['looking_for'] # list
-	# job_matches = req_data['job_matches'] # list
-	# favorited_jobs = req_data['favorited_jobs'] # list
+	req_data = request.get_json()
 
-	# profiles = mongo.db.profiles # create new profiles collection
-	test_student = Student(name='Anthony')
-	test_student.save()
-	print('test')
+	student = Student()
+	student.username = req_data['username'] # each student has a unique username
+	student.first_name = req_data['first_name']
+	student.last_name = req_data['last_name']
+	student.email = req_data['email']
+	student.linkedin_token = req_data['linkedin_token']
+	student.github_token = req_data['github_token']
+	student.skills = req_data['skills'] # list of strings
+	student.need_visa = req_data['need_visa'] # boolean
+	student.location = req_data['location'] # dict or tuple of city, state
+	student.looking_for = req_data['looking_for'] # list
+	student.job_matches = req_data['job_matches'] # list
+	student.favorited_jobs = req_data['favorited_jobs'] # list
 
-	#profiles.insert({'username': 'Matcha'}) # TODO: Add code to create profiles and necessary fields
+	student.save()
+
 	return 'Success'
 
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
 def get_profile(username):
-	''' Get a profile with the given username '''
-	profiles = mongo.db.profiles.find({'username': username}) 
-	# TODO: Add code to work with profile
-	return dumps(profiles) # TODO: change return value as needed
+
+	students = Student.query.all()
+	# print(student.last_name)
+
+	return 'Success'
 
 @app.route('/v1/editProfile/<string:username>', methods=['POST'])
 def edit_profile(username):
@@ -230,5 +218,32 @@ def hide_account(employer):
 	# TODO: hide account
 	return 'Success'
 
+# Listings for testing purposes
+# @app.route('/v1/listings/all', methods=['GET'])
+# def show_job_listings():
+# 	listings = mongo.db.listings.find({})  # all listings
+# 	return dumps(listings)
+#
+#
+# @app.route('/v1/listings/new', methods=['POST'])
+# def create_job_listing():
+# 	# ''' Create a new listing '''
+# 	# listings = mongo.db.listings
+#     #
+# 	# try:
+# 	# 	data = json.loads(request.data)
+# 	# except AttributeError:
+# 	# 	return dumps({'reason': 'malformed data'}), 404
+#     #
+# 	# new_listing = {'name': data['name'], 'salary': data['salary']}
+# 	# listings.insert(new_listing)
+#
+# 	listings = mongo.db.student.find({})
+# 	print(listings)
+#
+# 	return 'success', 200
+
 if __name__ == '__main__':
 	app.run(debug=True)
+
+
