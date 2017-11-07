@@ -6,16 +6,16 @@ A platform that seamlessly connects employers and qualified candidates with matc
 
 ## Prerequisites
 
-Package managers:
-
+- `NodeJS`
 - `npm`
 - `pip`
+- `Docker`
 
-## To run an automated production build:
+## To run a dockerized production build:
 
 ```
-mkvirtualenv matcha-prod
-bash startWebserver.sh    # Assumes you have NodeJS and npm. Installs all required dependencies and runs server on localhost 5000
+pip install docker-compose
+docker-compose up -d --build    # deployed on port 80
 ```
 
 If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
