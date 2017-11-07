@@ -1,4 +1,5 @@
 import React from 'react';
+import Select from 'react-select';
 
 export default class RegisterEmployer extends React.Component {
     constructor(props) {
