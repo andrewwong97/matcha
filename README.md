@@ -15,7 +15,7 @@ A platform that seamlessly connects employers and qualified candidates with matc
 
 ```
 pip install docker-compose
-docker-compose up -d --build    # deployed on port 80
+docker-compose up -d --build    # deployed on port 5000
 ```
 
 If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
