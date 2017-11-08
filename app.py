@@ -27,7 +27,7 @@ mongo = MongoAlchemy(app)
 # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 CORS(app)
 
-
+# catch-all for front end
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
@@ -35,7 +35,7 @@ def index(path):
 
 
 # Basic Login
-@app.route('/login', methods=['POST'])
+@app.route('/v1/login', methods=['POST'])
 def login():
 	if request.method == 'POST':
 		data = json.loads(request.data)
@@ -54,14 +54,14 @@ def login():
 
 
 # Basic Logout
-@app.route('/logout', methods=['POST'])
+@app.route('/v1/logout', methods=['POST'])
 def logout():
 	session.pop('email', None)
 	return redirect(url_for('index'))
 
 
 # Basic Register
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/v1/register', methods=['GET', 'POST'])
 def register():
 	if request.method == 'POST':
 		users = mongo.db.users
@@ -84,6 +84,11 @@ def register():
 
 	return render_template('/index.html')
 
+
+@app.route('/v1/listings/all', methods=['GET'])
+def listings():
+	return dumps([{'name': 'Software Engineer', 'salary': '5000'},{'name': 'Software Engineer', 'salary': '5000'},{'name': 'Software Engineer', 'salary': '5000'}]), 200
+	
 
 class Student(mongo.Document):
 
@@ -139,7 +144,7 @@ def create_profile():
 
 	student.save()
 
-	return 'Success'
+	return dumps(student_to_dict(student)), 200
 
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
 def get_profile(username):
