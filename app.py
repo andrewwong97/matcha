@@ -108,63 +108,88 @@ class Student(mongo.Document):
 
 def student_to_dict(st):
 
-	student = dict()
-	student['username'] = st.username
-	student['first_name'] = st.first_name
-	student['last_name'] = st.last_name
-	student['email'] = st.email
-	student['linkedin_token'] = st.linkedin_token
-	student['github_token'] = st.github_token
-	student['skills'] = st.skills  # list of strings
-	student['need_visa'] = st.need_visa  # boolean
-	student['location'] = st.location  # dict or tuple of city, state
-	student['looking_for'] = st.looking_for  # list
-	student['job_matches'] = st.job_matches  # list
-	student['favorited_jobs'] = st.favorited_jobs  # list
+	st_dict = dict()
+	st_dict['username'] = st.username
+	st_dict['first_name'] = st.first_name
+	st_dict['last_name'] = st.last_name
+	st_dict['email'] = st.email
+	st_dict['linkedin_token'] = st.linkedin_token
+	st_dict['github_token'] = st.github_token
+	st_dict['skills'] = st.skills  # list of strings
+	st_dict['need_visa'] = st.need_visa  # boolean
+	st_dict['location'] = st.location  # dict or tuple of city, state
+	st_dict['looking_for'] = st.looking_for  # list
+	st_dict['job_matches'] = st.job_matches  # list
+	st_dict['favorited_jobs'] = st.favorited_jobs  # list
 
-	return student
+	return st_dict
+
+def dict_to_student(dict):
+
+	st_obj = Student()
+	st_obj.username = dict['username']  # each student has a unique username
+	st_obj.first_name = dict['first_name']
+	st_obj.last_name = dict['last_name']
+	st_obj.email = dict['email']
+	st_obj.linkedin_token = dict['linkedin_token']
+	st_obj.github_token = dict['github_token']
+	st_obj.skills = dict['skills']  # list of strings
+	st_obj.need_visa = dict['need_visa']  # boolean
+	st_obj.location = dict['location']  # dict or tuple of city, state
+	st_obj.looking_for = dict['looking_for']  # list
+	st_obj.job_matches = dict['job_matches']  # list
+	st_obj.favorited_jobs = dict['favorited_jobs']  # list
+
+	return st_obj
 
 @app.route('/v1/createProfile', methods=['POST'])
 def create_profile():
+
 	req_data = request.get_json()
-
-	student = Student()
-	student.username = req_data['username'] # each student has a unique username
-	student.first_name = req_data['first_name']
-	student.last_name = req_data['last_name']
-	student.email = req_data['email']
-	student.linkedin_token = req_data['linkedin_token']
-	student.github_token = req_data['github_token']
-	student.skills = req_data['skills'] # list of strings
-	student.need_visa = req_data['need_visa'] # boolean
-	student.location = req_data['location'] # dict or tuple of city, state
-	student.looking_for = req_data['looking_for'] # list
-	student.job_matches = req_data['job_matches'] # list
-	student.favorited_jobs = req_data['favorited_jobs'] # list
-
-	student.save()
+	student_obj = dict_to_student(req_data)
+	student_obj.save()
 
 	return dumps(student_to_dict(student)), 200
 
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
 def get_profile(username):
 
- 	st = Student.query.filter(Student.username == username).first()
-	student = student_to_dict(st)
+	st_obj = Student.query.filter(Student.username == username).first()
 
-	return dumps(student)
+	if st_obj is not None:
+		student_dict = student_to_dict(st_obj)
+		return dumps(student_dict)
+	else:
+		return 'Username Not Found' #TODO: improve error handling
 
 @app.route('/v1/editProfile/<string:username>', methods=['POST'])
 def edit_profile(username):
-	profiles = mongo.db.profiles.find({'username': username})  # get document with given username
-	# TODO: Add code to update necessary profile fields
-	return 'Success' # TODO: change return value as needed
+
+	new_data = request.get_json() # dictionary with data from user
+	st_obj = Student.query.filter(Student.username == username).first()
+
+	if st_obj is not None:
+
+		for key in new_data:
+			setattr(st_obj, key, new_data[key])
+
+		st_obj.save()
+		return 'Success'  # TODO: change return value as needed
+	else:
+		return 'Username Not Found' #TODO: improve error handling
+
 
 @app.route('/v1/candidate/<string:username>/getCurrentMatches', methods=['GET'])
 def get_job_matches(username):
-	job_matches = mongo.db.profiles.find({'username': username}, {'matches': 1, '_id': 0}) # return only job matches
-	# TODO: Add any additional code
-	return dumps(job_matches) # TODO: change return value as needed
+
+	st_obj = Student.query.filter(Student.username == username).first()
+
+	if st_obj is not None:
+		return dumps(st_obj.job_matches)
+	else:
+		return 'Username Not Found'  # TODO: improve error handling
+
+
 
 @app.route('/v1/candidate/<string:username>/declineJob/<string:job_name>', methods=['POST'])
 def decline_job(username, job_name):
