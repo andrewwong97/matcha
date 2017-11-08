@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
+import history from '../history';
 
 
 const selectJobType = [
@@ -56,25 +57,41 @@ class Register extends React.Component {
     }
 
     register() {
-	    const options = {
-	        method: 'POST',
-            body: JSON.stringify({
-                first_name: this.state.first_name,
-                last_name: this.state.last_name,
-	            email: this.state.email,
-                password: this.state.password,
-                jobType: this.state.jobType,
-                expertise: this.state.expertise
-                //visaStatus: this.state.visaStatus --> add to POST
-                //city: this.state.city
-                
-	        })
+
+		const data = {
+            first_name: this.state.first_name,
+            last_name: this.state.last_name,
+            email: this.state.email,
+            username: this.state.email,
+            password: this.state.password, // has not yet been implemented in backend yet
+            linkedin_token: '',
+            github_token: '',
+            skills: [],
+            need_visa: this.state.visaStatus,
+            location: this.state.city,
+            looking_for: [this.state.jobType],
+            job_matches: [],
+            favorited_jobs: [],
+            expertise: this.state.expertise
         };
 
-	    fetch(window.location.origin + '/register', options)
+        const myHeaders = new Headers({
+            "Content-Type": 'application/json'
+        });
+
+		const options = {
+            method: 'POST',
+			headers: myHeaders,
+			body: JSON.stringify(data)
+        };
+
+        const base = window.location.origin; // gets localhost:5000 or base url
+        fetch(base + '/v1/createProfile', options)
             .then((response) => console.log(response));
 
-	    window.location.reload(true);
+        this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
+
+        history.push('/');
     }
 
 

@@ -60,31 +60,6 @@ def logout():
 	return redirect(url_for('index'))
 
 
-# Basic Register
-@app.route('/v1/register', methods=['GET', 'POST'])
-def register():
-	if request.method == 'POST':
-		users = mongo.db.users
-		data = json.loads(request.data)
-
-		f_name = data['first_name']
-		l_name = data['last_name']
-		email = data['email']
-		pwd = data['password'].encode('utf8')
-
-		u = users.find_one({'email': email})
-		if u is None:  # no user exists for this email
-			hashpass = bcrypt.hashpw(pwd, bcrypt.gensalt())
-			new_user = {'first_name': f_name, 'last_name': l_name, 'email': email, 'password': hashpass}
-			users.insert(new_user)
-			session['email'] = data['email']
-			return dumps(new_user), 200
-
-		return dumps({'reason': 'Email is already being used for another account'}), 200
-
-	return render_template('/index.html')
-
-
 @app.route('/v1/listings/all', methods=['GET'])
 def listings():
 	return dumps([{'name': 'Software Engineer', 'salary': '5000'},{'name': 'Software Engineer', 'salary': '5000'},{'name': 'Software Engineer', 'salary': '5000'}]), 200
@@ -99,7 +74,7 @@ class Student(mongo.Document):
 	linkedin_token = mongo.StringField()
 	github_token = mongo.StringField()
 	skills = mongo.ListField(mongo.StringField())
-	location = mongo.DictField(mongo.StringField(), mongo.StringField()) # dict or tuple of city, state
+	location = mongo.StringField() 
 	need_visa = mongo.StringField()
 	looking_for = mongo.ListField(mongo.StringField()) # list
 	job_matches = mongo.ListField(mongo.StringField()) # list
@@ -108,7 +83,7 @@ class Student(mongo.Document):
 
 def student_to_dict(st):
 
-	st_dict = dict()
+	st_dict = {}
 	st_dict['username'] = st.username
 	st_dict['first_name'] = st.first_name
 	st_dict['last_name'] = st.last_name
@@ -117,28 +92,28 @@ def student_to_dict(st):
 	st_dict['github_token'] = st.github_token
 	st_dict['skills'] = st.skills  # list of strings
 	st_dict['need_visa'] = st.need_visa  # boolean
-	st_dict['location'] = st.location  # dict or tuple of city, state
+	st_dict['location'] = st.location  # string
 	st_dict['looking_for'] = st.looking_for  # list
 	st_dict['job_matches'] = st.job_matches  # list
 	st_dict['favorited_jobs'] = st.favorited_jobs  # list
 
 	return st_dict
 
-def dict_to_student(dict):
+def dict_to_student(d):
 
 	st_obj = Student()
-	st_obj.username = dict['username']  # each student has a unique username
-	st_obj.first_name = dict['first_name']
-	st_obj.last_name = dict['last_name']
-	st_obj.email = dict['email']
-	st_obj.linkedin_token = dict['linkedin_token']
-	st_obj.github_token = dict['github_token']
-	st_obj.skills = dict['skills']  # list of strings
-	st_obj.need_visa = dict['need_visa']  # boolean
-	st_obj.location = dict['location']  # dict or tuple of city, state
-	st_obj.looking_for = dict['looking_for']  # list
-	st_obj.job_matches = dict['job_matches']  # list
-	st_obj.favorited_jobs = dict['favorited_jobs']  # list
+	st_obj.username = d['username']  # each student has a unique username
+	st_obj.first_name = d['first_name']
+	st_obj.last_name = d['last_name']
+	st_obj.email = d['email']
+	st_obj.linkedin_token = d['linkedin_token']
+	st_obj.github_token = d['github_token']
+	st_obj.skills = d['skills']  # list of strings
+	st_obj.need_visa = d['need_visa']  # boolean
+	st_obj.location = d['location']  # string
+	st_obj.looking_for = d['looking_for']  # list
+	st_obj.job_matches = d['job_matches']  # list
+	st_obj.favorited_jobs = d['favorited_jobs']  # list
 
 	return st_obj
 
@@ -146,10 +121,11 @@ def dict_to_student(dict):
 def create_profile():
 
 	req_data = request.get_json()
+	print(req_data, type(req_data))
 	student_obj = dict_to_student(req_data)
 	student_obj.save()
 
-	return dumps(student_to_dict(student)), 200
+	return dumps(student_to_dict(student_obj)), 200
 
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
 def get_profile(username):
