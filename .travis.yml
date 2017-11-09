@@ -2,13 +2,24 @@ sudo: required
 
 language: python
 
+python:
+    - "2.7"
+
 services:  
     - docker
+
+install:
+    - pip install -r requirements.txt
 
 env:  
     global:
         - DOCKER_VERSION=17.09.0-ce
         - DOCKER_COMPOSE_VERSION=1.17.0
+
+before_script:
+    - pytest --version
+    - docker version
+    - docker-compose version
 
 before_install:  
     # list docker-engine versions
@@ -22,7 +33,6 @@ before_install:
     - sudo mv docker-compose /usr/local/bin
 
 script:  
-    - docker version
-    - docker-compose version
     - docker-compose up -d --build
     - docker ps # debug
+    - pytest tests
