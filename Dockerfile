@@ -16,7 +16,7 @@ WORKDIR /app
 RUN npm install --unsafe-perm -g webpack
 RUN npm install -g yarn
 RUN yarn install
-RUN npm rebuild node-sass -f
+#RUN npm rebuild node-sass -f
 RUN webpack
 RUN pip install -r requirements.txt
 EXPOSE 5000
