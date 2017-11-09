@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import history from '../history';
 
 class Login extends React.Component {
 	constructor(props) {
@@ -7,7 +8,8 @@ class Login extends React.Component {
 
 		this.state = {
 			email: '',
-			password: ''
+			password: '',
+			badLogin: false
 		}
 
 		this.handleLogin.bind(this);
@@ -24,16 +26,33 @@ class Login extends React.Component {
 	}
 
 	handleLogin() {
-		// should probably encrypt the password from client side
-		const url = window.location.origin + '/v1/login';
-		
-		const email = this.state.email;
-		const password = this.state.password;
-		const formData = JSON.stringify({ email, password });
+		const data = {
+            username: this.state.email,
+            password: this.state.password, // v dangerous, plaintext
+        };
 
-		fetch(url, {method: 'POST', body: formData})
-		.then((res) => res.json())
-		.then((data) => console.log(data));
+        const myHeaders = new Headers({
+            "Content-Type": 'application/json'
+        });
+
+		const options = {
+            method: 'POST',
+			headers: myHeaders,
+			body: JSON.stringify(data)
+        };
+
+        const base = window.location.origin;
+        fetch(base + '/v1/login', options)
+            .then((response) => {
+            	if (response.status == 200) {
+            		// if success, redirect to the profile
+            		this.setState({ badLogin: false });
+            		console.log(response.username);
+            		history.push(`/profile/${response.username}`);
+            	} else {
+            		this.setState({ badLogin: true, email: '', password: '' }); // reset fields
+            	}
+            });        
 	}
 
 	render() {
@@ -55,9 +74,11 @@ class Login extends React.Component {
 					value={this.state.password}
 					type="password" 
 				/>
-
-				<button className="submitLogin" onClick={this.handleLogin.bind(this)}>Submit</button>
+				<button className="btn btn-submitLogin" onClick={this.handleLogin.bind(this)}>Submit</button>
 				<Link to="/register">Need an account? Register here</Link>
+
+				{ this.state.badLogin == true ? <p style={{'color': '#ed441e'}}>Error: please check that you have correctly entered username and/or password</p> : <p></p> }
+
 			</div>
 		);
 	}

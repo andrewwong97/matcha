@@ -37,40 +37,42 @@ def index(path):
 # Basic Login
 @app.route('/v1/login', methods=['POST'])
 def login():
+	'''
+	Receive a request from the front end with username and password
+	Check with database that this is a valid user
+	Add username to session if valid
+		Else return 404
+	'''
 	if request.method == 'POST':
-		data = json.loads(request.data)
+		data = request.get_json()
+		username = data['username']
+		password = data['password']
+		# v dangerous, plaintext password
 
-		# u = mongo.db.users.find_one({'email': request.form['email']})
-		u = mongo.db.users.find_one({'email': data['email']})
+		# check if username is in db
+		st_obj = Student.query.filter(Student.username == username, Student.password == password).first()
 
-		if u is None:
-			session['email'] = None
-			return dumps({'status': 404, 'reason': 'invalid email'}), 404
+		if st_obj is not None:
+			student_dict = student_to_dict(st_obj)
+			session['username'] = username  # add current user to session
+			return dumps(student_dict), 200
 		else:
-			session['email'] = data['email']
-			return dumps({'email': data['email'], 'first_name': u['first_name'], 'last_name': u['last_name']}), 200
-
-	return redirect(url_for('index'))
+			return dumps({}), 404
 
 
 # Basic Logout
 @app.route('/v1/logout', methods=['POST'])
 def logout():
-	session.pop('email', None)
-	return redirect(url_for('index'))
+	session.pop('username', None)
+	return redirect(url_for('index')), 200
 
-
-@app.route('/v1/listings/all', methods=['GET'])
-def listings():
-	return dumps([{'name': 'Software Engineer', 'salary': '5000'},{'name': 'Software Engineer', 'salary': '5000'},{'name': 'Software Engineer', 'salary': '5000'}]), 200
-	
 
 class Student(mongo.Document):
-
 	username = mongo.StringField()
 	first_name = mongo.StringField()
 	last_name = mongo.StringField()
 	email = mongo.StringField()
+	password = mongo.StringField()
 	linkedin_token = mongo.StringField()
 	github_token = mongo.StringField()
 	skills = mongo.ListField(mongo.StringField())
@@ -88,6 +90,7 @@ def student_to_dict(st):
 	st_dict['first_name'] = st.first_name
 	st_dict['last_name'] = st.last_name
 	st_dict['email'] = st.email
+	st_dict['password'] = st.password
 	st_dict['linkedin_token'] = st.linkedin_token
 	st_dict['github_token'] = st.github_token
 	st_dict['skills'] = st.skills  # list of strings
@@ -106,6 +109,7 @@ def dict_to_student(d):
 	st_obj.first_name = d['first_name']
 	st_obj.last_name = d['last_name']
 	st_obj.email = d['email']
+	st_obj.password = d['password']
 	st_obj.linkedin_token = d['linkedin_token']
 	st_obj.github_token = d['github_token']
 	st_obj.skills = d['skills']  # list of strings
@@ -121,11 +125,11 @@ def dict_to_student(d):
 def create_profile():
 
 	req_data = request.get_json()
-	print(req_data, type(req_data))
 	student_obj = dict_to_student(req_data)
 	student_obj.save()
 
 	return dumps(student_to_dict(student_obj)), 200
+
 
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
 def get_profile(username):
