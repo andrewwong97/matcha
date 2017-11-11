@@ -1,21 +1,8 @@
 from bson.json_util import dumps
-from flask import (Flask, render_template, session, request,redirect, url_for)
-from flask.ext.mongoalchemy import MongoAlchemy
-from flask_cors import CORS
-
-
-# Models and backend logic should be separated from app.py
-from models import (Student, Employer)
-from util import (student_to_dict, dict_to_student)
-
-
-app = Flask(__name__)
-app.secret_key = 'matcha'
-
-app.config.from_pyfile('config.py')
-
-mongo = MongoAlchemy(app)
-CORS(app)
+from flask import (render_template, session, request,redirect, url_for)
+from models import Student
+from app import app, mongo
+from util import student_to_dict, dict_to_student
 
 
 # catch-all for front end
@@ -181,6 +168,3 @@ def deauthorize_employer(employer):
 def hide_account(employer):
     # TODO: hide account
     return 'Success'
-
-if __name__ == '__main__':
-    app.run()
