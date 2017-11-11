@@ -31113,11 +31113,6 @@ var Login = function (_React$Component) {
 					type: 'password'
 				}),
 				_react2.default.createElement(
-					'a',
-					{ href: this.getLinkedinURL() },
-					'Login With LinkedIn'
-				),
-				_react2.default.createElement(
 					'button',
 					{ className: 'btn btn-submitLogin', onClick: this.handleLogin.bind(this) },
 					'Submit'

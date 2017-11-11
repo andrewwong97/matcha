@@ -1,4 +1,4 @@
-import json, base64, os
+import json, base64, os, requests
 from urllib import urlencode
 from models import Student
 
@@ -51,15 +51,44 @@ def dict_to_student(d):
     return st_obj
 
 
-def linkedin_redirect_uri():
+def config_dict():
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    config = json.loads(open(os.path.join(current_dir, 'config.json'), 'r').read())
+    return json.loads(open(os.path.join(current_dir, 'config.json'), 'r').read())
+
+
+def linkedin_redirect_uri():
+    config = config_dict()
     csrf = base64.b64encode('matcha')  # unique string that is hard to guess
     options = {
         'response_type': 'code',
         'client_id': config['linkedin_client_id'],
-        'redirect_uri': 'http://localhost:5000',
+        'redirect_uri': 'http://localhost:5000/auth/callback',
         'state': csrf,
 
     }
     return 'https://www.linkedin.com/oauth/v2/authorization?' + urlencode(options)
+
+
+def linkedin_token(auth_code):
+    """
+    Exchange auth code for auth token, returns a JSON dict of token and expiration
+    :param auth_code: code received from callback
+    :returns dict with the form {'access_token': <token>, 'expires_in': <seconds>}
+    """
+    config = config_dict()
+    options = {
+        'grant_type': 'authorization_code',
+        'code': auth_code,
+        'redirect_uri': 'http://localhost:5000/auth/callback',
+        'client_id': config['linkedin_client_id'],
+        'client_secret': config['linkedin_client_secret'],
+    }
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    r = requests.post('https://www.linkedin.com/oauth/v2/accessToken', params=options, headers=headers)
+    return r.json()
+
+
+def get_linkedin_profile(token):
+    r = requests.get()
