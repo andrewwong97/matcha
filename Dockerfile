@@ -20,4 +20,4 @@ RUN yarn install
 RUN webpack
 RUN pip install -r requirements.txt
 EXPOSE 5000
-CMD ["python", "app.py"]
+CMD ["python", "matcha/app.py"]

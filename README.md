@@ -24,7 +24,7 @@ If the server isn't running, try switching off of Hopkins network since it tends
 
 Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS. We use `webpack --watch` for hot reloading of React components during dev, but for production we will just use a static bundle.
 
-First time:
+Setup:
 ```
 git clone this repository to your local
 cd 2017-group-16
@@ -35,17 +35,15 @@ mkvirtualenv matcha             # the name of your virtual environment
 pip install -r requirements.txt
 npm install -g yarn webpack     # only if you don't already have these
 yarn install                    # we use Yarn to install js dependencies
-python app.py    w-               # run flask server in current tab
+```
+
+Run:
+```
+python matcha/app.py            # run flask server in current tab
 webpack --watch                 # run webpack server in another tab
 ```
 Navigate to `localhost:5000` on your favorite browser.
 
-Not your first time (if you have created a virtual environment already):
-```
-workon matcha
-python app.py                   # in current tab
-webpack --watch                 # in another tab
-```
 
 ### Common Errors in Setup:
 `error traceback example`: _how to fix_

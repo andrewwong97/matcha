@@ -2,7 +2,7 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const extractSass = new ExtractTextPlugin({
-    filename: __dirname + 'static/bundle.css',
+    filename: __dirname + '/matcha/static/bundle.css',
     allChunks: true,
     disable: process.env.NODE_ENV === "development"
 });
@@ -12,7 +12,7 @@ module.exports = {
     "./js/app.js", "./scss/main.scss"
   ],
   output: {
-    path: __dirname + '/static',
+    path: __dirname + '/matcha/static',
     filename: "bundle.js",
     publicPath: '/'
   },
