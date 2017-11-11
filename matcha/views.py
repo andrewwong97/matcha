@@ -3,7 +3,7 @@ from flask import (render_template, session, request,redirect, url_for)
 from models import Student
 from app import app, mongo
 from util import student_to_dict, dict_to_student
-from util import linkedin_redirect_uri, linkedin_token
+from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile
 
 
 # catch-all for front end
@@ -23,8 +23,12 @@ def get_linkedin_uri():
 def get_linkedin_token():
     """ After user authenticates through linkedin, get token """
     token = linkedin_token(request.args.get('code'))
-    print token
-    return dumps(token), 200
+    access = token['access_token']
+    expires = token['expires_in']
+    try:
+        return dumps(linkedin_basic_profile(access)), 200
+    except:
+        return dumps({}), 500
 
 
 

@@ -90,5 +90,14 @@ def linkedin_token(auth_code):
     return r.json()
 
 
-def get_linkedin_profile(token):
-    r = requests.get()
+def linkedin_basic_profile(token):
+    params = {
+        'format': 'json'
+    }
+    headers = {
+        'x-li-format': 'json',
+        'Authorization': 'Bearer {}'.format(token),
+        'Connection': 'Keep-Alive'
+    }
+    r = requests.get('https://api.linkedin.com/v1/people/~', params=params, headers=headers)
+    return r.json()
