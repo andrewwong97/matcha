@@ -4,5 +4,3 @@ node_modules/
 *.pyc
 *.log
 .cache
-
-config.json

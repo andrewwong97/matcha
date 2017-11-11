@@ -2,7 +2,7 @@ from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
 from models import Student
 from app import app, mongo
-from util import student_to_dict, dict_to_student
+from util import student_to_dict, dict_to_student, linkedin_redirect_uri
 
 
 # catch-all for front end
@@ -10,6 +10,18 @@ from util import student_to_dict, dict_to_student
 @app.route('/<path:path>')
 def index(path):
     return render_template('index.html')
+
+
+@app.route('/v1/getLinkedinURI', methods=['GET'])
+def get_linkedin_uri():
+    """ Return linkedin redirect uri to client """
+    return dumps({'uri': linkedin_redirect_uri()}), 200
+
+
+@app.route('/auth/callback', methods=['GET', 'POST'])
+def linkedin_callback():
+    """ After user authenticates through linkedin, gets sent here """
+    return redirect(url_for('auth')), 200
 
 
 @app.route('/v1/login', methods=['POST'])

@@ -1,3 +1,5 @@
+import json, base64, os
+from urllib import urlencode
 from models import Student
 
 
@@ -47,3 +49,17 @@ def dict_to_student(d):
     st_obj.favorited_jobs = d['favorited_jobs']  # list
 
     return st_obj
+
+
+def linkedin_redirect_uri():
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    config = json.loads(open(os.path.join(current_dir, 'config.json'), 'r').read())
+    csrf = base64.b64encode('matcha')  # unique string that is hard to guess
+    options = {
+        'response_type': 'code',
+        'client_id': config['linkedin_client_id'],
+        'redirect_uri': 'http://localhost:5000',
+        'state': csrf,
+
+    }
+    return 'https://www.linkedin.com/oauth/v2/authorization?' + urlencode(options)

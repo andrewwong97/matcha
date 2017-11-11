@@ -31113,6 +31113,11 @@ var Login = function (_React$Component) {
 					type: 'password'
 				}),
 				_react2.default.createElement(
+					'a',
+					{ href: this.getLinkedinURL() },
+					'Login With LinkedIn'
+				),
+				_react2.default.createElement(
 					'button',
 					{ className: 'btn btn-submitLogin', onClick: this.handleLogin.bind(this) },
 					'Submit'
@@ -31179,9 +31184,10 @@ var selectExpertise = [{ 'value': 'Engineering', 'label': 'Engineering', 'name':
 
 var selectVisaStatus = [{ 'value': 'Citizen', 'label': 'U.S. citizen or resident', 'name': 'visaStatus' }, { 'value': 'Visa', 'label': 'Require a visa to work in the U.S.', 'name': 'visaStatus' }];
 
-// TODO: use react-virtualized & react-virtualized-select to efficiently render 
-// large list of 1000 largest cities
+// TODO: use react-select to render an async loading text area for all cities
 var selectCity = [{ 'value': 'San Francisco', 'label': 'San Francisco', 'name': 'city' }, { 'value': 'New York', 'label': 'New York', 'name': 'city' }, { 'value': 'Baltimore', 'label': 'Baltimore', 'name': 'city' }];
+
+var base = window.location.origin; // gets localhost:5000 or base url
 
 var Register = function (_React$Component) {
     _inherits(Register, _React$Component);
@@ -31217,6 +31223,15 @@ var Register = function (_React$Component) {
             this.setState(_defineProperty({}, option.name, option.value));
         }
     }, {
+        key: 'registerWithLinkedIn',
+        value: function registerWithLinkedIn() {
+            fetch(base + '/v1/getLinkedinURI').then(function (res) {
+                return res.json();
+            }).then(function (data) {
+                return window.location.replace(data.uri);
+            });
+        }
+    }, {
         key: 'register',
         value: function register() {
 
@@ -31225,7 +31240,7 @@ var Register = function (_React$Component) {
                 last_name: this.state.last_name,
                 email: this.state.email,
                 username: this.state.email,
-                password: this.state.password, // has not yet been implemented in backend yet
+                password: this.state.password,
                 linkedin_token: '',
                 github_token: '',
                 skills: [],
@@ -31247,9 +31262,8 @@ var Register = function (_React$Component) {
                 body: JSON.stringify(data)
             };
 
-            var base = window.location.origin; // gets localhost:5000 or base url
             fetch(base + '/v1/createProfile', options).then(function (response) {
-                return console.log(response);
+                return response.json();
             });
 
             this.setState({ email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
@@ -31324,9 +31338,9 @@ var Register = function (_React$Component) {
                     onChange: this.handleSelect.bind(this)
                 }),
                 _react2.default.createElement(
-                    'p',
-                    null,
-                    'Placeholder for Login via LinkedIn'
+                    'button',
+                    { className: 'btn', onClick: this.registerWithLinkedIn },
+                    'Login via LinkedIn'
                 ),
                 _react2.default.createElement(
                     'p',

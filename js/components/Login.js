@@ -74,6 +74,7 @@ class Login extends React.Component {
 					value={this.state.password}
 					type="password" 
 				/>
+				<a href={this.getLinkedinURL()}>Login With LinkedIn</a>
 				<button className="btn btn-submitLogin" onClick={this.handleLogin.bind(this)}>Submit</button>
 				<Link to="/register">Need an account? Register here</Link>
 
