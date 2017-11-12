@@ -38,9 +38,6 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _jsxFileName = '/Users/andrew/Desktop/matcha/react/components/RegisterEmployer.js';
-
-
 var baseUrl = require('../vars.json').baseUrl;
 
 var RegisterEmployer = function (_Component) {
@@ -92,52 +89,27 @@ var RegisterEmployer = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            return _react2.default.createElement('div', { className: 'RegisterEmployer', __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 47
-                }
-            }, _react2.default.createElement('h1', {
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 48
-                }
-            }, 'Register Employer'), _react2.default.createElement('input', {
+            return _react2.default.createElement('div', { className: 'RegisterEmployer' }, _react2.default.createElement('h1', null, 'Register Employer'), _react2.default.createElement('input', {
                 onChange: this.handleChange.bind(this),
                 name: 'company_name',
                 placeholder: 'Company Name',
                 value: this.state.company_name,
-                type: 'text',
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 49
-                }
+                type: 'text'
             }), _react2.default.createElement('input', {
                 onChange: this.handleChange.bind(this),
                 name: 'email',
                 placeholder: 'Email',
                 value: this.state.email,
-                type: 'text',
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 57
-                }
+                type: 'text'
             }), _react2.default.createElement('input', {
                 onChange: this.handleChange.bind(this),
                 name: 'password',
                 placeholder: 'Password',
                 value: this.state.password,
-                type: 'password',
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 65
-                }
+                type: 'password'
             }), _react2.default.createElement('button', {
                 className: 'btn btn-submitRegister',
-                onClick: this.register.bind(this),
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 73
-                }
+                onClick: this.register.bind(this)
             }, 'Sign Up'));
         }
     }]);
@@ -146,4 +118,3 @@ var RegisterEmployer = function (_Component) {
 }(_react.Component);
 
 exports.default = RegisterEmployer;
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImNvbXBvbmVudHMvUmVnaXN0ZXJFbXBsb3llci5qcyJdLCJuYW1lcyI6WyJSZWFjdCIsIkNvbXBvbmVudCIsImJhc2VVcmwiLCJyZXF1aXJlIiwiUmVnaXN0ZXJFbXBsb3llciIsInByb3BzIiwic3RhdGUiLCJjb21wYW55X25hbWUiLCJlbWFpbCIsInBhc3N3b3JkIiwiZXZlbnQiLCJ0YXJnZXQiLCJ2YWx1ZSIsIm5hbWUiLCJzZXRTdGF0ZSIsIm9wdGlvbiIsIm9wdGlvbnMiLCJtZXRob2QiLCJib2R5IiwiZmlyc3RfbmFtZSIsImZldGNoIiwidGhlbiIsInJlc3BvbnNlIiwiY29uc29sZSIsImxvZyIsImhhbmRsZUNoYW5nZSIsImJpbmQiLCJyZWdpc3RlciJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUFBLEFBQU8sQUFBUzs7Ozs7Ozs7O0FBRWhCLElBQU0sVUFBVSxRQUFBLEFBQVEsZ0JBQXhCLEFBQXdDOztJQUVuQixBOzhDQUNqQjs7OEJBQUEsQUFBWSxPQUFPOzRDQUFBOzs4SkFBQSxBQUNULEFBQ047O2NBQUEsQUFBSzswQkFBUSxBQUNLLEFBQ2Q7bUJBRlMsQUFFRixBQUNQO3NCQUxXLEFBRWYsQUFBYSxBQUdDO0FBSEQsQUFDVDtlQUlQOzs7OztxQyxBQUVZLE9BQU8sQUFDaEI7Z0JBQU0sU0FBUyxNQUFmLEFBQXFCLEFBQ3JCO2dCQUFNLFFBQVEsT0FBZCxBQUFxQixBQUNyQjtnQkFBTSxPQUFPLE9BQWIsQUFBb0IsQUFFcEI7O2lCQUFBLEFBQUssMkNBQUwsQUFDSyxNQURMLEFBQ1ksQUFFZjs7OztxQyxBQUVZLFFBQVEsQUFDakI7aUJBQUEsQUFBSywyQ0FBVyxPQUFoQixBQUF1QixNQUFPLE9BQTlCLEFBQXFDLEFBQ3hDOzs7O21DQUVVLEFBQ1A7Z0JBQU07d0JBQVUsQUFDSixBQUNSOztnQ0FDZ0IsS0FBQSxBQUFLLE1BREEsQUFDTSxBQUN2QjsyQkFBTyxLQUFBLEFBQUssTUFGSyxBQUVDLEFBQ2xCOzhCQUFVLEtBQUEsQUFBSyxNQUx2QixBQUFnQixBQUVOLEFBQWUsQUFHSSxBQUk3QjtBQVB5QixBQUNqQixpQkFERTtBQUZNLEFBQ1o7O2tCQVFFLFVBQU4sQUFBZ0IsZ0JBQWhCLEFBQWdDLFNBQWhDLEFBQ0ssS0FBSyxVQUFBLEFBQUMsVUFBRDt1QkFBYyxRQUFBLEFBQVEsSUFBdEIsQUFBYyxBQUFZO0FBRHBDLEFBR0g7Ozs7aUNBR1EsQUFDTDttQ0FDSSxjQUFBLFNBQUssV0FBTCxBQUFlOzhCQUFmO2dDQUFBLEFBQ0k7QUFESjthQUFBLGtCQUNJLGNBQUE7OzhCQUFBO2dDQUFBO0FBQUE7QUFBQSxlQURKLEFBQ0ksQUFDQTswQkFDYyxLQUFBLEFBQUssYUFBTCxBQUFrQixLQURoQyxBQUNjLEFBQXVCLEFBQ2pDO3NCQUZKLEFBRVMsQUFDTDs2QkFISixBQUdnQixBQUNaO3VCQUFPLEtBQUEsQUFBSyxNQUpoQixBQUlzQixBQUNsQjtzQkFMSixBQUtTOzs4QkFMVDtnQ0FGSixBQUVJLEFBUUE7QUFSQTtBQUNJOzBCQVFVLEtBQUEsQUFBSyxhQUFMLEFBQWtCLEtBRGhDLEFBQ2MsQUFBdUIsQUFDakM7c0JBRkosQUFFUyxBQUNMOzZCQUhKLEFBR2dCLEFBQ1o7dUJBQU8sS0FBQSxBQUFLLE1BSmhCLEFBSXNCLEFBQ2xCO3NCQUxKLEFBS1M7OzhCQUxUO2dDQVZKLEFBVUksQUFRQTtBQVJBO0FBQ0k7MEJBUVUsS0FBQSxBQUFLLGFBQUwsQUFBa0IsS0FEaEMsQUFDYyxBQUF1QixBQUNqQztzQkFGSixBQUVTLEFBQ0w7NkJBSEosQUFHZ0IsQUFDWjt1QkFBTyxLQUFBLEFBQUssTUFKaEIsQUFJc0IsQUFDbEI7c0JBTEosQUFLUzs7OEJBTFQ7Z0NBbEJKLEFBa0JJLEFBUUE7QUFSQTtBQUNJLGdDQU9KLGNBQUE7MkJBQUEsQUFDYyxBQUNWO3lCQUFTLEtBQUEsQUFBSyxTQUFMLEFBQWMsS0FGM0IsQUFFYSxBQUFtQjs7OEJBRmhDO2dDQUFBO0FBQUE7QUFDSSxlQTVCWixBQUNJLEFBMEJJLEFBTVg7Ozs7O0FBMUV5QyxBOztrQkFBekIsQSIsImZpbGUiOiJSZWdpc3RlckVtcGxveWVyLmpzIiwic291cmNlUm9vdCI6Ii9Vc2Vycy9hbmRyZXcvRGVza3RvcC9tYXRjaGEvcmVhY3QifQ==

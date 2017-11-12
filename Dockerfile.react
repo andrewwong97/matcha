@@ -1,23 +1,18 @@
 FROM ubuntu:latest
 RUN apt-get update -y
 
-# Install node/npm/python
+# Install node
 RUN apt-get install -y nodejs npm curl sudo
-RUN apt-get install -y python-pip python-dev build-essential
 
 # Get latest Node 6.x
 RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
 
-COPY . /app
-WORKDIR /app
+COPY ./react /js
+WORKDIR /js
 
 # Install necessary deps
-RUN npm install --unsafe-perm -g webpack
 RUN npm install -g yarn
 RUN yarn install
-#RUN npm rebuild node-sass -f
-RUN webpack
-RUN pip install -r requirements.txt
-EXPOSE 5000
-CMD ["python", "matcha/app.py"]
+EXPOSE 3000
+CMD ["yarn", "dev"]

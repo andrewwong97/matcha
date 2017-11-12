@@ -1,8 +1,19 @@
 version: '2'
 services:
-    web:
-        build: .
+    flask:
+        build:
+          context: .
+          dockerfile: Dockerfile.flask
         ports:
         - "5000:5000"
         volumes:
         - .:/code
+    web:
+        build:
+          context: .
+          dockerfile: Dockerfile.react
+        ports:
+        - "3000:3000"
+        volumes:
+        - .:/code
+

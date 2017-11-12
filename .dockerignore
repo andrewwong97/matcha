@@ -1,7 +1,6 @@
 .git
 .DS_Store
 .gitignore
-node_modules/
+react/node_modules/
 Dockerfile
 .docker-compose.yml
-
