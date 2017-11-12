@@ -16,37 +16,38 @@ A platform that seamlessly connects employers and qualified candidates with matc
 ```
 pip install docker-compose
 docker-compose up -d --build    # deployed on port 5000
+cd react/
+yarn build
+yarn start
 ```
 
 If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
 
 ## To run dev:
 
-Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS. We use `webpack --watch` for hot reloading of React components during dev, but for production we will just use a static bundle.
+Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS.
 
 Setup:
 ```
 git clone this repository to your local
 cd 2017-group-16
 
-pip install virtualenvwrapper   # only if you don't already have this
+pip install virtualenvwrapper   # HIGHLY ENCOURAGED
+mkvirtualenv matcha
 
-mkvirtualenv matcha             # the name of your virtual environment
 pip install -r requirements.txt
-npm install -g yarn webpack     # only if you don't already have these
-yarn install                    # we use Yarn to install js dependencies
+npm install -g yarn
+cd react
+yarn
 ```
 
 Run:
 ```
 python matcha/app.py            # run flask server in current tab
-webpack --watch                 # run webpack server in another tab
+cd react && yarn dev            # run react app
 ```
-Navigate to `localhost:5000` on your favorite browser.
+Navigate to `localhost:3000` on your favorite browser.
 
-
-### Common Errors in Setup:
-`error traceback example`: _how to fix_
 
 ## Running Tests
 
