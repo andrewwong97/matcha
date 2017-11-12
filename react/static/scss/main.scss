@@ -1,13 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500,700');
+@import './react-bootstrap-table.min';
 
 @import 'components/Login';
 @import 'components/Listings';
 @import 'components/Register';
 @import 'base/Nav';
 @import 'base/Button';
+
+@import 'pages/EmployerProfile';
 @import 'pages/Home';
 @import 'pages/StudentProfile';
-
 
 body {
 	font-family: "Fira Sans", "Helvetica", "Arial", sans-serif;

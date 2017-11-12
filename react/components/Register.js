@@ -87,12 +87,17 @@ class Register extends Component {
         };
 
         fetch(baseUrl + '/v1/createProfile', options)
-            .then((response) => console.log(response));
+            .then((response) => {
+                if (response.status === 200) {
+                    const email = this.state.email;
+                    this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
+                    Router.pushRoute(`/profile/${email}`);
+                } else {
+                    alert("Error creating account. Please check for duplicate emails.");
+                }
+            });
 
-        const email = this.state.email;
-        this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
 
-        Router.pushRoute(`/profile/${email}`);
     }
 
 

@@ -72,6 +72,11 @@ def create_profile():
     return dumps(student_to_dict(student_obj)), 200
 
 
+@app.route('/v1/registerEmployer', methods=['POST'])
+def create_employer_profile():
+    return dumps({}), 200
+
+
 @app.route('/v1/getProfile/<string:username>', methods=['GET'])
 def get_profile(username):
     st_obj = Student.query.filter(Student.username == username).first()
