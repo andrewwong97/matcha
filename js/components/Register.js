@@ -21,13 +21,14 @@ const selectVisaStatus = [
     {'value': 'Visa', 'label': 'Require a visa to work in the U.S.', 'name': 'visaStatus'},
 ];
 
-// TODO: use react-virtualized & react-virtualized-select to efficiently render 
-// large list of 1000 largest cities
+// TODO: use react-select to render an async loading text area for all cities
 const selectCity = [
     {'value': 'San Francisco', 'label': 'San Francisco', 'name': 'city'},
     {'value': 'New York', 'label': 'New York', 'name': 'city'},
     {'value': 'Baltimore', 'label': 'Baltimore', 'name': 'city'},
 ];
+
+const base = window.location.origin; // gets localhost:5000 or base url
 
 class Register extends React.Component {
 	constructor(props) {
@@ -56,6 +57,12 @@ class Register extends React.Component {
 	    this.setState({[option.name]: option.value});
     }
 
+    registerWithLinkedIn() {
+	    fetch(base + '/v1/getLinkedinURI')
+            .then((res) => res.json())
+            .then((data) => window.location.replace(data.uri));
+    }
+
     register() {
 
 		const data = {
@@ -63,7 +70,7 @@ class Register extends React.Component {
             last_name: this.state.last_name,
             email: this.state.email,
             username: this.state.email,
-            password: this.state.password, // has not yet been implemented in backend yet
+            password: this.state.password,
             linkedin_token: '',
             github_token: '',
             skills: [],
@@ -85,9 +92,8 @@ class Register extends React.Component {
 			body: JSON.stringify(data)
         };
 
-        const base = window.location.origin; // gets localhost:5000 or base url
         fetch(base + '/v1/createProfile', options)
-            .then((response) => console.log(response));
+            .then((response) => response.json());
 
         this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
 
@@ -164,7 +170,9 @@ class Register extends React.Component {
                     onChange={this.handleSelect.bind(this)}
                 />
 
-				<p>Placeholder for Login via LinkedIn</p>
+                <button className="btn" onClick={this.registerWithLinkedIn}>
+                    Login via LinkedIn
+                </button>
 
 				<p>Placeholder for Login via GitHub</p>
 
