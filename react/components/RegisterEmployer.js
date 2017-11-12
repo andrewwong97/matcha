@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Router from '../routes';
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -30,15 +31,22 @@ export default class RegisterEmployer extends Component {
         const options = {
             method: 'POST',
             body: JSON.stringify({
-                first_name: this.state.company_name,
+                company_name: this.state.company_name,
                 email: this.state.email,
                 password: this.state.password,
             })
         };
 
-        fetch(baseUrl + '/v1/register', options)
-            .then((response) => console.log(response));
-
+        fetch(baseUrl + '/v1/registerEmployer', options)
+            .then((response) => {
+                if (response.status === 200) {
+                    const email = this.state.email;
+                    this.setState({ company_name: '', email: '', password: '' });
+                    Router.pushRoute(`/profile/employer/${email}`);
+                } else {
+                    alert("Error creating account. Please check for duplicate emails.");
+                }
+            });
     }
 
 

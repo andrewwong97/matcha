@@ -10,7 +10,6 @@ export default ({ children, title }) => (
             <title>{ title } | Matcha - an intelligent job matching platform</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css" />
-            <link rel="stylesheet" href="../static/react-bootstrap-table.min.css" />
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500,700" />
             <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
         </Head>

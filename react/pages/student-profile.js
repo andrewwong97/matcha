@@ -35,7 +35,7 @@ export default class StudentProfile extends React.Component {
 
     render() {
         return (
-            <Layout title="StudentProfile">
+            <Layout title="Student Profile">
                 <div className="StudentProfile">
                     <div className="logo-placeholder"></div>
                     {this.renderUserDetails()}
