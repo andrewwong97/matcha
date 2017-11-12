@@ -1,5 +1,5 @@
-# Matcha - intelligent job matching platform
-# OOSE Group 16
+# Matcha - intelligent job matching platform (OOSE Group 16)
+
 JHU Object Oriented Software Engineering - Fall 2017
 
 A platform that seamlessly connects employers and qualified candidates with matching that runs deeper than the run-of-the-mill capacity planning tools or jobs marketplaces -- autoplay for recruiting.
@@ -15,10 +15,13 @@ A platform that seamlessly connects employers and qualified candidates with matc
 
 ```
 pip install docker-compose
-docker-compose up -d --build    # deployed on port 5000
-cd react/
-yarn build
-yarn start
+docker-compose up -d --build    # deployed on port 3000
+```
+
+If you are running Docker from AWS, make sure you allow traffic to port 3000 or change this line in `docker-compose.yml`:
+```
+FROM: - "3000:3000"
+TO: - "80:3000"
 ```
 
 If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
@@ -44,7 +47,7 @@ yarn
 Run:
 ```
 python matcha/app.py            # run flask server in current tab
-cd react && yarn dev            # run react app
+cd react && yarn dev            # run react app in another tab
 ```
 Navigate to `localhost:3000` on your favorite browser.
 
