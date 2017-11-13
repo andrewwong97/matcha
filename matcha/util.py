@@ -1,6 +1,6 @@
 import json, base64, os, requests
 from urllib import urlencode
-from models import Student
+from models import Student, Employer
 
 
 def student_to_dict(st):
@@ -49,6 +49,40 @@ def dict_to_student(d):
     st_obj.favorited_jobs = d['favorited_jobs']  # list
 
     return st_obj
+
+def employer_to_dict(em):
+    """
+    Convert MongoAlchemy Employer fields to dictionary
+    :param em: Employer object
+    :return: dictionary with keys as field name and value as field value
+    """
+    em_dict = dict()
+    em_dict['company_name'] = em.company_name
+    em_dict['description'] = ''
+    em_dict['num_employees'] = 0
+    em_dict['email'] = em.email
+    em_dict['password'] = em.password
+    em_dict['location'] = ''
+
+    return em_dict
+
+
+def dict_to_employer(d):
+    """
+    Convert dictionary to Employer object
+    :param d: dictionary
+    :return: Employer object
+    """
+    em_obj = Employer()
+    em_obj.company_name = d['company_name']  # each student has a unique username
+    em_obj.description = ''
+    em_obj.num_employees = 0
+    em_obj.email = d['email']
+    em_obj.password = d['password']
+    em_obj.location = ''  # string
+
+    return em_obj
+
 
 
 def config_dict():

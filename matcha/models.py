@@ -20,8 +20,9 @@ class Student(mongo.Document):
 
 
 class Employer(mongo.Document):
-    username = mongo.StringField()
-    first_name = mongo.StringField()
-    last_name = mongo.StringField()
+    company_name = mongo.StringField()
+    description = mongo.StringField()
+    num_employees = mongo.IntField()
     email = mongo.StringField()
     password = mongo.StringField()
+    location = mongo.StringField()
