@@ -1,4 +1,5 @@
-# Matcha - intelligent job matching platform (OOSE Group 16)
+## Matcha - intelligent job matching platform (OOSE Group 16)
+[![Build Status](https://travis-ci.com/jhu-oose/2017-group-16.svg?token=Du5Ucyp2pSQjddWdX9YH&branch=master)](https://travis-ci.com/jhu-oose/2017-group-16)
 
 JHU Object Oriented Software Engineering - Fall 2017
 
