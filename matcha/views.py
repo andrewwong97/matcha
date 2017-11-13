@@ -27,6 +27,7 @@ def get_linkedin_token():
     access = token['access_token']
     expires = token['expires_in']
     try:
+        # should redirect onto client side, not server
         return dumps(linkedin_basic_profile(access)), 200
     except:
         return dumps({}), 500
@@ -53,11 +54,11 @@ def login():
         if st_obj is not None:
             student_dict = student_to_dict(st_obj)
             if 'password' in student_dict:
-            	del student_dict['password']
+                del student_dict['password']
             print student_dict
             return dumps(student_dict), 200
         else:
-            return dumps({'reason': 'Student account already exists for email'}), 404
+            return dumps({"reason": "No account exists for this username"}), 404
 
 
 @app.route('/v1/logout', methods=['POST'])
@@ -68,6 +69,8 @@ def logout():
 
 @app.route('/v1/createStudentProfile', methods=['POST'])
 def create_student_profile():
+    # TODO: search for existing account
+    # if exist, return dumps({'reason': 'Student account already exists for email'}), 404
     req_data = request.get_json()
     student_obj = dict_to_student(req_data)
     student_obj.save()
@@ -81,9 +84,9 @@ def get_student_profile(username):
 
     if st_obj is not None:
         student_dict = student_to_dict(st_obj)
-        return dumps(student_dict)
+        return dumps(student_dict), 200
     else:
-        return 'Username Not Found'  # TODO: improve error handling
+        return dumps({}), 404
 
 
 @app.route('/v1/editStudentProfile/<string:username>', methods=['POST'])
@@ -97,9 +100,9 @@ def edit_student_profile(username):
             setattr(st_obj, key, new_data[key])
 
         st_obj.save()
-        return 'Success'  # TODO: change return value as needed
+        return dumps({student_to_dict(st_obj)}), 200
     else:
-        return 'Username Not Found'  # TODO: improve error handling
+        return dumps({}), 404
 
 
 @app.route('/v1/createEmployerProfile', methods=['POST'])
@@ -227,3 +230,11 @@ def deauthorize_employer(employer):
 def hide_account(employer):
     # TODO: hide account
     return 'Success'
+
+
+@app.route('/v1/listings/all', methods=['GET'])
+def get_all_listings():
+    from pymongo import MongoClient
+    client = MongoClient('mongodb://oose:letmein@ds015962.mlab.com:15962/matcha')
+    db = client['matcha']
+    return dumps(db.listings.find()), 200
