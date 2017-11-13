@@ -3,10 +3,12 @@
 ## Iteration 4 - 2017-11-17
 
 ### Added
-- LinkedIn OAuth: you can now register with LinkedIn and autopopulate your profile
+- LinkedIn OAuth: you can now authenticate with LinkedIn (future: autopopulate your profile)
 - Docker deployment
 - Continuous integration: all tests must pass before merging a branch to master
 - Pytest tests
+- Student and Employer profile screens
+- Basic matching, click to refresh matching
 
 ### Changed
 - Moved away from webpack, changed to NextJS to wrap React app for server-side rendering and isomorphic routes. Helps greatly in prefetching pages and data rendering times, where before it would take up to 15 seconds. 
