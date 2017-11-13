@@ -32,9 +32,8 @@ class Login extends React.Component {
 	handleLogin() {
         auth.login(this.state.email, this.state.password)
 			.then(data => {
-				console.log(data);
-                // Router.push(`/profile/${this.state.email}`)
-				Router.push('student-profile', `/profile/${this.state.email}`);
+				// page under pages/, browser url form
+				Router.push('/student-profile', `/profile/${this.state.email}`);
 			});
 	}
 
