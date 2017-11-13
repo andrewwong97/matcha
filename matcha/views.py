@@ -1,9 +1,10 @@
 from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
-from models import Student
+from models import Student, Employer
 from app import app, mongo
-from util import student_to_dict, dict_to_student
+from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
 from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile
+
 
 
 # catch-all for front end
@@ -63,8 +64,8 @@ def logout():
     return redirect(url_for('index')), 200
 
 
-@app.route('/v1/createProfile', methods=['POST'])
-def create_profile():
+@app.route('/v1/createStudentProfile', methods=['POST'])
+def create_student_profile():
     req_data = request.get_json()
     student_obj = dict_to_student(req_data)
     student_obj.save()
@@ -72,13 +73,8 @@ def create_profile():
     return dumps(student_to_dict(student_obj)), 200
 
 
-@app.route('/v1/registerEmployer', methods=['POST'])
-def create_employer_profile():
-    return dumps({}), 200
-
-
-@app.route('/v1/getProfile/<string:username>', methods=['GET'])
-def get_profile(username):
+@app.route('/v1/getStudentProfile/<string:username>', methods=['GET'])
+def get_student_profile(username):
     st_obj = Student.query.filter(Student.username == username).first()
 
     if st_obj is not None:
@@ -88,8 +84,8 @@ def get_profile(username):
         return 'Username Not Found'  # TODO: improve error handling
 
 
-@app.route('/v1/editProfile/<string:username>', methods=['POST'])
-def edit_profile(username):
+@app.route('/v1/editStudentProfile/<string:username>', methods=['POST'])
+def edit_student_profile(username):
     new_data = request.get_json()  # dictionary with data from user
     st_obj = Student.query.filter(Student.username == username).first()
 
@@ -99,6 +95,42 @@ def edit_profile(username):
             setattr(st_obj, key, new_data[key])
 
         st_obj.save()
+        return 'Success'  # TODO: change return value as needed
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
+
+@app.route('/v1/createEmployerProfile', methods=['POST'])
+def create_employer_profile():
+    req_data = request.get_json()
+    employer_obj = dict_to_employer(req_data)
+    employer_obj.save()
+
+    return dumps(employer_to_dict(employer_obj)), 200
+
+
+@app.route('/v1/getEmployerProfile/<string:company_name>', methods=['GET'])
+def get_employer_profile(company_name):
+    em_obj = Employer.query.filter(Employer.company_name == company_name).first() # TODO: fix so not case sensitive
+
+    if em_obj is not None:
+        em_dict = employer_to_dict(em_obj)
+        return dumps(em_dict)
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
+
+@app.route('/v1/editEmployerProfile/<string:company_name>', methods=['POST'])
+def edit_employer_profile(company_name):
+    new_data = request.get_json()  # dictionary with data from user
+    em_obj = Employer.query.filter(Employer.company_name == company_name).first()
+
+    if em_obj is not None:
+
+        for key in new_data:
+            setattr(em_obj, key, new_data[key])
+
+        em_obj.save()
         return 'Success'  # TODO: change return value as needed
     else:
         return 'Username Not Found'  # TODO: improve error handling
