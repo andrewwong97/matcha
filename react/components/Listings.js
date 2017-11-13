@@ -17,7 +17,7 @@ class Listings extends Component {
 					<li className="job-listing">
 						<div className="logo-placeholder"></div>
 						<div className="listing-text">
-							<p className="company">Company Name</p>
+							<p className="company">{listing.employer}</p>
 							<p className="name">{listing.name}</p>
 							<p className="salary">{listing.salary}</p>
 						</div>
