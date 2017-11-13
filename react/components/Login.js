@@ -1,6 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import Router from '../routes';
+import Router from 'next/router';
+import AuthService from '../util/AuthService';
+
+const baseUrl = require('../vars.json').baseUrl;
+const auth = new AuthService(baseUrl);
 
 class Login extends React.Component {
 	constructor(props) {
@@ -26,33 +30,12 @@ class Login extends React.Component {
 	}
 
 	handleLogin() {
-		const data = {
-            username: this.state.email,
-            password: this.state.password, // v dangerous, plaintext
-        };
-
-        const myHeaders = new Headers({
-            "Content-Type": 'application/json'
-        });
-
-		const options = {
-            method: 'POST',
-			headers: myHeaders,
-			body: JSON.stringify(data)
-        };
-
-        const base = window.location.origin;
-        fetch(base + '/v1/login', options)
-            .then((response) => {
-            	if (response.status == 200) {
-            		// if success, redirect to the profile
-            		this.setState({ badLogin: false });
-            		console.log(response.username);
-            		Router.pushRoute(`/profile/${response.username}`);
-            	} else {
-            		this.setState({ badLogin: true, email: '', password: '' }); // reset fields
-            	}
-            });        
+        auth.login(this.state.email, this.state.password)
+			.then(data => {
+				console.log(data);
+                // Router.push(`/profile/${this.state.email}`)
+				Router.push('student-profile', `/profile/${this.state.email}`);
+			});
 	}
 
 	render() {
