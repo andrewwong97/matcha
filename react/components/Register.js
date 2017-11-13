@@ -94,7 +94,7 @@ class Register extends Component {
 			body: JSON.stringify(data)
         };
 
-        fetch(baseUrl + '/v1/createProfile', options)
+        fetch(baseUrl + '/v1/createStudentProfile', options)
             .then((response) => response.json())
             .then((data) => {
                 const email = this.state.email;

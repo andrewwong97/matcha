@@ -29,6 +29,7 @@ export default class AuthService {
             .then(res => res.json())
             .then(data => {
                this.setProfile(data);
+               return data;
             });
 
     }

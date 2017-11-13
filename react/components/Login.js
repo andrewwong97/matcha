@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-// import Router from '../routes';
 import Router from 'next/router';
 import AuthService from '../util/AuthService';
 
@@ -32,8 +31,10 @@ class Login extends React.Component {
 
 	handleLogin() {
         auth.login(this.state.email, this.state.password)
-			.then(res => {
-                setTimeout(Router.push(`/profile/${this.state.email}`), 500);
+			.then(data => {
+				console.log(data);
+                // Router.push(`/profile/${this.state.email}`)
+				Router.push('student-profile', `/profile/${this.state.email}`);
 			});
 	}
 
