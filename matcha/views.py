@@ -38,6 +38,7 @@ def login():
     Receive a request from the front end with username and password
     Check with database that this is a valid user
     Add username to session if valid, Else return 404
+    Currently works with student
     """
     if request.method == 'POST':
         data = request.get_json()
@@ -50,11 +51,12 @@ def login():
 
         if st_obj is not None:
             student_dict = student_to_dict(st_obj)
-            session['username'] = username  # add current user to session
+            if 'password' in student_dict:
+            	del student_dict['password']
             print student_dict
             return dumps(student_dict), 200
         else:
-            return dumps({}), 404
+            return dumps({'reason': 'Student account already exists for email'}), 404
 
 
 @app.route('/v1/logout', methods=['POST'])

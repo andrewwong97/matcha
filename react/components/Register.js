@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import Link from 'next/link';
 import Select from 'react-select';
-import Router from '../routes';
+import Router from 'next/router';
+import AuthService from "../util/AuthService";
+
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -22,13 +24,13 @@ const selectVisaStatus = [
     {'value': 'Visa', 'label': 'Require a visa to work in the U.S.', 'name': 'visaStatus'},
 ];
 
-// TODO: use react-virtualized & react-virtualized-select to efficiently render 
-// large list of 1000 largest cities
 const selectCity = [
     {'value': 'San Francisco', 'label': 'San Francisco', 'name': 'city'},
     {'value': 'New York', 'label': 'New York', 'name': 'city'},
     {'value': 'Baltimore', 'label': 'Baltimore', 'name': 'city'},
 ];
+
+const auth = new AuthService(baseUrl);
 
 class Register extends Component {
 	constructor(props) {
@@ -55,6 +57,12 @@ class Register extends Component {
 
 	handleSelect(option) {
 	    this.setState({[option.name]: option.value});
+    }
+
+    registerWithLinkedIn() {
+        fetch(baseUrl + '/v1/getLinkedinURI')
+            .then((res) => res.json())
+            .then((data) => window.location.replace(data.uri));
     }
 
     register() {
@@ -87,14 +95,16 @@ class Register extends Component {
         };
 
         fetch(baseUrl + '/v1/createProfile', options)
-            .then((response) => {
-                if (response.status === 200) {
-                    const email = this.state.email;
-                    this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
-                    Router.pushRoute(`/profile/${email}`);
-                } else {
-                    alert("Error creating account. Please check for duplicate emails.");
-                }
+            .then((response) => response.json())
+            .then((data) => {
+                const email = this.state.email;
+                this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
+                auth.setProfile(data);
+                Router.push(`/profile/${email}`);
+            })
+            .catch(error => {
+                alert("Error creating account. Please check for duplicate emails.");
+                console.log(`Error ${error}`);
             });
 
 
@@ -170,9 +180,13 @@ class Register extends Component {
                     onChange={this.handleSelect.bind(this)}
                 />
 
-				<p>Placeholder for Login via LinkedIn</p>
+                <button className="btn" onClick={this.registerWithLinkedIn}>
+                    Login via LinkedIn
+                </button>
 
-				<p>Placeholder for Login via GitHub</p>
+                <button className="btn">
+                    Login via Github Placeholder
+                </button>
 
 				<div className="submit-wrapper">
 					<button

@@ -1,10 +1,11 @@
 import React from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import Layout from '../components/layout';
+import withAuth from '../util/withAuth';
 
 const baseUrl = require('../vars.json').baseUrl;
 
-export default class EmployerProfile extends React.Component {
+class EmployerProfile extends React.Component {
     constructor(props){
         super(props);
 
@@ -48,3 +49,5 @@ export default class EmployerProfile extends React.Component {
         )
     }
 }
+
+export default withAuth(EmployerProfile);
