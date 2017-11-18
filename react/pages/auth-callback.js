@@ -4,6 +4,7 @@ import Layout from '../components/layout'
 import AuthService from '../util/AuthService'
 
 const auth = new AuthService();
+const baseUrl = require('../vars.json').baseUrl;
 
 export default class AuthCallback extends React.Component {
     constructor(props) {
@@ -11,7 +12,8 @@ export default class AuthCallback extends React.Component {
     }
 
     componentDidMount() {
-        {auth.linkedinLogin(this.props.url.query.code)}
+        auth.linkedinLogin(this.props.url.query.code)
+            .then(() => window.location.replace(`${window.location.origin}/profile/${auth.getProfile().username}`));
     }
 
     render() {

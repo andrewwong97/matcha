@@ -7,27 +7,8 @@ import stylesheet from '../static/scss/main.scss';
 
 import AuthService from "../util/AuthService";
 
-const auth = new AuthService(require('../vars.json').baseUrl);
 
-const logout = () => {
-    auth.logout();
-    setTimeout(Router.push('/'), 150);
-};
 
-const authNav = () => {
-    if (auth.loggedIn()) {
-        return <ul className="Nav">
-            <li><Link href="/"><a>Home</a></Link></li>
-            <li><Link prefetch href={`/profile/${auth.getProfile().username}`}><a>Profile</a></Link></li>
-            <li><a onClick={logout}>Logout</a></li>
-        </ul>
-    } else {
-        return <ul className="Nav">
-            <li><Link href="/"><a>Home</a></Link></li>
-            <li><Link href="/login"><a>Login</a></Link></li>
-        </ul>
-    }
-};
 
 
 export default class Layout extends React.Component {
@@ -35,19 +16,35 @@ export default class Layout extends React.Component {
         super(props);
         this.children = this.props.children;
         this.title = this.props.title;
+        this.auth = new AuthService(require('../vars.json').baseUrl);
+        this.noAuth = (<ul className="Nav">
+                <li><Link href="/"><a>Home</a></Link></li>
+                <li><Link href="/login"><a>Login</a></Link></li>
+            </ul>);
+
+        this.state = {
+            authNav: this.noAuth
+        }
     }
 
     componentDidMount() {
-        this.authNav = authNav()
+        if (this.auth.loggedIn()) {
+            this.yesAuth = (<ul className="Nav">
+                <li><Link href="/"><a>Home</a></Link></li>
+                <li><a href={`/profile/${this.auth.getProfile().username}`}>Profile</a></li>
+                <li><a className="logout" onClick={this.logout}>Logout</a></li>
+            </ul>);
+            this.setState({authNav: this.yesAuth})
+        }
+    }
+
+    logout() {
+        localStorage.clear();
+        window.location.replace(window.location.origin);
     }
 
     render() {
-        if (!this.authNav) {
-            this.authNav = <ul className="Nav">
-                <li><Link href="/"><a>Home</a></Link></li>
-                <li><Link href="/login"><a>Login</a></Link></li>
-            </ul>
-        }
+
 
         return (
             <div className="Layout">
@@ -66,7 +63,7 @@ export default class Layout extends React.Component {
                         <div className="logo">
                             <h1>Matcha</h1>
                         </div>
-                        { this.authNav }
+                        { this.state.authNav }
                     </div>
                     { this.children }
                 </div>

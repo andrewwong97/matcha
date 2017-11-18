@@ -37,6 +37,12 @@ class Login extends React.Component {
 			});
 	}
 
+	linkedinLogin() {
+        fetch(baseUrl + '/v1/getLinkedinURI')
+            .then((res) => res.json())
+            .then((data) => window.location.replace(data.uri));
+    }
+
 	render() {
 		return (
 			<div className="Login">
@@ -56,6 +62,9 @@ class Login extends React.Component {
 					value={this.state.password}
 					type="password" 
 				/>
+				<button className="btn" onClick={this.linkedinLogin}>
+                    Login via LinkedIn
+                </button>
 				<button className="btn btn-submitLogin" onClick={this.handleLogin.bind(this)}>Submit</button>
 				<Link href="/register"><a>Need an account? Register here</a></Link>
 
