@@ -9,18 +9,18 @@ export default class AuthService {
         this.domain = domain || 'http://localhost:5000';
         this.login = this.login.bind(this);
         this.getProfile = this.getProfile.bind(this);
-    }
 
-    login(username, password) {
-        const headers = {
+        this.headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         };
+    }
 
+    login(username, password) {
         return fetch(`${this.domain}/v1/login`, {
             method: 'POST',
             type: 'cors',
-            headers,
+            headers: this.headers,
             body: JSON.stringify({
                 username,
                 password
@@ -32,6 +32,21 @@ export default class AuthService {
                return data;
             });
 
+    }
+
+    linkedinLogin(code) {
+        return fetch(`${this.domain}/v1/linkedinLogin`, {
+            method: 'POST',
+            type: 'cors',
+            headers: this.headers,
+            body: JSON.stringify({ code })
+        })
+            .then(res => res.json())
+            .then(data => {
+                localStorage.setItem('linkedin_token', data.linkedin_token);
+               this.setProfile(data.profile);
+               return data;
+            });
     }
 
     loggedIn(){
