@@ -96,7 +96,7 @@ def linkedin_redirect_uri():
     options = {
         'response_type': 'code',
         'client_id': config['linkedin_client_id'],
-        'redirect_uri': 'http://localhost:5000/auth/callback',
+        'redirect_uri': 'http://localhost:3000/auth-callback',
         'state': csrf,
 
     }
@@ -113,7 +113,7 @@ def linkedin_token(auth_code):
     options = {
         'grant_type': 'authorization_code',
         'code': auth_code,
-        'redirect_uri': 'http://localhost:5000/auth/callback',
+        'redirect_uri': 'http://localhost:3000/auth-callback',
         'client_id': config['linkedin_client_id'],
         'client_secret': config['linkedin_client_secret'],
     }
@@ -133,6 +133,31 @@ def linkedin_basic_profile(token):
         'Authorization': 'Bearer {}'.format(token),
         'Connection': 'Keep-Alive'
     }
-    fields = '(id,first-name,last-name,positions,industry,headline,specialties,location,public-profile-url)'
+    fields = '(id,first-name,last-name,positions,industry,headline,specialties,location,public-profile-url,email-address)'
     r = requests.get('https://api.linkedin.com/v1/people/~:{}'.format(fields), params=params, headers=headers)
     return r.json()
+
+
+def li_to_student(d):
+    """
+    Convert linkedin profile API response to student object
+    :param d: Linkedin API response dict
+    :return: Student representation
+    """
+
+    st_obj = Student()
+    st_obj.username = d['emailAddress']  # each student has a unique username
+    st_obj.first_name = d['firstName']
+    st_obj.last_name = d['lastName']
+    st_obj.email = d['emailAddress']
+    st_obj.password = ''
+    st_obj.linkedin_token = ''
+    st_obj.github_token = ''
+    st_obj.skills = []
+    st_obj.need_visa = ''
+    st_obj.location = d['location']['name']  # string
+    st_obj.looking_for = []
+    st_obj.job_matches = []
+    st_obj.favorited_jobs = []
+
+    return st_obj

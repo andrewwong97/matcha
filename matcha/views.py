@@ -3,8 +3,7 @@ from flask import (render_template, session, request,redirect, url_for)
 from models import Student, Employer
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
-from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile
-
+from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student
 
 
 # catch-all for front end
@@ -16,31 +15,19 @@ def index(path):
 
 @app.route('/v1/getLinkedinURI', methods=['GET'])
 def get_linkedin_uri():
-    """ Return linkedin redirect uri to client """
+    """
+    Return Linkedin redirect URI.
+    :return: { uri: <redirect_uri> }
+    """
     return dumps({'uri': linkedin_redirect_uri()}), 200
-
-
-@app.route('/auth/callback', methods=['GET', 'POST'])
-def get_linkedin_token():
-    """ After user authenticates through linkedin, get token """
-    token = linkedin_token(request.args.get('code'))
-    access = token['access_token']
-    expires = token['expires_in']
-    try:
-        # should redirect onto client side, not server
-        return dumps(linkedin_basic_profile(access)), 200
-    except:
-        return dumps({}), 500
-
 
 
 @app.route('/v1/login', methods=['POST'])
 def login():
     """
-    Receive a request from the front end with username and password
-    Check with database that this is a valid user
-    Add username to session if valid, Else return 404
-    Currently works with student
+    Login with username and password. Returns a JSON serialized
+    Student object.
+    :return: { first_name: <first_name>, last_name ...  }
     """
     if request.method == 'POST':
         data = request.get_json()
@@ -59,6 +46,34 @@ def login():
             return dumps(student_dict), 200
         else:
             return dumps({"reason": "No account exists for this username"}), 404
+
+
+@app.route('/v1/linkedinLogin', methods=['POST'])
+def linkedin_login():
+    """
+    Login with auth code. Exchanges auth code for auth token. Finds student with
+    corresponding linkedin_token and returns serialized Student.
+    :return: { linkedin_token: <token>, profile: <serialized_student> }
+    """
+    req = request.get_json()
+    try:
+        token = linkedin_token(req['code'])['access_token']
+    except KeyError:
+        # no access token
+        print 'error: {}'.format(linkedin_token(req['code']))
+        return dumps({'reason': linkedin_token(req['code'])['error_description']}), 404
+    stu = Student.query.filter(Student.linkedin_token == token).first()
+    if stu:
+
+        return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
+    else:
+        # student doesn't exist, create it
+        new_student = li_to_student(linkedin_basic_profile(token))
+        new_student.linkedin_token = token
+        new_student.save()
+        stu = Student.query.filter(Student.linkedin_token == token).first()
+        print 'student created: \n {}'.format(student_to_dict(stu))
+        return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
 
 
 @app.route('/v1/logout', methods=['POST'])
