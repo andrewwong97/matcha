@@ -2,7 +2,6 @@ from app import mongo
 from mongoalchemy.fields import *
 
 
-
 class Student(mongo.Document):
     username = mongo.StringField()
     first_name = mongo.StringField()
