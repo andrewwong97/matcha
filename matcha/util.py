@@ -136,3 +136,6 @@ def linkedin_basic_profile(token):
     fields = '(id,first-name,last-name,positions,industry,headline,specialties,location,public-profile-url)'
     r = requests.get('https://api.linkedin.com/v1/people/~:{}'.format(fields), params=params, headers=headers)
     return r.json()
+
+def matcher(candidate, job):
+    return

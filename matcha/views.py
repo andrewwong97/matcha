@@ -141,8 +141,8 @@ def edit_employer_profile(company_name):
         return 'Username Not Found'  # TODO: improve error handling
 
 
-@app.route('/v1/candidate/<string:username>/getCurrentMatches', methods=['GET'])
-def get_job_matches(username):
+@app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
+def get_candidate_matches(username):
     st_obj = Student.query.filter(Student.username == username).first()
 
     if st_obj is not None:
@@ -210,6 +210,11 @@ def edit_job(employer):
 
 @app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
 def delete_job(employer):
+    # TODO: delete job
+    return 'Success'
+
+@app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
+def get_job_matches(employer):
     # TODO: delete job
     return 'Success'
 
