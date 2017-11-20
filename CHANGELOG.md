@@ -8,7 +8,8 @@
 - Continuous integration: all tests must pass before merging a branch to master
 - Nosetests
 - Student and Employer profile screens
-- Basic matching, click to refresh matching
+- Updated matching system
+- Click-to-refresh matching and display on student profiles
 
 ### Changed
 - Moved away from webpack, changed to NextJS to wrap React app for server-side rendering and isomorphic routes. Helps greatly in prefetching pages and data rendering times, where before it would take up to 15 seconds. 
