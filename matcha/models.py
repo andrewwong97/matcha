@@ -25,3 +25,13 @@ class Employer(mongo.Document):
     email = mongo.StringField()
     password = mongo.StringField()
     location = mongo.StringField()
+
+
+class listings(mongo.Document):
+    name = mongo.StringField()
+    salary = mongo.IntField()
+    # num_employees = mongo.NumberField()
+    employer = mongo.StringField()  # change to mongo.ObjectIdField()
+    # location = mongo.StringField()
+    desired_skills = mongo.ListField(mongo.StringField())
+    job_type = mongo.StringField()

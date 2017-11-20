@@ -1,9 +1,11 @@
+import json
 from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
-from models import Student, Employer
+from models import Student, Employer, listings
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
 from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student
+from util import listing_to_dict, dict_to_listing
 from util import matcher
 
 
@@ -63,6 +65,7 @@ def linkedin_login():
         # no access token
         print 'error: {}'.format(linkedin_token(req['code']))
         return dumps({'reason': linkedin_token(req['code'])['error_description']}), 404
+
     stu = Student.query.filter(Student.linkedin_token == token).first()
     if stu:
 
@@ -164,16 +167,16 @@ def get_matches(username):
     if st_obj is not None:
         matches = []
         matches_dict = {}
-        for listing in get_all_listings():
-            rating = matcher(st_obj, listing)
+        for listing_obj in listings.query.all():
+            rating = matcher(st_obj, listing_obj)
             if rating > 0:
                 if rating not in matches_dict:
                     matches_dict = []
-                matches_dict[rating].append(listing)
+                matches_dict[rating].append(listing_to_dict(listing_obj))
 
         for key in matches_dict:
             matches += matches_dict[key]
-        return dumps(matches)
+        return dumps(matches), 200
     else:
         return 'Username Not Found'  # TODO: improve error handling
 

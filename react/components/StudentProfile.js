@@ -23,7 +23,11 @@ class StudentProfile extends React.Component {
     }
 
     getMatches() {
-        fetch(baseUrl + '/v1/candidate/' + this.props.username + '/getMatches')//, options)
+        const options = {
+            method: 'GET',
+        }
+
+        fetch(baseUrl + '/v1/candidate/' + this.props.username + '/getMatches', options)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data)
@@ -44,7 +48,7 @@ class StudentProfile extends React.Component {
                     <span className="thin"> ({this.props.username})</span>
                 </h1>
                 <h1 className="location">Location: {this.state.user.location}</h1>
-                <h1 className="looking-for">Looking for: {this.state.user.looking_for}</h1>
+                <h1 className="looking-for">Looking for: {this.state.user.looking_for[0]}</h1>
             </div>
         } else {
             return <h1 className="name">
