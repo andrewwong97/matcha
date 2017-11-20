@@ -56,7 +56,7 @@ Navigate to `localhost:3000` on your favorite browser.
 ## Running Tests
 
 1. Navigate to top level matcha directory
-2. Run `pytest tests` (runs `pytest` on all valid test functions inside the `tests/` directory)
+2. Run `nosetests`
 
 ## DB Access - MongoDB
 

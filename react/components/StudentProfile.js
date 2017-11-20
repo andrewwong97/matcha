@@ -27,14 +27,12 @@ class StudentProfile extends React.Component {
             .then(res => res.json())
             .then(data => {
                 let matches = []
-                const looking_for = this.state.user ? this.state.user.looking_for.toString().toUpperCase() : 'Internship';
+                const looking_for = this.state.user ? this.state.user.looking_for.toString().toUpperCase() : 'Internship'.toUpperCase();
                 data.map(d => {
                     if (d.job_type.toString().toUpperCase() == looking_for) {
                         matches.push({ id: d._id.$oid, name: d.name, employer: d.employer, job_type: d.job_type });
                     }
                 });
-                const r = Math.floor(Math.random()*3);
-                matches = matches.slice(r, r+3);
                 this.setState({matches});
             });
     }

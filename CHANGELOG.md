@@ -3,10 +3,10 @@
 ## Iteration 4 - 2017-11-17
 
 ### Added
-- LinkedIn OAuth: you can now authenticate with LinkedIn (future: autopopulate your profile)
+- LinkedIn OAuth: you can now autopopulate your profile with LinkedIn
 - Docker deployment
 - Continuous integration: all tests must pass before merging a branch to master
-- Pytest tests
+- Nosetests
 - Student and Employer profile screens
 - Basic matching, click to refresh matching
 

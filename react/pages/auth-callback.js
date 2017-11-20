@@ -19,7 +19,7 @@ export default class AuthCallback extends React.Component {
     render() {
         return (
             <Layout title="Auth Callback">
-                Redirecting to homepage...
+                Authenticating login...(might take some time)
             </Layout>
         );
     }
