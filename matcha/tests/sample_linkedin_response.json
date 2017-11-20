@@ -1,0 +1,79 @@
+{
+	"firstName": "Andrew",
+	"headline": "Computer Science Student at Johns Hopkins University",
+	"lastName": "Wong",
+	"industry": "Computer Software",
+	"location": {
+		"country": {
+			"code": "us"
+		},
+		"name": "Greater New York City Area"
+	},
+	"positions": {
+		"_total": 3,
+		"values": [
+			{
+				"startDate": {
+					"year": 2017,
+					"month": 10
+				},
+				"title": "Software Engineer",
+				"company": {
+					"industry": "Hospital & Health Care",
+					"size": "2-10",
+					"type": "Educational",
+					"id": 11057931,
+					"name": "Corrie Health, MiCORE Study (Johns Hopkins Medicine)"
+				},
+				"location": {
+					"name": "Baltimore, Maryland"
+				},
+				"isCurrent": true,
+				"id": 1116896059
+			},
+			{
+				"startDate": {
+					"year": 2016,
+					"month": 5
+				},
+				"title": "Hackathon Organizer, Web Lead",
+				"company": {
+					"name": "HopHacks"
+				},
+				"summary": "-- Regularly updating hackathon registration system written in MeteorJS, HTML, and CSS \n-- Acting as judge, sponsor, and speaker liaison as the primary point-of-contact for 36 hour event\n-- Designed Spring 2017, Fall 2017 HopHacks logo and participant t-shirt\n-- Leading 2017-2018 redesign and React refactoring of website",
+				"location": {
+					"country": {
+						"code": "us",
+						"name": "United States"
+					},
+					"name": "Baltimore, Maryland Area"
+				},
+				"isCurrent": true,
+				"id": 866072008
+			},
+			{
+				"startDate": {
+					"year": 2016,
+					"month": 4
+				},
+				"title": "Software Developer",
+				"company": {
+					"industry": "Information Services",
+					"size": "2-10",
+					"type": "Privately Held",
+					"id": 5096534,
+					"name": "GeoSure Global"
+				},
+				"summary": "-- Automated data gathering by using Python, Amazon EC2 instances, and scheduled tasks\n-- Wrote a Python package to cluster Twitter stream data into activity centers\n-- Labeled 10,000 highly concentrated activity points into neighborhoods by geocoding\n-- Wrote and deployed a Python Django app that divided city bounds into neighborhoods",
+				"location": {
+					"name": "New York, New York"
+				},
+				"isCurrent": true,
+				"id": 810713201
+			}
+		]
+	},
+	"publicProfileUrl": "https://www.linkedin.com/in/andrewwong97",
+	"emailAddress": "wongandrew97@gmail.com",
+	"id": "23wf7rLbVY"
+}
