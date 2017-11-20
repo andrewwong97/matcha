@@ -4,6 +4,7 @@ from models import Student, Employer
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
 from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student
+from util import matcher
 
 
 # catch-all for front end
@@ -156,12 +157,23 @@ def edit_employer_profile(company_name):
         return 'Username Not Found'  # TODO: improve error handling
 
 
-@app.route('/v1/candidate/<string:username>/getCurrentMatches', methods=['GET'])
-def get_job_matches(username):
+@app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
+def get_matches(username):
     st_obj = Student.query.filter(Student.username == username).first()
 
     if st_obj is not None:
-        return dumps(st_obj.job_matches)
+        matches = []
+        matches_dict = {}
+        for listing in get_all_listings():
+            rating = matcher(st_obj, listing)
+            if rating > 0:
+                if rating not in matches_dict:
+                    matches_dict = []
+                matches_dict[rating].append(listing)
+
+        for key in matches_dict:
+            matches += matches_dict[key]
+        return dumps(matches)
     else:
         return 'Username Not Found'  # TODO: improve error handling
 
@@ -225,6 +237,11 @@ def edit_job(employer):
 
 @app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
 def delete_job(employer):
+    # TODO: delete job
+    return 'Success'
+
+@app.route('/v1/employer/<string:employer>/getJobMatches/<string:job_name>', methods=['DELETE'])
+def get_job_matches(employer, job_name):
     # TODO: delete job
     return 'Success'
 

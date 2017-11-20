@@ -12,12 +12,18 @@ class EmployerProfile extends React.Component {
             matches: [{id: 1, name: 'Software Engineer', student_name: 'Andrew Wong'}],
             profile: null,
         };
+
+        this.getMatches()
     }
 
     componentDidMount() {
         fetch(`${baseUrl}/v1/getProfile/${this.props.username}`, {method: 'GET'})
             .then((res) => res.json())
             .then((user) => this.setState({ user }));
+    }
+
+    getMatches() {
+        // Get employer/job matches
     }
 
     renderUserDetails() {
