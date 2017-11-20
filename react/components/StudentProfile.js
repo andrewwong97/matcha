@@ -1,4 +1,5 @@
 import React from 'react';
+import Router from 'next/router';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import withAuth from '../util/withAuth';
 
@@ -10,7 +11,9 @@ class StudentProfile extends React.Component {
 
         this.state = {
             matches: [],
-            user: JSON.parse(localStorage.profile)
+            user: JSON.parse(localStorage.profile),
+            username: Router.asPath.slice(9)
+
         };
     }
 
@@ -28,7 +31,7 @@ class StudentProfile extends React.Component {
             type: 'cors'
         }
 
-        fetch(baseUrl + '/v1/candidate/' + this.props.username + '/getMatches', options)
+        fetch(baseUrl + '/v1/candidate/' + this.state.username + '/getMatches', options)
             .then((response) => response.json())
             .then((matches) => {
                 console.log(matches)
@@ -44,16 +47,16 @@ class StudentProfile extends React.Component {
             return <div className="user-details">
                 <h1 className="name">
                     {this.state.user.first_name} {this.state.user.last_name}
-                    <span className="thin"> ({this.props.username})</span>
+                    <span className="thin"> ({this.state.username})</span>
                 </h1>
                 <h1 className="location">Location: {this.state.user.location}</h1>
-                <h1 className="skills">Skills: {this.state.user.skills.map(s => s + ' ')}</h1>
-                <h1 className="looking-for">Looking for: {this.state.user.looking_for[0]}</h1>
+                <h1 className="skills">Skills: {this.state.user.skills.join(', ')}</h1>
+                <h1 className="looking-for">Looking for: {this.state.user.looking_for.join(', ')}</h1>
             </div>
         } else {
             return <h1 className="name">
                 Loading User Details...
-                <span className="thin"> ({this.props.username})</span>
+                <span className="thin"> ({this.state.username})</span>
             </h1>
         }
     }
