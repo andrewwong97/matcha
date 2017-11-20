@@ -41,9 +41,19 @@ class Register extends Component {
             jobType: '',
             expertise: '',
             visaStatus: '',
-            city: ''
+            city: '',
+            skills: [],
+            allSkills: []
 		}
+
 	}
+
+	componentDidMount() {
+	    fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
+            .then(res => res.json())
+            .then(data => this.setState({ allSkills: data.map(s => ({label: s, value: s})) }));
+
+    }
 
 	handleChange(event) {
 	    const target = event.target;
@@ -59,6 +69,10 @@ class Register extends Component {
 	    this.setState({[option.name]: option.value});
     }
 
+    handleSkillSelect(skills) {
+	    this.setState({ skills })
+    }
+
     registerWithLinkedIn() {
         fetch(baseUrl + '/v1/getLinkedinURI')
             .then((res) => res.json())
@@ -66,7 +80,6 @@ class Register extends Component {
     }
 
     register() {
-
 		const data = {
             first_name: this.state.first_name,
             last_name: this.state.last_name,
@@ -75,7 +88,7 @@ class Register extends Component {
             password: this.state.password, // has not yet been implemented in backend yet
             linkedin_token: '',
             github_token: '',
-            skills: [],
+            skills: this.state.skills.map((s) => s.value),
             need_visa: this.state.visaStatus,
             location: this.state.city,
             looking_for: [this.state.jobType],
@@ -180,14 +193,25 @@ class Register extends Component {
                     onChange={this.handleSelect.bind(this)}
                 />
 
-                <button className="btn" onClick={this.registerWithLinkedIn}>
-                    Login via LinkedIn
-                </button>
+                <Select
+                    name="skills"
+                    value={this.state.skills}
+                    placeholder="Skills"
+                    options={this.state.allSkills}
+                    onChange={this.handleSkillSelect.bind(this)}
+                    multi={true}
+                />
 
-                <button className="btn">
-                    Login via Github Placeholder
-                </button>
 
+                <div className="social-login">
+                     <button className="btn" onClick={this.registerWithLinkedIn}>
+                        Login via LinkedIn
+                    </button>
+
+                    <button className="btn">
+                        Login via Github Placeholder
+                    </button>
+                </div>
 				<div className="submit-wrapper">
 					<button
 						className="btn btn-submitRegister"

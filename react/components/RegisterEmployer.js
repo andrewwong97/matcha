@@ -30,6 +30,7 @@ export default class RegisterEmployer extends Component {
     register() {
         const options = {
             method: 'POST',
+            headers: { "Content-Type": 'application/json' },
             body: JSON.stringify({
                 company_name: this.state.company_name,
                 email: this.state.email,

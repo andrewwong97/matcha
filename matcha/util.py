@@ -1,6 +1,7 @@
 import json, base64, os, requests, re
 from urllib import urlencode
-from models import Student, Employer
+from models import Student, Employer, listings
+
 
 def student_to_dict(st):
     """
@@ -83,6 +84,36 @@ def dict_to_employer(d):
     return em_obj
 
 
+def listing_to_dict(obj):
+    """
+    Convert MongoAlchemy listing fields to dictionary
+    :param st: listing object
+    :return: dictionary with keys as field name and value as field value
+    """
+    listing_dict = dict()
+    listing_dict['name'] = obj.name
+    listing_dict['salary'] = obj.salary
+    listing_dict['employer'] = obj.employer
+    listing_dict['desired_skills'] = obj.desired_skills
+    listing_dict['job_type'] = obj.job_type
+
+    return listing_dict
+
+
+def dict_to_listing(d):
+    """
+    Convert dictionary to listing object
+    :param d: dictionary
+    :return: listing object
+    """
+    l = listings()
+    l.name = d['name']
+    l.salary = d['salary']
+    l.employer = d['employer']
+    l.desired_skills = d['desired_skills']
+    l.job_type = d['job_type']
+    return l
+
 
 def config_dict():
     current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -136,23 +167,30 @@ def linkedin_basic_profile(token):
     r = requests.get('https://api.linkedin.com/v1/people/~:{}'.format(fields), params=params, headers=headers)
     return r.json()
 
+
 def matcher(candidate, listing):
-    if str(candidate.looking_for).lower() != str(listing.job_type).lower():
+    if str(candidate.looking_for[0]).lower() != listing.job_type.lower():
         return 0
 
-    li_prof = linkedin_basic_profile(linkedin_token(candidate.linkedin_token))
+    # Will not work on invalid access token, suggestion: scrape based on linkedin email
+    # li_prof = linkedin_basic_profile(linkedin_token(candidate.linkedin_token))
 
-    tokenized = re.split('[^a-zA-Z]', str(li_prof))
-
+    # tokenized = re.split('[^a-zA-Z]', str(li_prof))
     rating = 0
-    for token in tokenized:
-        for skill in listing.desired_skills:
-            if str(token).lower() == str(skill).lower():
+    # for token in tokenized:
+    #     for skill in listing.desired_skills:
+    #         if str(token).lower() == str(skill).lower():
+    #             rating += 1
+    #
+    # rating = rating / len(tokenized)
+
+    for skill in candidate.skills:
+        for desired in listing.desired_skills:
+            if skill.lower() == desired.lower():
                 rating += 1
 
-    rating = rating / len(tokenized)
+    return 1.0 * rating / (len(candidate.skills) + len(listing.desired_skills))
 
-    return rating
 
 def li_to_student(d):
     """
