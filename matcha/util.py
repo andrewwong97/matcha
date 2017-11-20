@@ -1,7 +1,6 @@
-import json, base64, os, requests
+import json, base64, os, requests, re
 from urllib import urlencode
 from models import Student, Employer
-
 
 def student_to_dict(st):
     """
@@ -137,5 +136,20 @@ def linkedin_basic_profile(token):
     r = requests.get('https://api.linkedin.com/v1/people/~:{}'.format(fields), params=params, headers=headers)
     return r.json()
 
-def matcher(candidate, job):
-    return
+def matcher(candidate, listing):
+    if str(candidate.looking_for).lower() != str(listing.job_type).lower():
+        return 0
+
+    li_prof = linkedin_basic_profile(linkedin_token(candidate.linkedin_token))
+
+    tokenized = re.split('[^a-zA-Z]', str(li_prof))
+
+    rating = 0
+    for token in tokenized:
+        for skill in listing.desired_skills:
+            if str(token).lower() == str(skill).lower():
+                rating += 1
+
+    rating = rating / len(tokenized)
+
+    return rating

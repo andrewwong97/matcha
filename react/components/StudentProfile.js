@@ -12,8 +12,6 @@ class StudentProfile extends React.Component {
             matches: [],
             user: JSON.parse(localStorage.profile)
         };
-
-        this.getMatches()
     }
 
     componentDidMount() {
@@ -21,35 +19,29 @@ class StudentProfile extends React.Component {
             const user = JSON.parse(localStorage.profile);
             this.setState({ user });
         }
+        this.getMatches()
     }
 
     getMatches() {
-
+        fetch(baseUrl + '/v1/candidate/' + this.props.username + '/getMatches')//, options)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                this.setState({
+                    matches: JSON.parse(data[0])
+                });
+            })
+            .catch(error => {
+                console.log(`Error ${error}`);
+            });
     }
-
-    // refreshMatches() {
-    //     fetch(`${baseUrl}/v1/listings/all`, {method: 'GET'})
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             let matches = []
-    //             const looking_for = this.state.user ? this.state.user.looking_for.toString().toUpperCase() : 'Internship';
-    //             data.map(d => {
-    //                 if (d.job_type.toString().toUpperCase() == looking_for) {
-    //                     matches.push({ id: d._id.$oid, name: d.name, employer: d.employer, job_type: d.job_type });
-    //                 }
-    //             });
-    //             const r = Math.floor(Math.random()*3);
-    //             matches = matches.slice(r, r+3);
-    //             this.setState({matches});
-    //         });
-    // }
 
     renderUserDetails() {
         if (this.state.user) {
             return <div className="user-details">
                 <h1 className="name">
                     {this.state.user.first_name} {this.state.user.last_name}
-                    <span className="thin"> ({this.state.username})</span>
+                    <span className="thin"> ({this.props.username})</span>
                 </h1>
                 <h1 className="location">Location: {this.state.user.location}</h1>
                 <h1 className="looking-for">Looking for: {this.state.user.looking_for}</h1>
@@ -57,7 +49,7 @@ class StudentProfile extends React.Component {
         } else {
             return <h1 className="name">
                 Loading User Details...
-                <span className="thin"> ({this.state.username})</span>
+                <span className="thin"> ({this.props.username})</span>
             </h1>
         }
     }
@@ -67,7 +59,7 @@ class StudentProfile extends React.Component {
             <div className="StudentProfile">
                 { this.renderUserDetails() }
                 <button className="btn"
-                        onClick={this.refreshMatches.bind(this)}>Refresh Matches</button>
+                        onClick={this.getMatches.bind(this)}>Refresh Matches</button>
 
                 <BootstrapTable data={ this.state.matches }>
                     <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>

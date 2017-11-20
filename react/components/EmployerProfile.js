@@ -23,7 +23,7 @@ class EmployerProfile extends React.Component {
     }
 
     getMatches() {
-
+        // Get employer/job matches
     }
 
     renderUserDetails() {
