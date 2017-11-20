@@ -1,4 +1,5 @@
-import json, os
+import json
+from os.path import *
 from nose.tools import *
 from matcha.views import *
 
@@ -16,7 +17,7 @@ def test_invalid_linkedin_profile_get():
 
 
 def test_linkedin_to_student():
-    sample_linkedin_response = json.loads(open(os.path.join(os.getcwd(), './sample_linkedin_response.json'), 'r').read())
+    sample_linkedin_response = json.loads(open(join(dirname(realpath(__file__)), './sample_linkedin_response.json'), 'r').read())
     sample_linkedin_response['emailAddress'] = 'sample-username-that-will-be-deleted'
     st_obj = li_to_student(sample_linkedin_response)
     st_obj.save()
