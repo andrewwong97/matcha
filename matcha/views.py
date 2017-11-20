@@ -163,17 +163,16 @@ def edit_employer_profile(company_name):
 @app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
 def get_matches(username):
     st_obj = Student.query.filter(Student.username == username).first()
-
     if st_obj is not None:
         matches = []
         matches_dict = {}
         for listing_obj in listings.query.all():
             rating = matcher(st_obj, listing_obj)
             if rating > 0:
-                if rating not in matches_dict:
-                    matches_dict = []
-                matches_dict[rating].append(listing_to_dict(listing_obj))
-
+                if str(rating) not in matches_dict:
+                    matches_dict = {str(rating): [listing_to_dict(listing_obj)]}
+                else:
+                    matches_dict[str(rating)].append(listing_to_dict(listing_obj))
         for key in matches_dict:
             matches += matches_dict[key]
         return dumps(matches), 200

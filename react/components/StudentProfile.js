@@ -25,15 +25,14 @@ class StudentProfile extends React.Component {
     getMatches() {
         const options = {
             method: 'GET',
+            type: 'cors'
         }
 
         fetch(baseUrl + '/v1/candidate/' + this.props.username + '/getMatches', options)
             .then((response) => response.json())
-            .then((data) => {
-                console.log(data)
-                this.setState({
-                    matches: JSON.parse(data[0])
-                });
+            .then((matches) => {
+                console.log(matches)
+                this.setState({ matches });
             })
             .catch(error => {
                 console.log(`Error ${error}`);
@@ -48,6 +47,7 @@ class StudentProfile extends React.Component {
                     <span className="thin"> ({this.props.username})</span>
                 </h1>
                 <h1 className="location">Location: {this.state.user.location}</h1>
+                <h1 className="skills">Skills: {this.state.user.skills.map(s => s + ' ')}</h1>
                 <h1 className="looking-for">Looking for: {this.state.user.looking_for[0]}</h1>
             </div>
         } else {
@@ -63,7 +63,7 @@ class StudentProfile extends React.Component {
             <div className="StudentProfile">
                 { this.renderUserDetails() }
                 <button className="btn"
-                        onClick={this.getMatches.bind(this)}>Refresh Matches</button>
+                        onClick={this.getMatches.bind(this)}>Get Matches</button>
 
                 <BootstrapTable data={ this.state.matches }>
                     <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>

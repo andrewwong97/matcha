@@ -169,10 +169,10 @@ def linkedin_basic_profile(token):
 
 
 def matcher(candidate, listing):
-    # if str(candidate.looking_for).lower() != str(listing.job_type).lower():
-    #     return 0
-    print candidate
-    # Will not work on invalid access token
+    if str(candidate.looking_for[0]).lower() != listing.job_type.lower():
+        return 0
+
+    # Will not work on invalid access token, suggestion: scrape based on linkedin email
     # li_prof = linkedin_basic_profile(linkedin_token(candidate.linkedin_token))
 
     # tokenized = re.split('[^a-zA-Z]', str(li_prof))
@@ -184,14 +184,11 @@ def matcher(candidate, listing):
     #
     # rating = rating / len(tokenized)
 
-    print candidate
-
     for skill in candidate.skills:
         for desired in listing.desired_skills:
             if skill.lower() == desired.lower():
                 rating += 1
 
-    print rating
     return 1.0 * rating / (len(candidate.skills) + len(listing.desired_skills))
 
 
