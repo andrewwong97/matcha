@@ -33,4 +33,4 @@ script:
     - docker ps # debug
     
     # run python tests
-    - nosetests
+    - nosetests --with-coverage --cover-package matcha
