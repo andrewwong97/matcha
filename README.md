@@ -27,6 +27,13 @@ TO: - "80:3000"
 
 If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
 
+**To potential users**: Linkedin login is still a little buggy with token refresh, but regular signup/login works pretty well. Here's a sample login:
+```
+username: awong52@jhu.edu
+password: password
+```
+
+
 ## To run dev:
 
 Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS.
@@ -74,7 +81,3 @@ dbname: matcha
 db user: oose
 password: letmein
 ```
-
-## API
-https://github.com/jhu-oose/2017-group-16/wiki/API
-
