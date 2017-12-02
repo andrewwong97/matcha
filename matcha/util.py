@@ -114,28 +114,18 @@ def dict_to_listing(d):
     return l
 
 
-def matcher(candidate, listing):
-    if str(candidate.looking_for[0]).lower() != listing.job_type.lower():
-        return 0
-
-    # Will not work on invalid access token, suggestion: scrape based on linkedin email
-    # li_prof = linkedin_basic_profile(linkedin_token(candidate.linkedin_token))
-
-    # tokenized = re.split('[^a-zA-Z]', str(li_prof))
+def matcher(student, listing):
     rating = 0
-    # for token in tokenized:
-    #     for skill in listing.desired_skills:
-    #         if str(token).lower() == str(skill).lower():
-    #             rating += 1
-    #
-    # rating = rating / len(tokenized)
+    for i in student.looking_for:
+        if listing.job_type.lower() == i:
+            return 0
 
-    for skill in candidate.skills:
+    for skill in student.skills:
         for desired in listing.desired_skills:
             if skill.lower() == desired.lower():
                 rating += 1
 
-    return 1.0 * rating / (len(candidate.skills) + len(listing.desired_skills))
+    return 1.0 * rating / (len(student.skills) + len(listing.desired_skills))
 
 
 def li_to_student(d):
