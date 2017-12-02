@@ -56,7 +56,7 @@ class StudentProfile extends React.Component {
         } else {
             return <h1 className="name">
                 Loading User Details...
-                <span className="thin"> ({this.state.username})</span>
+                <div className="loading-pulse"></div>
             </h1>
         }
     }
