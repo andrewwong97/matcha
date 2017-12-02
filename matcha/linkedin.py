@@ -1,4 +1,4 @@
-import json, base64, os, requests
+import json, base64, os, requests, re
 from urllib import urlencode
 import nltk
 from nltk.corpus import stopwords
@@ -57,16 +57,24 @@ def linkedin_basic_profile(token):
     return r.json()
 
 
-def linkedin_to_skills_list(profileJSON):
+def linkedin_to_skills_list(profile_dict):
     """
     Convert student json profile to list of skills
-    :param profileJSON: profileJSON string
+    :param profile_dict: profileJSON string
     :return: list of tokenized skills
     """
-    if type(profileJSON) == 'dict':
-        profileJSON = json.dumps(profileJSON)
+    skills = []
+    tokens = []
 
-    tokens = nltk.word_tokenize(profileJSON)
+    try:
+        tokens = nltk.word_tokenize(str(profile_dict))
+    except TypeError:
+        tokens = re.split('[^a-zA-Z]', str(profile_dict))
+
     stop_words = set(stopwords.words('english'))
-    skills = [t for t in tokens if t not in stop_words]
-    return skills
+
+    for t in set(tokens):
+        if t not in stop_words and t.isalpha():
+            skills.append(t.lower())
+
+    return list(set(skills))

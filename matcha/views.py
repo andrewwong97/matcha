@@ -64,21 +64,27 @@ def linkedin_login():
     except KeyError:
         # no access token
         print 'error: {}'.format(linkedin_token(req['code']))
-        return dumps({'reason': linkedin_token(req['code'])['error_description']}), 404
+        return dumps({'reason': linkedin_token(req['code'])['error_description'], 'uri': linkedin_redirect_uri()}), 404
 
     stu = Student.query.filter(Student.linkedin_token == token).first()
     if stu:
         return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
     else:
-        # student doesn't exist, create it
         profile_dict = linkedin_basic_profile(token)
-        new_student = li_to_student(profile_dict)
-        new_student.linkedin_token = token
-        new_student.skills = linkedin_to_skills_list(profile_dict)
-        new_student.save()
-        stu = Student.query.filter(Student.linkedin_token == token).first()
-        print 'student created: \n {}'.format(student_to_dict(stu))
-        return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
+
+        # if account exists, return existing student
+        account_exists = Student.query.filter(Student.username == profile_dict['emailAddress']).first()
+        if account_exists:
+            return dumps({'linkedin_token': token, 'profile': student_to_dict(account_exists)}), 200
+        else:
+            # linkedin_token doesn't exist in db, create student
+            new_student = li_to_student(profile_dict)
+            new_student.linkedin_token = token
+            new_student.skills = linkedin_to_skills_list(profile_dict)
+            new_student.save()
+            stu = Student.query.filter(Student.linkedin_token == token).first()
+            print 'student created: \n {}'.format(student_to_dict(stu))
+            return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
 
 
 @app.route('/v1/logout', methods=['POST'])
