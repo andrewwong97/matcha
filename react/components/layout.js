@@ -7,35 +7,43 @@ import stylesheet from '../static/scss/main.scss';
 
 import AuthService from "../util/AuthService";
 
-
-
-
-
 export default class Layout extends React.Component {
     constructor(props) {
         super(props);
-        this.children = this.props.children;
-        this.title = this.props.title;
         this.auth = new AuthService(require('../vars.json').baseUrl);
-        this.noAuth = (<ul className="Nav">
-                <li><Link href="/"><a>Home</a></Link></li>
-                <li><Link href="/login"><a>Login</a></Link></li>
-            </ul>);
 
         this.state = {
-            authNav: this.noAuth
+            loggedIn: false,
+            username: "",
+            profileLink: "/"
         }
     }
 
     componentDidMount() {
         if (this.auth.loggedIn()) {
-            this.yesAuth = (<ul className="Nav">
-                <li><Link href="/"><a>Home</a></Link></li>
-                <li><a href={`/profile/${this.auth.getProfile().username}`}>Profile</a></li>
-                <li><a className="logout" onClick={this.logout}>Logout</a></li>
-            </ul>);
-            this.setState({authNav: this.yesAuth})
+            this.setState({
+                loggedIn: true,
+                username: this.auth.getProfile().username,
+                profileLink: '/profile/' + this.auth.getProfile().username
+            });
         }
+    }
+
+    renderLoggedOutNav() {
+        return (
+            <ul className="Nav">
+                <li><Link href="/login"><a>Login</a></Link></li>
+            </ul>
+        )
+    }
+
+    renderLoggedInNav() {
+        return (
+            <ul className="Nav">
+                <li><a href={this.state.profileLink}>Profile</a></li>
+                <li><a className="logout" onClick={this.logout}>Logout</a></li>
+            </ul>
+        )
     }
 
     logout() {
@@ -44,30 +52,31 @@ export default class Layout extends React.Component {
     }
 
     render() {
-
-
         return (
             <div className="Layout">
                 <Head>
                     <meta charset="utf-8" />
-                    <title>{ this.title } | Matcha - an intelligent job matching platform</title>
+                    <title>{ this.props.title } | Matcha - an intelligent job matching platform</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css" />
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500,700" />
                     <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
                 </Head>
 
-
                 <div className="App">
                     <div className="Nav-wrapper">
-                        <div className="logo">
-                            <h1>Matcha</h1>
-                        </div>
-                        { this.state.authNav }
+                        <a
+                            style={{textDecoration: "none"}}
+                            href={this.state.loggedIn ? this.state.profileLink : "/"}
+                        >
+                            <div className="logo">
+                                    <h1>Matcha</h1>
+                            </div>
+                        </a>
+                        {this.state.loggedIn ? this.renderLoggedInNav() : this.renderLoggedOutNav()}
                     </div>
-                    { this.children }
+                    { this.props.children }
                 </div>
-
             </div>
         )
     }
