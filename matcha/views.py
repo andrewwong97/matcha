@@ -3,10 +3,10 @@ from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
 from models import Student, Employer, listings
 from app import app, mongo
-from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
-from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student
-from util import listing_to_dict, dict_to_listing
+from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
+from util import listing_to_dict
 from util import matcher
+from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, linkedin_to_skills_list
 
 
 # catch-all for front end
@@ -64,20 +64,27 @@ def linkedin_login():
     except KeyError:
         # no access token
         print 'error: {}'.format(linkedin_token(req['code']))
-        return dumps({'reason': linkedin_token(req['code'])['error_description']}), 404
+        return dumps({'reason': linkedin_token(req['code'])['error_description'], 'uri': linkedin_redirect_uri()}), 404
 
     stu = Student.query.filter(Student.linkedin_token == token).first()
     if stu:
-
         return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
     else:
-        # student doesn't exist, create it
-        new_student = li_to_student(linkedin_basic_profile(token))
-        new_student.linkedin_token = token
-        new_student.save()
-        stu = Student.query.filter(Student.linkedin_token == token).first()
-        print 'student created: \n {}'.format(student_to_dict(stu))
-        return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
+        profile_dict = linkedin_basic_profile(token)
+
+        # if account exists, return existing student
+        account_exists = Student.query.filter(Student.username == profile_dict['emailAddress']).first()
+        if account_exists:
+            return dumps({'linkedin_token': token, 'profile': student_to_dict(account_exists)}), 200
+        else:
+            # linkedin_token doesn't exist in db, create student
+            new_student = li_to_student(profile_dict)
+            new_student.linkedin_token = token
+            new_student.skills = linkedin_to_skills_list(profile_dict)
+            new_student.save()
+            stu = Student.query.filter(Student.linkedin_token == token).first()
+            print 'student created: \n {}'.format(student_to_dict(stu))
+            return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
 
 
 @app.route('/v1/logout', methods=['POST'])
@@ -241,6 +248,7 @@ def edit_job(employer):
 def delete_job(employer):
     # TODO: delete job
     return 'Success'
+
 
 @app.route('/v1/employer/<string:employer>/getJobMatches/<string:job_name>', methods=['DELETE'])
 def get_job_matches(employer, job_name):

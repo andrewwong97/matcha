@@ -43,9 +43,12 @@ export default class AuthService {
         })
             .then(res => res.json())
             .then(data => {
-                localStorage.setItem('linkedin_token', data.linkedin_token);
-               this.setProfile(data.profile);
-               return data;
+                if (data.uri) {
+                    window.location.replace(data.uri);
+                } else {
+                    localStorage.setItem('linkedin_token', data.linkedin_token);
+                    this.setProfile(data.profile);
+                }
             });
     }
 

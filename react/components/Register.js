@@ -38,12 +38,12 @@ class Register extends Component {
 		this.state = {
 			email: '',
 			password: '',
-            jobType: '',
-            expertise: '',
-            visaStatus: '',
-            city: '',
-            skills: [],
-            allSkills: []
+      jobType: '',
+      expertise: '',
+      visaStatus: '',
+      city: '',
+      skills: [],
+      allSkills: []
 		}
 
 	}
