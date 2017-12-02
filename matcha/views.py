@@ -3,10 +3,10 @@ from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
 from models import Student, Employer, listings
 from app import app, mongo
-from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
-from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student, linkedin_to_skills_list
-from util import listing_to_dict, dict_to_listing
+from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
+from util import listing_to_dict
 from util import matcher
+from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, linkedin_to_skills_list
 
 
 # catch-all for front end
@@ -242,6 +242,7 @@ def edit_job(employer):
 def delete_job(employer):
     # TODO: delete job
     return 'Success'
+
 
 @app.route('/v1/employer/<string:employer>/getJobMatches/<string:job_name>', methods=['DELETE'])
 def get_job_matches(employer, job_name):
