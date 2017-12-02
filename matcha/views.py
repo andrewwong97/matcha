@@ -4,7 +4,7 @@ from flask import (render_template, session, request,redirect, url_for)
 from models import Student, Employer, listings
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
-from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student
+from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student, linkedin_to_skills_list
 from util import listing_to_dict, dict_to_listing
 from util import matcher
 
@@ -68,12 +68,13 @@ def linkedin_login():
 
     stu = Student.query.filter(Student.linkedin_token == token).first()
     if stu:
-
         return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
     else:
         # student doesn't exist, create it
-        new_student = li_to_student(linkedin_basic_profile(token))
+        profile_dict = linkedin_basic_profile(token)
+        new_student = li_to_student(profile_dict)
         new_student.linkedin_token = token
+        new_student.skills = linkedin_to_skills_list(profile_dict)
         new_student.save()
         stu = Student.query.filter(Student.linkedin_token == token).first()
         print 'student created: \n {}'.format(student_to_dict(stu))

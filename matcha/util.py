@@ -1,6 +1,8 @@
 import json, base64, os, requests, re
 from urllib import urlencode
 from models import Student, Employer, listings
+import nltk
+from nltk.corpus import stopwords
 
 
 def student_to_dict(st):
@@ -166,6 +168,21 @@ def linkedin_basic_profile(token):
     fields = '(id,first-name,last-name,positions,industry,headline,specialties,location,public-profile-url,email-address)'
     r = requests.get('https://api.linkedin.com/v1/people/~:{}'.format(fields), params=params, headers=headers)
     return r.json()
+
+
+def linkedin_to_skills_list(profileJSON):
+    """
+    Convert student json profile to list of skills
+    :param profileJSON: profileJSON string
+    :return: list of tokenized skills
+    """
+    if type(profileJSON) == 'dict':
+        profileJSON = json.dumps(profileJSON)
+
+    tokens = nltk.word_tokenize(profileJSON)
+    stop_words = set(stopwords.words('english'))
+    skills = [_ for _ in tokens if _ not in stop_words]
+    return skills
 
 
 def matcher(candidate, listing):

@@ -11,4 +11,6 @@ mongo = MongoAlchemy(app)
 from views import *
 
 if __name__ == '__main__':
+    import nltk
+    nltk.download('punkt')
     app.run(host='0.0.0.0')
