@@ -62,14 +62,17 @@ class Login extends React.Component {
 					value={this.state.password}
 					type="password" 
 				/>
-				<button className="btn" onClick={this.linkedinLogin}>
+				<div className="login-buttons">
+					<button className="btn btn-li" onClick={this.linkedinLogin}>
                     Login via LinkedIn
                 </button>
 				<button className="btn btn-submitLogin" onClick={this.handleLogin.bind(this)}>Submit</button>
 				<Link href="/register"><a>Need an account? Register here</a></Link>
 
-				{ this.state.badLogin == true ? <p style={{'color': '#ed441e'}}>Error: please check that you have correctly entered username and/or password</p> : <p></p> }
-
+				{ this.state.badLogin ? <p style={{'color': '#ed441e'}}>
+					Error: please check that you have correctly entered username and/or password</p> : ''
+				}
+				</div>
 			</div>
 		);
 	}
