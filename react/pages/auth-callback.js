@@ -19,7 +19,7 @@ export default class AuthCallback extends React.Component {
     render() {
         return (
             <Layout title="Auth Callback">
-                Authenticating login...(might take some time)
+               <div className="loading-pulse"></div>(might take some time)
             </Layout>
         );
     }

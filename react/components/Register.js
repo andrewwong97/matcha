@@ -204,7 +204,7 @@ class Register extends Component {
 
 
                 <div className="social-login">
-                     <button className="btn" onClick={this.registerWithLinkedIn}>
+                     <button className="btn btn-li" onClick={this.registerWithLinkedIn}>
                         Login via LinkedIn
                     </button>
 
