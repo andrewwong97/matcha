@@ -123,6 +123,7 @@ def matcher(student, listing):
     for skill in student.skills:
         for desired in listing.desired_skills:
             if skill.lower() == desired.lower():
+                # add fuzzy matching here
                 rating += 1
 
     return 1.0 * rating / (len(student.skills) + len(listing.desired_skills))

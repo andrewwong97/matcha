@@ -29,26 +29,35 @@ def get_linkedin_uri():
 def login():
     """
     Login with username and password. Returns a JSON serialized
-    Student object.
-    :return: { first_name: <first_name>, last_name ...  }
+    Student or Employer object.
+    :return: { first_name: <first_name> ... account_type: <Student or Employer>  }
     """
     if request.method == 'POST':
         data = request.get_json()
         username = data['username']
         password = data['password']
-        # v dangerous, plaintext password
 
         # check if username is in db
         st_obj = Student.query.filter(Student.username == username, Student.password == password).first()
 
-        if st_obj is not None:
+        if st_obj is None:
+            em_obj = Employer.query.filter(Employer.username == username, Employer.password == password).first()
+            if em_obj:
+                employer_dict = employer_to_dict(em_obj)
+                if 'password' in employer_dict:
+                    del employer_dict['password']
+                print employer_dict
+                employer_dict['account_type'] = 'Employer'
+                return dumps({employer_dict})
+            else:
+                return dumps({"reason": "No account exists for this username"}), 404
+        else:
             student_dict = student_to_dict(st_obj)
             if 'password' in student_dict:
                 del student_dict['password']
             print student_dict
+            student_dict['account_type'] = 'Student'
             return dumps(student_dict), 200
-        else:
-            return dumps({"reason": "No account exists for this username"}), 404
 
 
 @app.route('/v1/linkedinLogin', methods=['POST'])
@@ -95,13 +104,15 @@ def logout():
 
 @app.route('/v1/createStudentProfile', methods=['POST'])
 def create_student_profile():
-    # TODO: search for existing account
-    # if exist, return dumps({'reason': 'Student account already exists for email'}), 404
     req_data = request.get_json()
     student_obj = dict_to_student(req_data)
-    student_obj.save()
 
-    return dumps(student_to_dict(student_obj)), 200
+    account_exists = Student.query.filter(Student.username == req_data['username']).first()
+    if account_exists:
+        return dumps({'reason': 'Student account already exists for email'}), 404
+    else:
+        student_obj.save()
+        return dumps(student_to_dict(student_obj)), 200
 
 
 @app.route('/v1/getStudentProfile/<string:username>', methods=['GET'])
