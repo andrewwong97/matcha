@@ -1,6 +1,8 @@
 import json, base64, os, requests, re
 from urllib import urlencode
-from models import Student, Employer, listings
+from models import Student, Employer, Listing
+from app import mongo
+
 
 
 def student_to_dict(st):
@@ -10,6 +12,7 @@ def student_to_dict(st):
     :return: dictionary with keys as field name and value as field value
     """
     st_dict = dict()
+    #st_dict['_id'] = st._id['$oid']
     st_dict['username'] = st.username
     st_dict['first_name'] = st.first_name
     st_dict['last_name'] = st.last_name
@@ -34,6 +37,7 @@ def dict_to_student(d):
     :return: Student object
     """
     st_obj = Student()
+    #st_obj._id = d['_id']
     st_obj.username = d['username']  # each student has a unique username
     st_obj.first_name = d['first_name']
     st_obj.last_name = d['last_name']
@@ -84,21 +88,24 @@ def dict_to_employer(d):
     return em_obj
 
 
-def listing_to_dict(obj):
+def listing_to_dict(ls_obj):
     """
     Convert MongoAlchemy listing fields to dictionary
     :param st: listing object
     :return: dictionary with keys as field name and value as field value
     """
-    listing_dict = dict()
-    listing_dict['name'] = obj.name
-    listing_dict['salary'] = obj.salary
-    listing_dict['employer'] = obj.employer
-    listing_dict['desired_skills'] = obj.desired_skills
-    listing_dict['job_type'] = obj.job_type
+    ls_dict = dict()
+    ls_dict['_id'] = ls_obj._id
+    ls_dict['title'] = ls_obj.title
+    ls_dict['description'] = ls_obj.description
+    ls_dict['employer'] = ls_obj.employer
+    ls_dict['student_matches'] = ls_obj.student_matches
+    ls_dict['salary'] = ls_obj.salary
+    ls_dict['location'] = ls_obj.location
+    ls_dict['desired_skills'] = ls_obj.desired_skills
+    ls_dict['job_type'] = ls_obj.job_type
 
-    return listing_dict
-
+    return ls_dict
 
 def dict_to_listing(d):
     """
@@ -106,13 +113,16 @@ def dict_to_listing(d):
     :param d: dictionary
     :return: listing object
     """
-    l = listings()
-    l.name = d['name']
-    l.salary = d['salary']
-    l.employer = d['employer']
-    l.desired_skills = d['desired_skills']
-    l.job_type = d['job_type']
-    return l
+    ls = Listing()
+    ls.title = d['title']
+    ls.description = d['description']
+    ls.employer = d['employer']
+    ls.student_matches = d['student_matches']
+    ls.salary = d['salary']
+    ls.location = d['location']
+    ls.desired_skills = d['desired_skills']
+    ls.job_type = d['job_type']
+    return ls
 
 
 def config_dict():

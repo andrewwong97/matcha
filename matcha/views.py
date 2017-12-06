@@ -1,12 +1,13 @@
 import json
 from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
-from models import Student, Employer, listings
+from models import Student, Employer, Listing
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
 from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student
 from util import listing_to_dict, dict_to_listing
 from util import matcher
+from heapq import heappush, heappop, heapify
 
 
 # catch-all for front end
@@ -162,22 +163,77 @@ def edit_employer_profile(company_name):
 
 @app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
 def get_matches(username):
-    st_obj = Student.query.filter(Student.username == username).first()
+
+    pass
+    # Call to return student matches
+
+
+@app.route('/v1/createListing', methods=['POST'])
+def create_listing():
+    req_data = request.get_json()
+    listing_obj = dict_to_listing(req_data)
+    listing_obj.save()
+
+    return dumps(listing_to_dict(listing_obj)), 200
+
+
+@app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
+def compute_matches(username):
+
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+
     if st_obj is not None:
-        matches = []
-        matches_dict = {}
-        for listing_obj in listings.query.all():
-            rating = matcher(st_obj, listing_obj)
-            if rating > 0:
-                if str(rating) not in matches_dict:
-                    matches_dict = {str(rating): [listing_to_dict(listing_obj)]}
-                else:
-                    matches_dict[str(rating)].append(listing_to_dict(listing_obj))
-        for key in matches_dict:
-            matches += matches_dict[key]
-        return dumps(matches), 200
-    else:
-        return 'Username Not Found'  # TODO: improve error handling
+        new_matches = []
+
+        for listing_obj in Listing.query.all(): # loop through all listings
+            rating = matcher(st_obj, listing_obj) # determine if there's a match
+            if rating > 0: # if there is a match
+
+                new_matches.append(listing_obj._id) # add it to the matches list
+
+                if st_obj.username not in listing_obj.student_matches:
+                    listing_obj.student_matches.append(st_obj.username)
+
+
+
+        st_obj.job_matches = new_matches
+        st_obj.save()
+        listing_obj.save()
+
+
+    return dumps(new_matches), 200
+    # else:
+    #     return 'Username Not Found'  # TODO: improve error handling
+
+    # Call to matches function to refresh matches.
+
+    # Refresh matches algo should update the database once matches are refreshed
+
+    # Query Listing collection to find all listings.
+
+    # Loop through all listings searching for listings where student username shows up under 'student_matches'
+
+    # If there is a match, get the employer's name and add it to a dict/list of of all employer matches
+
+    # Return this list
+
+
+    # st_obj = Student.query.filter(Student.username == username).first()
+    # if st_obj is not None:
+    #     matches = []
+    #     matches_dict = {}
+    #     for listing_obj in listings.query.all():
+    #         rating = matcher(st_obj, listing_obj)
+    #         if rating > 0:
+    #             if str(rating) not in matches_dict:
+    #                 matches_dict = {str(rating): [listing_to_dict(listing_obj)]}
+    #             else:
+    #                 matches_dict[str(rating)].append(listing_to_dict(listing_obj))
+    #     for key in matches_dict:
+    #         matches += matches_dict[key]
+    #     return dumps(matches), 200
+    # else:
+    #     return 'Username Not Found'  # TODO: improve error handling
 
 
 @app.route('/v1/candidate/<string:username>/declineJob/<string:job_name>', methods=['POST'])
