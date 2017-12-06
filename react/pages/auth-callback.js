@@ -1,25 +1,31 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import Layout from '../components/layout'
 import AuthService from '../util/AuthService'
 
 const auth = new AuthService();
-const baseUrl = require('../vars.json').baseUrl;
 
-export default class AuthCallback extends React.Component {
+export default class AuthCallback extends Component {
     constructor(props) {
         super(props);
     }
 
     componentDidMount() {
+        // auto handles refreshes
         auth.linkedinLogin(this.props.url.query.code)
-            .then(() => window.location.replace(`${window.location.origin}/profile/${auth.getProfile().username}`));
+            .then(data => {
+                console.log('data', data);
+                window.location.replace(`${window.location.origin}/profile/${data.profile.account_type.toLowerCase()}/${data.profile.username}`)
+            });
     }
 
     render() {
         return (
             <Layout title="Auth Callback">
-               <div className="loading-pulse"></div>(might take some time)
+                <div className="auth-loading">
+                    <h3 className="loading-caption">Loading profile from LinkedIn...</h3>
+                    <div className="loading-pulse" />
+                </div>
             </Layout>
         );
     }

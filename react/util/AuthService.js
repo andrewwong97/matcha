@@ -1,4 +1,5 @@
 import React from 'react';
+import Router from 'next/router';
 
 // adapted from @jaredpalmer's version at https://github.com/zeit/next.js/issues/153
 // Matcha does not yet have JWT implemented, so we'll store usernames and profiles for now
@@ -16,6 +17,11 @@ export default class AuthService {
         };
     }
 
+    /**
+     * Regular login
+     * @param username
+     * @param password
+     */
     login(username, password) {
         return fetch(`${this.domain}/v1/login`, {
             method: 'POST',
@@ -34,6 +40,10 @@ export default class AuthService {
 
     }
 
+    /**
+     * Log into linkedin with auth code
+     * @param code - linkedin auth code received from calling API endpoint
+     */
     linkedinLogin(code) {
         return fetch(`${this.domain}/v1/linkedinLogin`, {
             method: 'POST',
@@ -44,12 +54,13 @@ export default class AuthService {
             .then(res => res.json())
             .then(data => {
                 if (data.uri) {
-                    window.location.replace(data.uri);
+                    window.location.replace(data.uri); // redirect to linkedin
                 } else {
-                    localStorage.setItem('linkedin_token', data.linkedin_token);
                     this.setProfile(data.profile);
                 }
-            });
+                return data;
+            })
+            .catch(error => Router.push('/'))
     }
 
     loggedIn(){
@@ -58,7 +69,6 @@ export default class AuthService {
 
 
     setProfile(profile){
-        // Saves profile data to localStorage
         localStorage.setItem('profile', JSON.stringify(profile))
     }
 

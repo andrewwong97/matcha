@@ -113,7 +113,7 @@ class Register extends Component {
                 const email = this.state.email;
                 this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
                 auth.setProfile(data);
-                Router.push(`/profile/${email}`);
+                Router.push(`/profile/student/${email}`);
             })
             .catch(error => {
                 alert("Error creating account. Please check for duplicate emails.");
