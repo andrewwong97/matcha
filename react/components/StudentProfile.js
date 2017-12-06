@@ -10,10 +10,10 @@ class StudentProfile extends React.Component {
         super(props);
 
         this.state = {
+            skills: [],
             matches: [],
             user: JSON.parse(localStorage.profile),
             username: Router.asPath.slice(9)
-
         };
     }
 
@@ -34,7 +34,7 @@ class StudentProfile extends React.Component {
         fetch(baseUrl + '/v1/candidate/' + this.state.username + '/getMatches', options)
             .then((response) => response.json())
             .then((matches) => {
-                console.log(matches)
+                console.log(matches);
                 this.setState({ matches });
             })
             .catch(error => {
@@ -50,13 +50,13 @@ class StudentProfile extends React.Component {
                     <span className="thin"> ({this.state.username})</span>
                 </h1>
                 <h1 className="location">Location: {this.state.user.location}</h1>
-                <h1 className="skills">Skills: {this.state.user.skills.join(', ')}</h1>
+                <h1 className="skills">Skills: {this.state.user.skills ? this.state.user.skills.join(', '): ''}</h1>
                 <h1 className="looking-for">Looking for: {this.state.user.looking_for.join(', ')}</h1>
             </div>
         } else {
-            return <h1 className="name">
+            return <h1 className="user-details">
                 Loading User Details...
-                <div className="loading-pulse"></div>
+                <div className="loading-pulse" />
             </h1>
         }
     }

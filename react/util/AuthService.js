@@ -44,9 +44,9 @@ export default class AuthService {
             .then(res => res.json())
             .then(data => {
                 if (data.uri) {
-                    window.location.replace(data.uri);
+                    window.location.replace(data.uri); // redirect to linkedin
                 } else {
-                    localStorage.setItem('linkedin_token', data.linkedin_token);
+                    localStorage.setItem('linkedin_token', data.linkedin_token); // change to handle refreshes
                     this.setProfile(data.profile);
                 }
             });
@@ -58,7 +58,6 @@ export default class AuthService {
 
 
     setProfile(profile){
-        // Saves profile data to localStorage
         localStorage.setItem('profile', JSON.stringify(profile))
     }
 

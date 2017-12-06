@@ -29,9 +29,10 @@ export default class Layout extends React.Component {
 
     componentDidMount() {
         if (this.auth.loggedIn()) {
+            const account_type = localStorage.getItem('profile').account_type ? localStorage.getItem('profile').account_type.toLowerCase() : 'student';
             this.yesAuth = (<ul className="Nav">
                 <li><Link href="/"><a>Home</a></Link></li>
-                <li><a href={`/profile/${this.auth.getProfile().username}`}>Profile</a></li>
+                <li><a href={`/profile/${account_type}/${this.auth.getProfile().username}`}>Profile</a></li>
                 <li><a className="logout" onClick={this.logout}>Logout</a></li>
             </ul>);
             this.setState({authNav: this.yesAuth})
