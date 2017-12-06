@@ -14,12 +14,19 @@
 
     &:hover {
         background-color: lighten(#1cbd6a, .8);
-        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         outline: none;
         cursor: pointer;
     }
 
     &:focus, &:visited, &:active {
         outline: none;
+    }
+}
+
+.btn-li {
+    background: #0077b5;
+    &:hover {
+        background-color: lighten(#0077b5, .8);
     }
 }

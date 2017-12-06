@@ -16,7 +16,7 @@ class Login extends React.Component {
 			badLogin: false
 		};
 
-		this.handleLogin.bind(this);
+		this.handleLogin = this.handleLogin.bind(this);
 	}
 
 	handleChange(event) {
@@ -33,7 +33,7 @@ class Login extends React.Component {
         auth.login(this.state.email, this.state.password)
 			.then(data => {
 				// page under pages/, browser url form
-				Router.push('/student-profile', `/profile/${this.state.email}`);
+				setTimeout(Router.push(`/profile/${data.account_type.toLowerCase()}/${data.email}`), 1000);
 			});
 	}
 
@@ -60,16 +60,20 @@ class Login extends React.Component {
 					name="password" 
 					placeholder="Password" 
 					value={this.state.password}
-					type="password" 
+					type="password"
+					onEnter={this.handleLogin}
 				/>
-				<button className="btn" onClick={this.linkedinLogin}>
+				<div className="login-buttons">
+					<button className="btn btn-li" onClick={this.linkedinLogin}>
                     Login via LinkedIn
                 </button>
-				<button className="btn btn-submitLogin" onClick={this.handleLogin.bind(this)}>Submit</button>
+				<button className="btn btn-submitLogin" onClick={this.handleLogin}>Submit</button>
 				<Link href="/register"><a>Need an account? Register here</a></Link>
 
-				{ this.state.badLogin == true ? <p style={{'color': '#ed441e'}}>Error: please check that you have correctly entered username and/or password</p> : <p></p> }
-
+				{ this.state.badLogin ? <p style={{'color': '#ed441e'}}>
+					Error: please check that you have correctly entered username and/or password</p> : ''
+				}
+				</div>
 			</div>
 		);
 	}

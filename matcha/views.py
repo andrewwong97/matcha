@@ -3,10 +3,10 @@ from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
 from models import Student, Employer, listings
 from app import app, mongo
-from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer
-from util import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, li_to_student
-from util import listing_to_dict, dict_to_listing
+from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
+from util import listing_to_dict
 from util import matcher
+from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, linkedin_to_skills_list
 
 
 # catch-all for front end
@@ -29,55 +29,86 @@ def get_linkedin_uri():
 def login():
     """
     Login with username and password. Returns a JSON serialized
-    Student object.
-    :return: { first_name: <first_name>, last_name ...  }
+    Student or Employer object.
+    :return: { first_name: <first_name> ... account_type: <Student or Employer>  }
     """
     if request.method == 'POST':
         data = request.get_json()
         username = data['username']
         password = data['password']
-        # v dangerous, plaintext password
 
         # check if username is in db
         st_obj = Student.query.filter(Student.username == username, Student.password == password).first()
 
-        if st_obj is not None:
+        if st_obj is None:
+            em_obj = Employer.query.filter(Employer.username == username, Employer.password == password).first()
+            if em_obj:
+                employer_dict = employer_to_dict(em_obj)
+                if 'password' in employer_dict:
+                    del employer_dict['password']
+                print employer_dict
+                employer_dict['account_type'] = 'Employer'
+                return dumps(employer_dict), 200
+            else:
+                return dumps({"reason": "No account exists for this username"}), 404
+        else:
             student_dict = student_to_dict(st_obj)
             if 'password' in student_dict:
                 del student_dict['password']
             print student_dict
+            student_dict['account_type'] = 'Student'
             return dumps(student_dict), 200
-        else:
-            return dumps({"reason": "No account exists for this username"}), 404
 
 
 @app.route('/v1/linkedinLogin', methods=['POST'])
 def linkedin_login():
     """
-    Login with auth code. Exchanges auth code for auth token. Finds student with
+    Login with auth code and exchanges auth code for auth token.
+    If the auth token is expired, update the Student object.
+
+    Finds student with
     corresponding linkedin_token and returns serialized Student.
     :return: { linkedin_token: <token>, profile: <serialized_student> }
     """
     req = request.get_json()
     try:
-        token = linkedin_token(req['code'])['access_token']
+        token = linkedin_token(req['code'])['access_token']  # get new token
+        # TODO: perhaps use token expiration date for fail-safe log in
     except KeyError:
         # no access token
         print 'error: {}'.format(linkedin_token(req['code']))
-        return dumps({'reason': linkedin_token(req['code'])['error_description']}), 404
+        return dumps({'reason': linkedin_token(req['code'])['error_description'], 'uri': linkedin_redirect_uri()}), 404
 
     stu = Student.query.filter(Student.linkedin_token == token).first()
     if stu:
-
-        return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
+        # if token is not expired/invalid, return student
+        profile = student_to_dict(stu)
+        profile['account_type'] = 'Student'
+        print 'student found: \n {}'.format(profile)
+        return dumps({'linkedin_token': token, 'profile': profile}), 200
     else:
-        # student doesn't exist, create it
-        new_student = li_to_student(linkedin_basic_profile(token))
-        new_student.linkedin_token = token
-        new_student.save()
-        stu = Student.query.filter(Student.linkedin_token == token).first()
-        print 'student created: \n {}'.format(student_to_dict(stu))
-        return dumps({'linkedin_token': token, 'profile': student_to_dict(stu)}), 200
+        # update token, return student
+        profile_dict = linkedin_basic_profile(token)
+
+        account_exists = Student.query.filter(Student.username == profile_dict['emailAddress']).first()
+        if account_exists:
+            account_exists.linkedin_token = token  # update token
+            profile = student_to_dict(account_exists)
+            profile['account_type'] = 'Student'
+            print 'student found: \n {}'.format(profile)
+            return dumps({'linkedin_token': token, 'profile': profile}), 200
+        else:
+            # if linkedin_token doesn't exist in db, create student
+            new_student = li_to_student(profile_dict)
+            new_student.linkedin_token = token
+            new_student.skills = linkedin_to_skills_list(profile_dict)
+            new_student.save()
+            stu = Student.query.filter(Student.linkedin_token == token).first()
+
+            profile = student_to_dict(stu)
+            profile['account_type'] = 'Student'
+            print 'student created: \n {}'.format(profile)
+            return dumps({'linkedin_token': token, 'profile': profile}), 200
 
 
 @app.route('/v1/logout', methods=['POST'])
@@ -88,13 +119,15 @@ def logout():
 
 @app.route('/v1/createStudentProfile', methods=['POST'])
 def create_student_profile():
-    # TODO: search for existing account
-    # if exist, return dumps({'reason': 'Student account already exists for email'}), 404
     req_data = request.get_json()
     student_obj = dict_to_student(req_data)
-    student_obj.save()
 
-    return dumps(student_to_dict(student_obj)), 200
+    account_exists = Student.query.filter(Student.username == req_data['username']).first()
+    if account_exists:
+        return dumps({'reason': 'Student account already exists for email'}), 404
+    else:
+        student_obj.save()
+        return dumps(student_to_dict(student_obj)), 200
 
 
 @app.route('/v1/getStudentProfile/<string:username>', methods=['GET'])
@@ -128,9 +161,13 @@ def edit_student_profile(username):
 def create_employer_profile():
     req_data = request.get_json()
     employer_obj = dict_to_employer(req_data)
-    employer_obj.save()
 
-    return dumps(employer_to_dict(employer_obj)), 200
+    account_exists = Employer.query.filter(Employer.username == req_data['email']).first()
+    if account_exists:
+        return dumps({'reason': 'Employer account already exists for email'}), 404
+    else:
+        employer_obj.save()
+        return dumps(employer_to_dict(employer_obj)), 200
 
 
 @app.route('/v1/getEmployerProfile/<string:company_name>', methods=['GET'])
@@ -241,6 +278,7 @@ def edit_job(employer):
 def delete_job(employer):
     # TODO: delete job
     return 'Success'
+
 
 @app.route('/v1/employer/<string:employer>/getJobMatches/<string:job_name>', methods=['DELETE'])
 def get_job_matches(employer, job_name):

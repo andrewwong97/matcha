@@ -7,6 +7,7 @@ import stylesheet from '../static/scss/main.scss';
 
 import AuthService from "../util/AuthService";
 
+
 export default class Layout extends React.Component {
     constructor(props) {
         super(props);
@@ -24,7 +25,8 @@ export default class Layout extends React.Component {
             this.setState({
                 loggedIn: true,
                 username: this.auth.getProfile().username,
-                profileLink: '/profile/' + this.auth.getProfile().username
+                accountType: this.auth.getProfile().account_type,
+                profileLink: '/profile/' + this.auth.getProfile().account_type + '/' + this.auth.getProfile().username
             });
         }
     }
@@ -62,7 +64,6 @@ export default class Layout extends React.Component {
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500,700" />
                     <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
                 </Head>
-
                 <div className="App">
                     <div className="Nav-wrapper">
                         <a

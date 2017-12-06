@@ -38,12 +38,12 @@ class Register extends Component {
 		this.state = {
 			email: '',
 			password: '',
-            jobType: '',
-            expertise: '',
-            visaStatus: '',
-            city: '',
-            skills: [],
-            allSkills: []
+      jobType: '',
+      expertise: '',
+      visaStatus: '',
+      city: '',
+      skills: [],
+      allSkills: []
 		}
 
 	}
@@ -113,7 +113,7 @@ class Register extends Component {
                 const email = this.state.email;
                 this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
                 auth.setProfile(data);
-                Router.push(`/profile/${email}`);
+                Router.push(`/profile/student/${email}`);
             })
             .catch(error => {
                 alert("Error creating account. Please check for duplicate emails.");
@@ -204,7 +204,7 @@ class Register extends Component {
 
 
                 <div className="social-login">
-                     <button className="btn" onClick={this.registerWithLinkedIn}>
+                     <button className="btn btn-li" onClick={this.registerWithLinkedIn}>
                         Login via LinkedIn
                     </button>
 

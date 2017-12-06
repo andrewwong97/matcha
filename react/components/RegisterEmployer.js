@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import Router from '../routes';
+import Router from 'next/router';
+import AuthService from '../util/AuthService';
 
 const baseUrl = require('../vars.json').baseUrl;
+const auth = new AuthService(baseUrl);
+
 
 export default class RegisterEmployer extends Component {
     constructor(props) {
@@ -11,6 +14,8 @@ export default class RegisterEmployer extends Component {
             email: '',
             password: '',
         };
+
+        this.register = this.register.bind(this);
     }
 
     handleChange(event) {
@@ -38,14 +43,17 @@ export default class RegisterEmployer extends Component {
             })
         };
 
-        fetch(baseUrl + '/v1/registerEmployer', options)
-            .then((response) => {
-                if (response.status === 200) {
+        fetch(baseUrl + '/v1/createEmployerProfile', options)
+            .then(response => response.json())
+            .then(data => {
+                if (data.reason) {
+                    // error
+                    alert(data.reason);
+                } else {
                     const email = this.state.email;
                     this.setState({ company_name: '', email: '', password: '' });
-                    Router.pushRoute(`/profile/employer/${email}`);
-                } else {
-                    alert("Error creating account. Please check for duplicate emails.");
+                    auth.setProfile(data);
+                    Router.push(`/profile/employer/${email}`);
                 }
             });
     }
@@ -81,7 +89,7 @@ export default class RegisterEmployer extends Component {
 
                 <button
                     className="btn btn-submitRegister"
-                    onClick={this.register.bind(this)}
+                    onClick={this.register}
                 >Sign Up</button>
             </div>
         );
