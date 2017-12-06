@@ -18,8 +18,10 @@ export default class AuthCallback extends Component {
     render() {
         return (
             <Layout title="Auth Callback">
-                <div className="loading-pulse" />
-                <h3>(might take some time)</h3>
+                <div className="auth-loading">
+                    <h3 className="loading-caption">Loading profile from LinkedIn...</h3>
+                    <div className="loading-pulse" />
+                </div>
             </Layout>
         );
     }

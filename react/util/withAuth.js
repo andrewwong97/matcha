@@ -1,12 +1,12 @@
 // a HOC for protected pages
 import React, {Component} from 'react'
-import Layout from '../components/layout'
 import AuthService from './AuthService'
 import Router from 'next/router'
 
 
 export default function withAuth(AuthComponent) {
     const Auth = new AuthService(require('../vars.json').baseUrl);
+
     return class Authenticated extends Component {
         constructor(props) {
             super(props);
@@ -18,6 +18,8 @@ export default function withAuth(AuthComponent) {
         componentDidMount () {
             if (!Auth.loggedIn()) {
                 Router.push('/');
+            } else if (window.location.pathname === '/') {
+                Router.push(`/profile/${Auth.getProfile().account_type}/${Auth.getProfile().username}`);
             }
             this.setState({ isLoading: false })
         }
@@ -27,7 +29,7 @@ export default function withAuth(AuthComponent) {
 
                 <div>
                     {this.state.isLoading ? (
-                        <div>LOADING....</div>
+                        <div className="loading">Loading</div>
                     ) : (
                         <AuthComponent {...this.props}  auth={Auth} />
                     )}

@@ -8,9 +8,6 @@ import stylesheet from '../static/scss/main.scss';
 import AuthService from "../util/AuthService";
 
 
-
-
-
 export default class Layout extends React.Component {
     constructor(props) {
         super(props);
@@ -29,10 +26,9 @@ export default class Layout extends React.Component {
 
     componentDidMount() {
         if (this.auth.loggedIn()) {
-            const account_type = localStorage.getItem('profile').account_type ? localStorage.getItem('profile').account_type.toLowerCase() : 'student';
             this.yesAuth = (<ul className="Nav">
                 <li><Link href="/"><a>Home</a></Link></li>
-                <li><a href={`/profile/${account_type}/${this.auth.getProfile().username}`}>Profile</a></li>
+                <li><a href={`/profile/${this.auth.getProfile().account_type}/${this.auth.getProfile().username}`}>Profile</a></li>
                 <li><a className="logout" onClick={this.logout}>Logout</a></li>
             </ul>);
             this.setState({authNav: this.yesAuth})
@@ -45,8 +41,6 @@ export default class Layout extends React.Component {
     }
 
     render() {
-
-
         return (
             <div className="Layout">
                 <Head>
@@ -57,8 +51,6 @@ export default class Layout extends React.Component {
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500,700" />
                     <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
                 </Head>
-
-
                 <div className="App">
                     <div className="Nav-wrapper">
                         <div className="logo">
