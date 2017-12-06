@@ -13,7 +13,6 @@ from mongoalchemy.fields import *
 #         return dict(**super_schema)
 
 class Student(mongo.Document):
-    #_id = mongo.ObjectIdField()
     username = mongo.StringField()
     first_name = mongo.StringField()
     last_name = mongo.StringField()
@@ -27,6 +26,7 @@ class Student(mongo.Document):
     looking_for = mongo.ListField(mongo.StringField())  # list
     job_matches = mongo.ListField(mongo.StringField())
     favorited_jobs = mongo.ListField(mongo.StringField())  # list
+    declined_jobs = mongo.ListField(mongo.StringField())  # list
 
 
 class Employer(mongo.Document):
@@ -39,7 +39,6 @@ class Employer(mongo.Document):
 
 
 class Listing(mongo.Document):
-    _id = mongo.ObjectIdField().gen()
     title = mongo.StringField()
     description = mongo.StringField()
     employer = mongo.StringField()

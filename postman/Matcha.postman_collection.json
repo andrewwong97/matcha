@@ -1,63 +1,200 @@
 {
-	"id": "1bc072a7-64d6-4319-4b02-9d3a006caa91",
-	"name": "Matcha",
-	"description": "",
-	"order": [
-		"85298d6d-a4ee-7d26-51b0-4dc6f5e195ee",
-		"b81f4a12-4d26-6632-12ce-2f82de19d321"
-	],
-	"folders": [],
-	"folders_order": [],
-	"timestamp": 1509326331521,
-	"owner": "2714396",
-	"public": false,
-	"requests": [
+	"variables": [],
+	"info": {
+		"name": "Matcha",
+		"_postman_id": "ba4093b7-2d14-6519-7586-97a06f3f920b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
 		{
-			"id": "85298d6d-a4ee-7d26-51b0-4dc6f5e195ee",
-			"headers": "",
-			"headerData": [],
-			"url": "",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "GET",
-			"collectionId": "1bc072a7-64d6-4319-4b02-9d3a006caa91",
-			"data": null,
-			"dataMode": "params",
-			"name": "New Job Listing",
+			"name": "Student",
 			"description": "",
-			"descriptionFormat": "html",
-			"time": 1509326354700,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {}
+			"item": [
+				{
+					"name": "Create Student Profile",
+					"request": {
+						"url": "http://localhost:5000/v1/createProfile",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"agaray1\",\n    \"first_name\" : \"Anthony\",\n    \"last_name\" : \"Garay\",\n    \"email\" : \"agaray1@jhu.edu\",\n    \"linkedin_token\" : \"ABC123\",\n    \"github_token\" : \"XYZ987\",\n    \"skills\" : [\"Python\", \"Adobe\", \"Leadership\"],\n    \"need_visa\" : false,\n    \"location\" : {\n        \"city\" : \"New York City\",\n        \"state\" : \"NY\"\n    \t\t\t},\n    \"looking_for\" : [\"Business Development\", \"Software Engineering\"],\n    \"job_matches\" : [\"Google\", \"Facebook\", \"Mongo\"],\n    \"favorited_jobs\" : [\"Google\", \"Facebook\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Profile",
+					"request": {
+						"url": "http://localhost:5000/v1/getProfile/agaray1",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Student Profile",
+					"request": {
+						"url": "http://localhost:5000/v1/createProfile",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"asharat1\",\n    \"first_name\" : \"Alex\",\n    \"last_name\" : \"Sharata\",\n    \"email\" : \"asharat1@jhu.edu\",\n    \"linkedin_token\" : \"ABC123\",\n    \"github_token\" : \"XYZ987\",\n    \"skills\" : [\"Python\", \"Adobe\", \"Leadership\"],\n    \"need_visa\" : \"false\",\n    \"location\" : {\n        \"city\" : \"Baltimore\",\n        \"state\" : \"MD\"\n    \t\t\t},\n    \"looking_for\" : [\"Business Development\", \"Software Engineering\"],\n    \"job_matches\" : [\"Google\", \"Facebook\", \"Mongo\"],\n    \"favorited_jobs\" : [\"Google\", \"Facebook\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Decline Job",
+					"request": {
+						"url": "http://localhost:5000/v1/candidate/wongandrew97@gmail.com/declineJob/5a278f4dd1c0f7628fca3314",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Favorite Job",
+					"request": {
+						"url": "http://localhost:5000/v1/candidate/wongandrew97@gmail.com/favoriteJob/5a278f4dd1c0f7628fca3314",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Matches",
+					"request": {
+						"url": "http://localhost:5000/v1/candidate/wongandrew97@gmail.com/getMatches",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "b81f4a12-4d26-6632-12ce-2f82de19d321",
-			"headers": "",
-			"headerData": [],
-			"url": "localhost:5000/login",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "POST",
-			"collectionId": "1bc072a7-64d6-4319-4b02-9d3a006caa91",
-			"data": [],
-			"dataMode": "raw",
-			"name": "Login",
-			"description": "login ",
-			"descriptionFormat": "html",
-			"time": 1509330921201,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"rawModeData": "{\"email\": \"awong52@jhu.edu\"}"
+			"name": "Employer",
+			"description": "",
+			"item": [
+				{
+					"name": "Create Employer Profile",
+					"request": {
+						"url": "http://localhost:5000/v1/createProfile",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"agaray1\",\n    \"first_name\" : \"Anthony\",\n    \"last_name\" : \"Garay\",\n    \"email\" : \"agaray1@jhu.edu\",\n    \"linkedin_token\" : \"ABC123\",\n    \"github_token\" : \"XYZ987\",\n    \"skills\" : [\"Python\", \"Adobe\", \"Leadership\"],\n    \"need_visa\" : false,\n    \"location\" : {\n        \"city\" : \"New York City\",\n        \"state\" : \"NY\"\n    \t\t\t},\n    \"looking_for\" : [\"Business Development\", \"Software Engineering\"],\n    \"job_matches\" : [\"Google\", \"Facebook\", \"Mongo\"],\n    \"favorited_jobs\" : [\"Google\", \"Facebook\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employer Profile",
+					"request": {
+						"url": "http://localhost:5000/v1/getProfile/agaray1",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Employer Profile",
+					"request": {
+						"url": "http://localhost:5000/v1/createProfile",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"asharat1\",\n    \"first_name\" : \"Alex\",\n    \"last_name\" : \"Sharata\",\n    \"email\" : \"asharat1@jhu.edu\",\n    \"linkedin_token\" : \"ABC123\",\n    \"github_token\" : \"XYZ987\",\n    \"skills\" : [\"Python\", \"Adobe\", \"Leadership\"],\n    \"need_visa\" : \"false\",\n    \"location\" : {\n        \"city\" : \"Baltimore\",\n        \"state\" : \"MD\"\n    \t\t\t},\n    \"looking_for\" : [\"Business Development\", \"Software Engineering\"],\n    \"job_matches\" : [\"Google\", \"Facebook\", \"Mongo\"],\n    \"favorited_jobs\" : [\"Google\", \"Facebook\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Employer Create Job",
+					"request": {
+						"url": "http://localhost:5000/v1/employer/Matcha/newJob",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Intern\",\n    \"description\": \"Lorem Ipsum\",\n    \"student_matches\": [\n        \"wongandrew97@gmail.com\"\n    ],\n    \"salary\": 50000,\n    \"location\": \"Baltimore\",\n    \"desired_skills\": [\n        \"Python\",\n        \"Java\"\n    ],\n    \"job_type\": \"Internship\",\n    \"looking_for\": [\n    \t\"Internship\"\n    \t]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Jobs",
+					"request": {
+						"url": "http://localhost:5000/v1/employer/Matcha/getCurrentJobs",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Compute Matches",
+			"request": {
+				"url": "http://localhost:5000/v1/candidate/wongandrew97@gmail.com/computeMatches",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }

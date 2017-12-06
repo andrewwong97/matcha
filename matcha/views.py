@@ -164,17 +164,12 @@ def edit_employer_profile(company_name):
 @app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
 def get_matches(username):
 
-    pass
-    # Call to return student matches
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
 
-
-@app.route('/v1/createListing', methods=['POST'])
-def create_listing():
-    req_data = request.get_json()
-    listing_obj = dict_to_listing(req_data)
-    listing_obj.save()
-
-    return dumps(listing_to_dict(listing_obj)), 200
+    if st_obj is not None:
+        return dumps(st_obj.job_matches)
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
 
 
 @app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
@@ -189,62 +184,76 @@ def compute_matches(username):
             rating = matcher(st_obj, listing_obj) # determine if there's a match
             if rating > 0: # if there is a match
 
-                new_matches.append(listing_obj._id) # add it to the matches list
+                if listing_obj.mongo_id not in st_obj.declined_jobs: # if the listing isn't already in declined jobs
 
-                if st_obj.username not in listing_obj.student_matches:
-                    listing_obj.student_matches.append(st_obj.username)
+                    if listing_obj.mongo_id not in st_obj.favorited_jobs: # or if listing isn't in favorited jobs
+
+                        new_matches.append(str(listing_obj.mongo_id)) # add it to the matches list in Student
+
+                        if st_obj.username not in listing_obj.student_matches: # if not already in Employer's matches add it too
+
+                            listing_obj.student_matches.append(st_obj.username)
 
 
 
-        st_obj.job_matches = new_matches
+        st_obj.job_matches = new_matches # TODO: check if we change all matches each time
         st_obj.save()
         listing_obj.save()
 
-
-    return dumps(new_matches), 200
-    # else:
-    #     return 'Username Not Found'  # TODO: improve error handling
-
-    # Call to matches function to refresh matches.
-
-    # Refresh matches algo should update the database once matches are refreshed
-
-    # Query Listing collection to find all listings.
-
-    # Loop through all listings searching for listings where student username shows up under 'student_matches'
-
-    # If there is a match, get the employer's name and add it to a dict/list of of all employer matches
-
-    # Return this list
+        return dumps(new_matches), 200
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
 
 
-    # st_obj = Student.query.filter(Student.username == username).first()
-    # if st_obj is not None:
-    #     matches = []
-    #     matches_dict = {}
-    #     for listing_obj in listings.query.all():
-    #         rating = matcher(st_obj, listing_obj)
-    #         if rating > 0:
-    #             if str(rating) not in matches_dict:
-    #                 matches_dict = {str(rating): [listing_to_dict(listing_obj)]}
-    #             else:
-    #                 matches_dict[str(rating)].append(listing_to_dict(listing_obj))
-    #     for key in matches_dict:
-    #         matches += matches_dict[key]
-    #     return dumps(matches), 200
-    # else:
-    #     return 'Username Not Found'  # TODO: improve error handling
+@app.route('/v1/candidate/<string:username>/declineJob/<string:job_id>', methods=['POST'])
+def decline_job(username, job_id):
 
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
 
-@app.route('/v1/candidate/<string:username>/declineJob/<string:job_name>', methods=['POST'])
-def decline_job(username, job_name):
-    # TODO: search employer job listing to remove candidate from matches
+    if st_obj is not None: # TODO: add error handling
+
+        for job_match in st_obj.job_matches:
+
+            if (job_match == job_id):
+
+                st_obj.job_matches.remove(job_id)
+                st_obj.declined_jobs.append(job_id)
+
+        for fav_job in st_obj.favorited_jobs:
+
+            if (job_match == job_id):
+
+                st_obj.favorited_jobs.remove(job_id)
+                st_obj.declined_jobs.append(job_id)
+
+        st_obj.save()
+
+        return dumps(st_obj.declined_jobs)
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
     return 'Success'
 
 
-@app.route('/v1/candidate/<string:username>/favoriteJob/<string:job_name>', methods=['POST'])
-def favorite_job(username, job_name):
-    # TODO: add code to favorite job
+@app.route('/v1/candidate/<string:username>/favoriteJob/<string:job_id>', methods=['POST'])
+def favorite_job(username, job_id):
+
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+
+    if st_obj is not None:  # TODO: add error handling
+
+        for job_match in st_obj.job_matches:
+
+            if (job_match == job_id):
+                st_obj.job_matches.remove(job_id)
+                st_obj.favorited_jobs.append(job_id)
+
+        st_obj.save()
+
+        return dumps(st_obj.favorited_jobs)
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
     return 'Success'
 
 
@@ -269,10 +278,16 @@ def get_authorization(employer):
 
 @app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
 def get_current_jobs(employer):
-    job_listings = mongo.db.employers.find({'employer': employer},
-                                           {'jobs_listings': 1, '_id': 0})  # return only job matches
-    # TODO: Add any additional code
-    return dumps(job_listings)  # TODO: change return value as needed
+
+    current_jobs = []
+
+    for listing_obj in Listing.query.all():  # loop through all listings
+
+        if (listing_obj.employer == employer):
+
+            current_jobs.append(listing_obj.mongo_id)
+
+    return dumps(current_jobs)  # TODO: change return value as needed
 
 
 @app.route('/v1/employer/<string:employer>/favoriteCandidate/<string:candidate>/<string:job_name>', methods=['POST'])
@@ -283,14 +298,28 @@ def favorite_candidate(employer, job_name, candidate):
 
 @app.route('/v1/employer/<string:employer>/newJob', methods=['POST'])
 def new_job(employer):
-    # TODO: create new job
-    return 'Success'
+    req_data = request.get_json()
+    listing_obj = dict_to_listing(req_data)
+    listing_obj.employer = employer
+    listing_obj.save()
+
+    return dumps(listing_to_dict(listing_obj)), 200
 
 
-@app.route('/v1/employer/<string:employer>/editJob/<string:job_name>', methods=['POST'])
-def edit_job(employer):
-    # TODO: edit job
-    return 'Success'
+@app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
+def edit_job(employer, job_id):
+    new_data = request.get_json()  # dictionary with data from user
+    ls_obj = Listing.query.filter(Listing.mongo_id == job_id).first()
+
+    if ls_obj is not None:
+
+        for key in new_data:
+            setattr(ls_obj, key, new_data[key])
+
+        ls_obj.save()
+        return 'Success'  # TODO: change return value as needed
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
 
 
 @app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])

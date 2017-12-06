@@ -12,7 +12,6 @@ def student_to_dict(st):
     :return: dictionary with keys as field name and value as field value
     """
     st_dict = dict()
-    #st_dict['_id'] = st._id['$oid']
     st_dict['username'] = st.username
     st_dict['first_name'] = st.first_name
     st_dict['last_name'] = st.last_name
@@ -26,6 +25,7 @@ def student_to_dict(st):
     st_dict['looking_for'] = st.looking_for  # list
     st_dict['job_matches'] = st.job_matches  # list
     st_dict['favorited_jobs'] = st.favorited_jobs  # list
+    st_dict['declined_jobs'] = st.declined_jobs  # list
 
     return st_dict
 
@@ -37,7 +37,6 @@ def dict_to_student(d):
     :return: Student object
     """
     st_obj = Student()
-    #st_obj._id = d['_id']
     st_obj.username = d['username']  # each student has a unique username
     st_obj.first_name = d['first_name']
     st_obj.last_name = d['last_name']
@@ -51,6 +50,7 @@ def dict_to_student(d):
     st_obj.looking_for = d['looking_for']  # list
     st_obj.job_matches = d['job_matches']  # list
     st_obj.favorited_jobs = d['favorited_jobs']  # list
+    st_obj.declined_jobs = d['declined_jobs']  # list
 
     return st_obj
 
@@ -95,7 +95,6 @@ def listing_to_dict(ls_obj):
     :return: dictionary with keys as field name and value as field value
     """
     ls_dict = dict()
-    ls_dict['_id'] = ls_obj._id
     ls_dict['title'] = ls_obj.title
     ls_dict['description'] = ls_obj.description
     ls_dict['employer'] = ls_obj.employer
@@ -116,7 +115,6 @@ def dict_to_listing(d):
     ls = Listing()
     ls.title = d['title']
     ls.description = d['description']
-    ls.employer = d['employer']
     ls.student_matches = d['student_matches']
     ls.salary = d['salary']
     ls.location = d['location']
@@ -179,8 +177,8 @@ def linkedin_basic_profile(token):
 
 
 def matcher(candidate, listing):
-    if str(candidate.looking_for[0]).lower() != listing.job_type.lower():
-        return 0
+    # if str(candidate.looking_for[0]).lower() != listing.job_type.lower():
+    #     return 0
 
     # Will not work on invalid access token, suggestion: scrape based on linkedin email
     # li_prof = linkedin_basic_profile(linkedin_token(candidate.linkedin_token))
