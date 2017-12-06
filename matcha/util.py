@@ -59,6 +59,7 @@ def employer_to_dict(em):
     em_dict['company_name'] = em.company_name
     em_dict['description'] = ''
     em_dict['num_employees'] = 0
+    em_dict['username'] = em.username
     em_dict['email'] = em.email
     em_dict['password'] = em.password
     em_dict['location'] = ''
@@ -76,6 +77,7 @@ def dict_to_employer(d):
     em_obj.company_name = d['company_name']  # each student has a unique username
     em_obj.description = ''
     em_obj.num_employees = 0
+    em_obj.username = d['email']
     em_obj.email = d['email']
     em_obj.password = d['password']
     em_obj.location = ''  # string

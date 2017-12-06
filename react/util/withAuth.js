@@ -19,7 +19,7 @@ export default function withAuth(AuthComponent) {
             if (!Auth.loggedIn()) {
                 Router.push('/');
             } else if (window.location.pathname === '/') {
-                Router.push(`/profile/${Auth.getProfile().account_type}/${Auth.getProfile().username}`);
+                Router.push(`/profile/${Auth.getProfile().account_type.toLowerCase()}/${Auth.getProfile().username}`);
             }
             this.setState({ isLoading: false })
         }
@@ -29,7 +29,7 @@ export default function withAuth(AuthComponent) {
 
                 <div>
                     {this.state.isLoading ? (
-                        <div className="loading">Loading</div>
+                        <div className="loading" />
                     ) : (
                         <AuthComponent {...this.props}  auth={Auth} />
                     )}
