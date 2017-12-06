@@ -1,5 +1,22 @@
 # Changelog
 
+## Iteration 5 - 2017-12-08
+
+### Added
+- LinkedIn token refresh
+- More robust Listing functionality: 
+  - create job
+  - favorite job
+  - decline job
+  - get current jobs
+  - edit job
+
+### Changed
+
+
+### Removed
+
+
 ## Iteration 4 - 2017-11-17
 
 ### Added
