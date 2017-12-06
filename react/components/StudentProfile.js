@@ -1,5 +1,6 @@
 import React from 'react';
 import Router from 'next/router';
+import classNames from 'classnames';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import withAuth from '../util/withAuth';
 
@@ -13,8 +14,11 @@ class StudentProfile extends React.Component {
             skills: [],
             matches: [],
             user: JSON.parse(localStorage.profile),
-            username: Router.asPath.slice(9)
+            username: Router.asPath.slice(Router.asPath.indexOf('student/')+8),
+            showSkills: false
         };
+
+        this.toggleSkills = this.toggleSkills.bind(this);
     }
 
     componentDidMount() {
@@ -42,7 +46,12 @@ class StudentProfile extends React.Component {
             });
     }
 
+    toggleSkills() {
+        this.setState({ showSkills: !this.state.showSkills });
+    }
+
     renderUserDetails() {
+        const skillsClass = classNames('skills', {hide: !this.state.showSkills});
         if (this.state.user) {
             return <div className="user-details">
                 <h1 className="name">
@@ -50,7 +59,8 @@ class StudentProfile extends React.Component {
                     <span className="thin"> ({this.state.username})</span>
                 </h1>
                 <h1 className="location">Location: {this.state.user.location}</h1>
-                <h1 className="skills">Skills: {this.state.user.skills ? this.state.user.skills.join(', '): ''}</h1>
+                <button className="btn btn-show-skills" onClick={this.toggleSkills}>{this.state.showSkills ? 'Hide Skills': 'Show Skills'}</button>
+                <h1 className={skillsClass}>Skills: {this.state.user.skills ? this.state.user.skills.join(', '): 'No skills found'}</h1>
                 <h1 className="looking-for">Looking for: {this.state.user.looking_for.join(', ')}</h1>
             </div>
         } else {
@@ -66,7 +76,7 @@ class StudentProfile extends React.Component {
             <div className="StudentProfile">
                 { this.renderUserDetails() }
                 <button className="btn"
-                        onClick={this.getMatches.bind(this)}>Get Matches</button>
+                        onClick={this.getMatches.bind(this)}>Refresh Matches</button>
 
                 <BootstrapTable data={ this.state.matches }>
                     <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>
