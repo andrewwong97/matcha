@@ -5,7 +5,9 @@
 @import 'components/Listings';
 @import 'base/Nav';
 @import 'base/Button';
+@import 'base/Loader';
 
+@import 'pages/Auth';
 @import 'pages/EmployerProfile';
 @import 'pages/Home';
 @import 'pages/StudentProfile';
@@ -25,4 +27,8 @@ a {
 
 .thin {
 	font-weight: 300;
+}
+
+.hide {
+	display: none !important;
 }

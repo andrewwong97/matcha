@@ -33,6 +33,7 @@ class Employer(mongo.Document):
     company_name = mongo.StringField()
     description = mongo.StringField()
     num_employees = mongo.IntField()
+    username = mongo.StringField()
     email = mongo.StringField()
     password = mongo.StringField()
     location = mongo.StringField()

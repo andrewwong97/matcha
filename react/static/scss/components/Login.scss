@@ -6,11 +6,7 @@
 	justify-content: center;
 	align-items: center;
 
-	input[name="email"],
-	input[name="password"],
-	input[name="first_name"],
-	input[name="last_name"],
-	input[name="company_name"]{
+	input[type="text"], input[type="password"] {
 		flex: 1 30%;
 		margin: 1% 35%;
 		padding: 20px;
@@ -55,5 +51,15 @@
 .logout {
 	&:hover {
 		cursor: pointer;
+	}
+}
+
+.login-buttons {
+	margin: 10px 35%;
+	display: flex;
+	flex-flow: row wrap;
+	button {
+		flex: 0 40%;
+
 	}
 }

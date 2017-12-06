@@ -9,7 +9,7 @@ class EmployerProfile extends React.Component {
         super(props);
 
         this.state = {
-            matches: [{id: 1, name: 'Software Engineer', student_name: 'Andrew Wong'}],
+            matches: [],
             profile: null,
         };
 
