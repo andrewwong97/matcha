@@ -43,6 +43,7 @@ def test_create_employer_profile():
     em_obj.company_name = rand_uname
     em_obj.description = 'description'
     em_obj.num_employees = 0
+    em_obj.username = 'username'
     em_obj.email = 'email'
     em_obj.password = 'password'
     em_obj.location = 'location'
@@ -53,6 +54,7 @@ def test_create_employer_profile():
     assert em_test.company_name == rand_uname
     assert em_test.description == 'description'
     assert em_test.num_employees == 0
+    assert em_test.username == 'username'
     assert em_test.email == 'email'
     assert em_test.password == 'password'
     assert em_test.location == 'location'
@@ -66,6 +68,7 @@ def test_edit_employer_profile():
     em_obj.company_name = rand_uname
     em_obj.description = 'description'
     em_obj.num_employees = 0
+    em_obj.username = 'username'
     em_obj.email = 'email'
     em_obj.password = 'password'
     em_obj.location = 'location'
