@@ -396,7 +396,7 @@ def get_all_listings():
     # client = MongoClient('mongodb://oose:letmein@ds015962.mlab.com:15962/matcha')
     client = MongoClient('mongodb://matcha:letmein@ds129146.mlab.com:29146/matcha2')
     db = client['matcha']
-    return dumps(db.listings.find()), 200
+    return dumps(db.Listing.find()), 200
 
 
 @app.route('/v1/skills/all', methods=['GET'])
