@@ -72,6 +72,6 @@ pass: matcha17
 ### DB User Details
 ```
 dbname: matcha
-db user: oose
+db user: matcha
 password: letmein
 ```
