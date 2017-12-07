@@ -1,7 +1,6 @@
-import json
 from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
-from models import Student, Employer, listings
+from models import Student, Employer, Listing
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
 from util import listing_to_dict
@@ -127,7 +126,9 @@ def create_student_profile():
         return dumps({'reason': 'Student account already exists for email'}), 404
     else:
         student_obj.save()
-        return dumps(student_to_dict(student_obj)), 200
+        st_dict = student_to_dict(student_obj)
+        st_dict['account_type'] = 'Student'
+        return dumps(st_dict), 200
 
 
 @app.route('/v1/getStudentProfile/<string:username>', methods=['GET'])
@@ -136,6 +137,7 @@ def get_student_profile(username):
 
     if st_obj is not None:
         student_dict = student_to_dict(st_obj)
+        student_dict['account_type'] = 'Student'
         return dumps(student_dict), 200
     else:
         return dumps({}), 404
@@ -167,7 +169,9 @@ def create_employer_profile():
         return dumps({'reason': 'Employer account already exists for email'}), 404
     else:
         employer_obj.save()
-        return dumps(employer_to_dict(employer_obj)), 200
+        em_dict = employer_to_dict(employer_obj)
+        em_dict['account_type'] = 'Employer'
+        return dumps(em_dict), 200
 
 
 @app.route('/v1/getEmployerProfile/<string:company_name>', methods=['GET'])
@@ -199,33 +203,96 @@ def edit_employer_profile(company_name):
 
 @app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
 def get_matches(username):
-    st_obj = Student.query.filter(Student.username == username).first()
+
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+
     if st_obj is not None:
-        matches = []
-        matches_dict = {}
-        for listing_obj in listings.query.all():
-            rating = matcher(st_obj, listing_obj)
-            if rating > 0:
-                if str(rating) not in matches_dict:
-                    matches_dict = {str(rating): [listing_to_dict(listing_obj)]}
-                else:
-                    matches_dict[str(rating)].append(listing_to_dict(listing_obj))
-        for key in matches_dict:
-            matches += matches_dict[key]
-        return dumps(matches), 200
+        return dumps(st_obj.job_matches)
     else:
         return 'Username Not Found'  # TODO: improve error handling
 
 
-@app.route('/v1/candidate/<string:username>/declineJob/<string:job_name>', methods=['POST'])
-def decline_job(username, job_name):
-    # TODO: search employer job listing to remove candidate from matches
+@app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
+def compute_matches(username):
+
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+
+    if st_obj is not None:
+        new_matches = []
+
+        for listing_obj in Listing.query.all(): # loop through all listings
+            rating = matcher(st_obj, listing_obj) # determine if there's a match
+            if rating > 0: # if there is a match
+
+                if listing_obj.mongo_id not in st_obj.declined_jobs: # if the listing isn't already in declined jobs
+
+                    if listing_obj.mongo_id not in st_obj.favorited_jobs: # or if listing isn't in favorited jobs
+
+                        new_matches.append(str(listing_obj.mongo_id)) # add it to the matches list in Student
+
+                        if st_obj.username not in listing_obj.student_matches: # if not already in Employer's matches add it too
+
+                            listing_obj.student_matches.append(st_obj.username)
+
+
+        st_obj.job_matches = new_matches # TODO: check if we change all matches each time
+        st_obj.save()
+        listing_obj.save()
+
+        return dumps(new_matches), 200
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
+
+@app.route('/v1/candidate/<string:username>/declineJob/<string:job_id>', methods=['POST'])
+def decline_job(username, job_id):
+
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+
+    if st_obj is not None: # TODO: add error handling
+
+        for job_match in st_obj.job_matches:
+
+            if (job_match == job_id):
+
+                st_obj.job_matches.remove(job_id)
+                st_obj.declined_jobs.append(job_id)
+
+        for fav_job in st_obj.favorited_jobs:
+
+            if (job_match == job_id):
+
+                st_obj.favorited_jobs.remove(job_id)
+                st_obj.declined_jobs.append(job_id)
+
+        st_obj.save()
+
+        return dumps(st_obj.declined_jobs)
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
     return 'Success'
 
 
-@app.route('/v1/candidate/<string:username>/favoriteJob/<string:job_name>', methods=['POST'])
-def favorite_job(username, job_name):
-    # TODO: add code to favorite job
+@app.route('/v1/candidate/<string:username>/favoriteJob/<string:job_id>', methods=['POST'])
+def favorite_job(username, job_id):
+
+    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+
+    if st_obj is not None:  # TODO: add error handling
+
+        for job_match in st_obj.job_matches:
+
+            if (job_match == job_id):
+                st_obj.job_matches.remove(job_id)
+                st_obj.favorited_jobs.append(job_id)
+
+        st_obj.save()
+
+        return dumps(st_obj.favorited_jobs)
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
     return 'Success'
 
 
@@ -250,10 +317,16 @@ def get_authorization(employer):
 
 @app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
 def get_current_jobs(employer):
-    job_listings = mongo.db.employers.find({'employer': employer},
-                                           {'jobs_listings': 1, '_id': 0})  # return only job matches
-    # TODO: Add any additional code
-    return dumps(job_listings)  # TODO: change return value as needed
+
+    current_jobs = []
+
+    for listing_obj in Listing.query.all():  # loop through all listings
+
+        if (listing_obj.employer == employer):
+
+            current_jobs.append(listing_obj.mongo_id)
+
+    return dumps(current_jobs)  # TODO: change return value as needed
 
 
 @app.route('/v1/employer/<string:employer>/favoriteCandidate/<string:candidate>/<string:job_name>', methods=['POST'])
@@ -264,14 +337,28 @@ def favorite_candidate(employer, job_name, candidate):
 
 @app.route('/v1/employer/<string:employer>/newJob', methods=['POST'])
 def new_job(employer):
-    # TODO: create new job
-    return 'Success'
+    req_data = request.get_json()
+    listing_obj = dict_to_listing(req_data)
+    listing_obj.employer = employer
+    listing_obj.save()
+
+    return dumps(listing_to_dict(listing_obj)), 200
 
 
-@app.route('/v1/employer/<string:employer>/editJob/<string:job_name>', methods=['POST'])
-def edit_job(employer):
-    # TODO: edit job
-    return 'Success'
+@app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
+def edit_job(employer, job_id):
+    new_data = request.get_json()  # dictionary with data from user
+    ls_obj = Listing.query.filter(Listing.mongo_id == job_id).first()
+
+    if ls_obj is not None:
+
+        for key in new_data:
+            setattr(ls_obj, key, new_data[key])
+
+        ls_obj.save()
+        return 'Success'  # TODO: change return value as needed
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
 
 
 @app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
@@ -306,16 +393,13 @@ def hide_account(employer):
 
 @app.route('/v1/listings/all', methods=['GET'])
 def get_all_listings():
-    from pymongo import MongoClient
-    client = MongoClient('mongodb://oose:letmein@ds015962.mlab.com:15962/matcha')
-    db = client['matcha']
-    return dumps(db.listings.find()), 200
+    return dumps(Listing.query.all()), 200
 
 
 @app.route('/v1/skills/all', methods=['GET'])
 def get_all_skills():
     all_skills = []
-    for listing in listings.query.all():
+    for listing in Listing.query.all():
         all_skills += listing.desired_skills
     return dumps(sorted(set(all_skills))), 200
 

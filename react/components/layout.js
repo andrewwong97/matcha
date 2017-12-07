@@ -25,8 +25,8 @@ export default class Layout extends React.Component {
             this.setState({
                 loggedIn: true,
                 username: this.auth.getProfile().username,
-                accountType: this.auth.getProfile().account_type,
-                profileLink: '/profile/' + this.auth.getProfile().account_type + '/' + this.auth.getProfile().username
+                accountType: this.auth.getProfile().account_type.toLowerCase(),
+                profileLink: '/profile/' + this.auth.getProfile().account_type.toLowerCase() + '/' + this.auth.getProfile().username
             });
         }
     }

@@ -1,4 +1,4 @@
-from models import Student, Employer, listings
+from models import Student, Employer, Listing
 
 
 def student_to_dict(st):
@@ -21,6 +21,7 @@ def student_to_dict(st):
     st_dict['looking_for'] = st.looking_for  # list
     st_dict['job_matches'] = st.job_matches  # list
     st_dict['favorited_jobs'] = st.favorited_jobs  # list
+    st_dict['declined_jobs'] = st.declined_jobs  # list
 
     return st_dict
 
@@ -45,6 +46,7 @@ def dict_to_student(d):
     st_obj.looking_for = d['looking_for']  # list
     st_obj.job_matches = d['job_matches']  # list
     st_obj.favorited_jobs = d['favorited_jobs']  # list
+    st_obj.declined_jobs = d['declined_jobs']  # list
 
     return st_obj
 
@@ -85,37 +87,42 @@ def dict_to_employer(d):
     return em_obj
 
 
-def listing_to_dict(obj):
+def listing_to_dict(ls_obj):
     """
     Convert MongoAlchemy listing fields to dictionary
     :param st: listing object
     :return: dictionary with keys as field name and value as field value
     """
-    listing_dict = dict()
-    listing_dict['name'] = obj.name
-    listing_dict['salary'] = obj.salary
-    listing_dict['employer'] = obj.employer
-    listing_dict['desired_skills'] = obj.desired_skills
-    listing_dict['job_type'] = obj.job_type
+    ls_dict = dict()
+    ls_dict['title'] = ls_obj.title
+    ls_dict['description'] = ls_obj.description
+    ls_dict['employer'] = ls_obj.employer
+    ls_dict['student_matches'] = ls_obj.student_matches
+    ls_dict['salary'] = ls_obj.salary
+    ls_dict['location'] = ls_obj.location
+    ls_dict['desired_skills'] = ls_obj.desired_skills
+    ls_dict['job_type'] = ls_obj.job_type
 
-    return listing_dict
+    return ls_dict
 
-
+  
 def dict_to_listing(d):
     """
     Convert dictionary to listing object
     :param d: dictionary
     :return: listing object
     """
-    l = listings()
-    l.name = d['name']
-    l.salary = d['salary']
-    l.employer = d['employer']
-    l.desired_skills = d['desired_skills']
-    l.job_type = d['job_type']
-    return l
+    ls = Listing()
+    ls.title = d['title']
+    ls.description = d['description']
+    ls.student_matches = d['student_matches']
+    ls.salary = d['salary']
+    ls.location = d['location']
+    ls.desired_skills = d['desired_skills']
+    ls.job_type = d['job_type']
+    return ls
 
-
+  
 def matcher(student, listing):
     rating = 0
     for i in student.looking_for:
@@ -152,5 +159,6 @@ def li_to_student(d):
     st_obj.looking_for = []
     st_obj.job_matches = []
     st_obj.favorited_jobs = []
+    st_obj.declined_jobs = []
 
     return st_obj
