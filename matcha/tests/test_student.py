@@ -171,6 +171,7 @@ def test_edit_student_profile_mismatch():
     st_obj.looking_for = ['job1', 'job2']  # list
     st_obj.job_matches = ['match1', 'match2']  # list
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
+    st_obj.declined_jobs = []
     st_obj.save()
 
     st_test = Student.query.filter(Student.username == rand_uname).first()
