@@ -54,6 +54,7 @@ def test_create_student_profile():
     st_obj.looking_for = ['job1', 'job2']  # list
     st_obj.job_matches = ['match1', 'match2']  # list
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
+    st_obj.declined_jobs = []
     st_obj.save()
 
     st_test = Student.query.filter(Student.username == rand_uname).first()
@@ -74,6 +75,7 @@ def test_create_student_profile():
     assert st_test.job_matches[1] == 'match2'
     assert st_test.favorited_jobs[0] == 'fav1'
     assert st_test.favorited_jobs[1] == 'fav2'
+    assert st_test.declined_jobs == []
 
     st_test.remove()
 
@@ -94,6 +96,7 @@ def test_create_student_profile_mismatch():
     st_obj.looking_for = ['job1', 'job2']  # list
     st_obj.job_matches = ['match1', 'match2']  # list
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
+    st_obj.declined_jobs = []
     st_obj.save()
 
     st_test = Student.query.filter(Student.username == rand_uname).first()
@@ -133,6 +136,7 @@ def test_edit_student_profile():
     st_obj.looking_for = ['job1', 'job2']  # list
     st_obj.job_matches = ['match1', 'match2']  # list
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
+    st_obj.declined_jobs = []
     st_obj.save()
 
     st_test = Student.query.filter(Student.username == rand_uname).first()

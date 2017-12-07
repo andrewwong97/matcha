@@ -169,7 +169,9 @@ def create_employer_profile():
         return dumps({'reason': 'Employer account already exists for email'}), 404
     else:
         employer_obj.save()
-        return dumps(employer_to_dict(employer_obj)), 200
+        em_dict = employer_to_dict(employer_obj)
+        em_dict['account_type'] = 'Employer'
+        return dumps(em_dict), 200
 
 
 @app.route('/v1/getEmployerProfile/<string:company_name>', methods=['GET'])
@@ -231,7 +233,6 @@ def compute_matches(username):
                         if st_obj.username not in listing_obj.student_matches: # if not already in Employer's matches add it too
 
                             listing_obj.student_matches.append(st_obj.username)
-
 
 
         st_obj.job_matches = new_matches # TODO: check if we change all matches each time
@@ -392,11 +393,7 @@ def hide_account(employer):
 
 @app.route('/v1/listings/all', methods=['GET'])
 def get_all_listings():
-    from pymongo import MongoClient
-    # client = MongoClient('mongodb://oose:letmein@ds015962.mlab.com:15962/matcha')
-    client = MongoClient('mongodb://matcha:letmein@ds129146.mlab.com:29146/matcha2')
-    db = client['matcha']
-    return dumps(db.Listing.find()), 200
+    return dumps(Listing.query.all()), 200
 
 
 @app.route('/v1/skills/all', methods=['GET'])
