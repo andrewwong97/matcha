@@ -94,7 +94,8 @@ class Register extends Component {
             looking_for: [this.state.jobType],
             job_matches: [],
             favorited_jobs: [],
-            expertise: this.state.expertise
+            expertise: this.state.expertise,
+            declined_jobs: []
         };
 
         const myHeaders = new Headers({

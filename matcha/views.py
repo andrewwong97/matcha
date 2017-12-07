@@ -1,4 +1,3 @@
-import json
 from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
 from models import Student, Employer, Listing
@@ -6,7 +5,6 @@ from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
 from util import listing_to_dict
 from util import matcher
-from heapq import heappush, heappop, heapify
 from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, linkedin_to_skills_list
 
 
@@ -392,7 +390,8 @@ def hide_account(employer):
 @app.route('/v1/listings/all', methods=['GET'])
 def get_all_listings():
     from pymongo import MongoClient
-    client = MongoClient('mongodb://oose:letmein@ds015962.mlab.com:15962/matcha')
+    # client = MongoClient('mongodb://oose:letmein@ds015962.mlab.com:15962/matcha')
+    client = MongoClient('mongodb://matcha:letmein@ds129146.mlab.com:29146/matcha2')
     db = client['matcha']
     return dumps(db.listings.find()), 200
 
@@ -400,7 +399,7 @@ def get_all_listings():
 @app.route('/v1/skills/all', methods=['GET'])
 def get_all_skills():
     all_skills = []
-    for listing in listings.query.all():
+    for listing in Listing.query.all():
         all_skills += listing.desired_skills
     return dumps(sorted(set(all_skills))), 200
 

@@ -136,3 +136,29 @@ def matcher(student, listing):
                 rating += 1
 
     return 1.0 * rating / (len(student.skills) + len(listing.desired_skills))
+
+
+def li_to_student(d):
+    """
+    Convert linkedin profile API response to student object
+    :param d: Linkedin API response dict
+    :return: Student representation
+    """
+
+    st_obj = Student()
+    st_obj.username = d['emailAddress']  # each student has a unique username
+    st_obj.first_name = d['firstName']
+    st_obj.last_name = d['lastName']
+    st_obj.email = d['emailAddress']
+    st_obj.password = ''
+    st_obj.linkedin_token = ''
+    st_obj.github_token = ''
+    st_obj.skills = []
+    st_obj.need_visa = ''
+    st_obj.location = d['location']['name']  # string
+    st_obj.looking_for = []
+    st_obj.job_matches = []
+    st_obj.favorited_jobs = []
+    st_obj.declined_jobs = []
+
+    return st_obj
