@@ -126,7 +126,9 @@ def create_student_profile():
         return dumps({'reason': 'Student account already exists for email'}), 404
     else:
         student_obj.save()
-        return dumps(student_to_dict(student_obj)), 200
+        st_dict = student_to_dict(student_obj)
+        st_dict['account_type'] = 'Student'
+        return dumps(st_dict), 200
 
 
 @app.route('/v1/getStudentProfile/<string:username>', methods=['GET'])
@@ -135,6 +137,7 @@ def get_student_profile(username):
 
     if st_obj is not None:
         student_dict = student_to_dict(st_obj)
+        student_dict['account_type'] = 'Student'
         return dumps(student_dict), 200
     else:
         return dumps({}), 404
