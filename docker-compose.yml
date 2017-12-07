@@ -16,4 +16,10 @@ services:
         - "3000:3000"
         volumes:
         - .:/code
-
+        links:
+        - mongodb
+    mongodb:
+        image: mongo:3.4.10
+        ports:
+        - "27017:27017"
+        container_name: mongodb_container
