@@ -1,4 +1,4 @@
-from models import Student, Employer, Listings
+from models import Student, Employer, Listing
 
 
 def student_to_dict(st):
