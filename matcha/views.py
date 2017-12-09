@@ -156,7 +156,7 @@ def edit_student_profile(username):
         st_obj.save()
         return dumps(student_to_dict(st_obj)), 200
     else:
-        return dumps({}), 404
+        return dumps({'reason': 'Student account does not exist'}), 404
 
 
 @app.route('/v1/createEmployerProfile', methods=['POST'])
@@ -171,22 +171,21 @@ def create_employer_profile():
     student_exists = Student.query.filter(Student.username == req_data['email']).first()
     if student_exists:
         return dumps({'reason': 'Student account already exists for email'}), 404
-    
+
     employer_obj.save()
     em_dict = employer_to_dict(employer_obj)
-    em_dict['account_type'] = 'Employer'
     return dumps(em_dict), 200
 
 
 @app.route('/v1/getEmployerProfile/<string:company_name>', methods=['GET'])
 def get_employer_profile(company_name):
-    em_obj = Employer.query.filter(Employer.company_name == company_name).first() # TODO: fix so not case sensitive
+    em_obj = Employer.query.filter(Employer.company_name == company_name).first()  # TODO: fix so not case sensitive
 
     if em_obj is not None:
         em_dict = employer_to_dict(em_obj)
-        return dumps(em_dict)
+        return dumps(em_dict), 200
     else:
-        return 'Username Not Found'  # TODO: improve error handling
+        return dumps({}), 404
 
 
 @app.route('/v1/editEmployerProfile/<string:username>', methods=['POST'])

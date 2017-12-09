@@ -22,6 +22,7 @@ def student_to_dict(st):
     st_dict['job_matches'] = st.job_matches  # list
     st_dict['favorited_jobs'] = st.favorited_jobs  # list
     st_dict['declined_jobs'] = st.declined_jobs  # list
+    st_dict['account_type'] = 'Student'
 
     return st_dict
 
@@ -65,6 +66,7 @@ def employer_to_dict(em):
     em_dict['email'] = em.email
     em_dict['password'] = em.password
     em_dict['location'] = ''
+    em_dict['account_type'] = 'Employer'
 
     return em_dict
 
@@ -102,6 +104,7 @@ def listing_to_dict(ls_obj):
     ls_dict['location'] = ls_obj.location
     ls_dict['desired_skills'] = ls_obj.desired_skills
     ls_dict['job_type'] = ls_obj.job_type
+    ls_dict['account_type'] = 'Listing'
 
     return ls_dict
 
