@@ -13,7 +13,8 @@ class EmployerProfile extends React.Component {
             matches: [],
             listings: [],
             profile: JSON.parse(localStorage.profile),
-            showAddListing: false
+            showAddListing: false,
+            isEditing: false
         };
 
         this.getMatches();
@@ -36,14 +37,34 @@ class EmployerProfile extends React.Component {
         // Get employer/job matches
     }
 
+    toggleEditing() {
+        this.setState({isEditing: !this.state.isEditing});
+    }
+
+    renderUserDetailsEditing() {
+        return (
+            <div className="company-details">
+                <h1 className="name">
+                    {this.state.profile.company_name}
+                    <span style={{fontSize: "16pt"}} className="thin"> ({this.props.username})</span>
+                </h1>
+            </div>
+        )
+    }
+
     renderUserDetails() {
-        return this.state.profile ?
+        if (this.state.isEditing) {
+            return this.renderUserDetailsEditing();
+        }
+
+        return (
             <div className="company-details">
                 <h1 className="name">
                     {this.state.profile.company_name}
                     <span className="thin"> ({this.props.username})</span>
                 </h1>
-            </div> : '';
+            </div>
+        )
     }
 
     toggleAddListing() {
@@ -52,10 +73,25 @@ class EmployerProfile extends React.Component {
     }
 
     render() {
+        if (!this.state.profile) {
+            return (
+                <h1 className="user-details">
+                    Loading User Details...
+                    <div className="loading-pulse" />
+                </h1>
+            );
+        }
 
         return (
             <div className="EmployerProfile">
-                <div className="logo-placeholder" />
+                <button
+                    className="btn"
+                    style={{float: "right"}}
+                    onClick={this.toggleEditing.bind(this)}
+                >
+                    {this.state.isEditing ? 'Done editing' : 'Edit profile'}
+                </button>
+                <div className="logo-placeholder"></div>
                 {this.renderUserDetails()}
 
                 <button
