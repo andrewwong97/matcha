@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { numberWithCommas } from '../util/fieldFormat';
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -11,15 +12,17 @@ class Listings extends Component {
 	}
 
 	renderListings() {
-		return this.state.listings == null ? 'Loading listings...' :
+		return !this.state.listings ?
+			<div className="loader"><h1 className="thin">Loading listings...</h1><div className="loading-pulse" /></div> :
 			this.state.listings.map((listing) =>
 				(
 					<li className="job-listing">
 						<div className="logo-placeholder"></div>
 						<div className="listing-text">
-							<p className="company">{listing.employer}</p>
-							<p className="name">{listing.name}</p>
-							<p className="salary">{listing.salary}</p>
+							<p className="company">{listing.company_name}</p>
+							<p className="name">{listing.title}</p>
+							<p className="salary">Salary: {listing.salary}</p>
+							<p className="skills">Skills: {listing.desired_skills.join(', ')}</p>
 						</div>
 					</li>
 				)

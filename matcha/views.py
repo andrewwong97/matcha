@@ -124,6 +124,10 @@ def create_student_profile():
     account_exists = Student.query.filter(Student.username == req_data['username']).first()
     if account_exists:
         return dumps({'reason': 'Student account already exists for email'}), 404
+
+    employer_exists = Employer.query.filter(Employer.username == req_data['username']).first()
+    if employer_exists:
+        return dumps({'reason': 'Employer account already exists for email'}), 404
     else:
         student_obj.save()
         st_dict = student_to_dict(student_obj)
