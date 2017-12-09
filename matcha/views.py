@@ -319,7 +319,6 @@ def get_authorization(employer):
 
 @app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
 def get_current_jobs(employer):
-    print Listing.query.all()
     return dumps([listing_to_dict(l) for l in Listing.query.all() if l.employer == employer]), 200
 
 

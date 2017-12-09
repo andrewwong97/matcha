@@ -17,8 +17,8 @@ export default class AddListing extends Component {
         this.handleSelect = this.handleSelect.bind(this);
         this.state = {
             title: '',
-            salary: 0,
-            jobType: null
+            jobType: null,
+            desired_skills: ''
         }
     }
 
@@ -39,20 +39,22 @@ export default class AddListing extends Component {
                 body: JSON.stringify({
                     title: this.state.title,
                     salary: this.state.salary,
-                    job_type: [this.state.jobType]
+                    job_type: [this.state.jobType],
+                    desired_skills: this.state.desired_skills.split(',')
                 })
             })
             .then(res => res.json())
             .then(data => {
                 alert('Added listing.');
-                this.setState({ title: '', salary: 0 });
+                this.setState({ title: '', salary: 0, desired_skills: '' });
             })
     }
 
     render() {
         return (
             <div className="AddListing">
-                <input type="text"
+                <div className="add-listing-control">
+                    <input type="text"
                        name="title"
                        value={this.state.title}
                        placeholder="Listing Name"
@@ -64,6 +66,12 @@ export default class AddListing extends Component {
                        placeholder="Salary"
                        onChange={this.handleChange}
                 />
+                 <input type="text"
+                       name="desired_skills"
+                       value={this.state.desired_skills}
+                       placeholder="Skills (comma separated)"
+                       onChange={this.handleChange}
+                />
                 <Select
                         name="jobType"
                         value={this.state.jobType}
@@ -71,6 +79,7 @@ export default class AddListing extends Component {
                         options={selectJobType}
                         onChange={this.handleSelect}
                     />
+                </div>
                 <button
                     className="btn"
                     onClick={this.submitListing.bind(this)}

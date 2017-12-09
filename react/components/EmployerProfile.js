@@ -73,6 +73,7 @@ class EmployerProfile extends React.Component {
     }
 
     render() {
+        console.log(this.state.listings)
         if (!this.state.profile) {
             return (
                 <h1 className="user-details">
@@ -111,6 +112,7 @@ class EmployerProfile extends React.Component {
                 <BootstrapTable data={ this.state.listings }>
                     <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='title'>Job Title</TableHeaderColumn>
+                    <TableHeaderColumn dataField='desired_skills'>Skills</TableHeaderColumn>
                     <TableHeaderColumn dataField='salary'>Salary</TableHeaderColumn>
                 </BootstrapTable>
 
