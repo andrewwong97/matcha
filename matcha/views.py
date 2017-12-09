@@ -167,11 +167,15 @@ def create_employer_profile():
     account_exists = Employer.query.filter(Employer.username == req_data['email']).first()
     if account_exists:
         return dumps({'reason': 'Employer account already exists for email'}), 404
-    else:
-        employer_obj.save()
-        em_dict = employer_to_dict(employer_obj)
-        em_dict['account_type'] = 'Employer'
-        return dumps(em_dict), 200
+
+    student_exists = Student.query.filter(Student.username == req_data['email']).first()
+    if student_exists:
+        return dumps({'reason': 'Student account already exists for email'}), 404
+    
+    employer_obj.save()
+    em_dict = employer_to_dict(employer_obj)
+    em_dict['account_type'] = 'Employer'
+    return dumps(em_dict), 200
 
 
 @app.route('/v1/getEmployerProfile/<string:company_name>', methods=['GET'])
