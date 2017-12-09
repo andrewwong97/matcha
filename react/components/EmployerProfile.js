@@ -1,6 +1,7 @@
 import React from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import withAuth from '../util/withAuth';
+import classNames from 'classnames';
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -10,10 +11,11 @@ class EmployerProfile extends React.Component {
 
         this.state = {
             matches: [],
-            profile: null,
+            profile: JSON.parse(localStorage.profile),
         };
 
-        this.getMatches()
+        this.getMatches();
+        this.renderUserDetails = this.renderUserDetails.bind(this);
     }
 
     componentDidMount() {
@@ -39,8 +41,13 @@ class EmployerProfile extends React.Component {
     render() {
         return (
             <div className="EmployerProfile">
-                <div className="logo-placeholder"></div>
+                <div className="logo-placeholder" />
                 {this.renderUserDetails()}
+
+                <button
+                    className="btn btn-add-listing"
+                    onClick={this.toggleAddListing}
+                >Add Listing</button>
 
                 <BootstrapTable data={ this.state.matches }>
                     <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>
