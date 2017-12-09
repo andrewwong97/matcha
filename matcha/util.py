@@ -81,9 +81,9 @@ def dict_to_employer(d):
     em_obj.company_name = d['company_name'] if 'company_name' in d else ''
     em_obj.description = d['description'] if 'description' in d else ''
     em_obj.num_employees = d['num_employees'] if 'num_employees' in d else 0
-    em_obj.username = d['email'] if 'email' in d else ''
-    em_obj.email = d['email'] if 'email' in d else ''
-    em_obj.password = d['password'] if 'password' in d else ''
+    em_obj.username = d['email']
+    em_obj.email = d['email']
+    em_obj.password = d['password']
     em_obj.location = d['location'] if 'location' in d else ''
 
     return em_obj

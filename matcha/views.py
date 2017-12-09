@@ -162,7 +162,6 @@ def edit_student_profile(username):
 @app.route('/v1/createEmployerProfile', methods=['POST'])
 def create_employer_profile():
     req_data = request.get_json()
-    employer_obj = dict_to_employer(req_data)
 
     account_exists = Employer.query.filter(Employer.username == req_data['email']).first()
     if account_exists:
@@ -172,6 +171,7 @@ def create_employer_profile():
     if student_exists:
         return dumps({'reason': 'Student account already exists for email'}), 404
 
+    employer_obj = dict_to_employer(req_data)
     employer_obj.save()
     em_dict = employer_to_dict(employer_obj)
     return dumps(em_dict), 200
@@ -221,26 +221,25 @@ def compute_matches(username):
     st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
 
     if st_obj is not None:
-        new_matches = []
+        new_matches = st_obj.job_matches
 
-        for listing_obj in Listing.query.all(): # loop through all listings
-            rating = matcher(st_obj, listing_obj) # determine if there's a match
-            if rating > 0: # if there is a match
+        for listing_obj in Listing.query.all():  # loop through all listings
+            rating = matcher(st_obj, listing_obj)  # determine if there's a match
+            if rating > 0:
+                if listing_obj.mongo_id not in st_obj.declined_jobs:  # if the listing isn't already in declined jobs
 
-                if listing_obj.mongo_id not in st_obj.declined_jobs: # if the listing isn't already in declined jobs
+                    if listing_obj.mongo_id not in st_obj.favorited_jobs:  # or if listing isn't in favorited jobs
 
-                    if listing_obj.mongo_id not in st_obj.favorited_jobs: # or if listing isn't in favorited jobs
-
-                        new_matches.append(str(listing_obj.mongo_id)) # add it to the matches list in Student
+                        new_matches.append(str(listing_obj.mongo_id))  # add it to the matches list in Student
 
                         if st_obj.username not in listing_obj.student_matches: # if not already in Employer's matches add it too
 
                             listing_obj.student_matches.append(st_obj.username)
 
-
-            st_obj.job_matches = new_matches # TODO: check if we change all matches each time
-            st_obj.save()
             listing_obj.save()
+
+        st_obj.job_matches = list(set(new_matches))
+        st_obj.save()
 
         return dumps(new_matches), 200
     else:
