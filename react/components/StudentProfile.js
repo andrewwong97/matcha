@@ -38,7 +38,6 @@ class StudentProfile extends React.Component {
         fetch(baseUrl + '/v1/candidate/' + this.state.username + '/getMatches', options)
             .then((response) => response.json())
             .then((matches) => {
-                console.log(matches);
                 this.setState({ matches });
             })
             .catch(error => {
@@ -57,8 +56,11 @@ class StudentProfile extends React.Component {
             })
             .then(response => response.json())
             .then((user_profile) => {
-                console.log(user_profile);
                 this.setState({user: user_profile});
+                user_profile['account_type'] = 'student';
+                console.log(user_profile)
+                console.log(JSON.stringify(user_profile))
+                localStorage.setItem('profile', JSON.stringify(user_profile));
             })
             .catch(error => {
                 console.log(`Error ${error}`);
