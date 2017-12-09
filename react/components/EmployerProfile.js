@@ -1,7 +1,7 @@
 import React from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import withAuth from '../util/withAuth';
-import classNames from 'classnames';
+import AddListing from './AddListing';
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -11,17 +11,20 @@ class EmployerProfile extends React.Component {
 
         this.state = {
             matches: [],
+            listings: [],
             profile: JSON.parse(localStorage.profile),
+            showAddListing: false
         };
 
         this.getMatches();
         this.renderUserDetails = this.renderUserDetails.bind(this);
+        this.toggleAddListing = this.toggleAddListing.bind(this);
     }
 
     componentDidMount() {
-        fetch(`${baseUrl}/v1/getProfile/${this.props.username}`, {method: 'GET'})
-            .then((res) => res.json())
-            .then((user) => this.setState({ user }));
+        fetch(baseUrl + '/v1/employer/' + this.state.profile.company_name + '/getCurrentJobs', {method: 'GET'})
+            .then(res => res.json())
+            .then(listings => this.setState({ listings }))
     }
 
     getMatches() {
@@ -38,6 +41,10 @@ class EmployerProfile extends React.Component {
             </div> : '';
     }
 
+    toggleAddListing() {
+        this.setState({ showAddListing: !this.state.showAddListing });
+    }
+
     render() {
         return (
             <div className="EmployerProfile">
@@ -47,13 +54,23 @@ class EmployerProfile extends React.Component {
                 <button
                     className="btn btn-add-listing"
                     onClick={this.toggleAddListing}
-                >Add Listing</button>
+                >{this.state.showAddListing ? 'Hide Add Listing': 'Add Listing'}</button>
+                { this.state.showAddListing ? <AddListing profile={this.state.profile} /> : '' }
 
+                <h1>Matches</h1>
                 <BootstrapTable data={ this.state.matches }>
                     <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='name'>Job Title</TableHeaderColumn>
                     <TableHeaderColumn dataField='student_name'>Student Name</TableHeaderColumn>
                 </BootstrapTable>
+
+                <h1>Listings</h1>
+                <BootstrapTable data={ this.state.listings }>
+                    <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>
+                    <TableHeaderColumn dataField='title'>Job Title</TableHeaderColumn>
+                    <TableHeaderColumn dataField='salary'>Salary</TableHeaderColumn>
+                </BootstrapTable>
+
             </div>
         )
     }
