@@ -19,9 +19,14 @@ class EmployerProfile extends React.Component {
         this.getMatches();
         this.renderUserDetails = this.renderUserDetails.bind(this);
         this.toggleAddListing = this.toggleAddListing.bind(this);
+        this.updateListings = this.updateListings.bind(this);
     }
 
     componentDidMount() {
+        this.updateListings();
+    }
+
+    updateListings() {
         fetch(baseUrl + '/v1/employer/' + this.state.profile.company_name + '/getCurrentJobs', {method: 'GET'})
             .then(res => res.json())
             .then(listings => this.setState({ listings }))
@@ -43,9 +48,11 @@ class EmployerProfile extends React.Component {
 
     toggleAddListing() {
         this.setState({ showAddListing: !this.state.showAddListing });
+        this.updateListings();
     }
 
     render() {
+
         return (
             <div className="EmployerProfile">
                 <div className="logo-placeholder" />
