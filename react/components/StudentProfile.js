@@ -46,11 +46,31 @@ class StudentProfile extends React.Component {
             });
     }
 
+    updateUserProfile(profile) {
+        fetch(
+            baseUrl + '/v1/editStudentProfile/' + this.state.username,
+            {
+                method: 'POST',
+                body: JSON.stringify(profile)
+            })
+            .then(response => response.json())
+            .then((user_profile) => {
+                console.log(user_profile);
+                this.setState({user: user_profile});
+            })
+            .catch(error => {
+                console.log(`Error ${error}`);
+            });
+    }
+
     toggleSkills() {
         this.setState({showSkills: !this.state.showSkills});
     }
 
     toggleEditing() {
+        if (this.state.isEditing) {
+            this.updateUserProfile(this.state.user)
+        }
         this.setState({isEditing: !this.state.isEditing});
     }
 
@@ -76,13 +96,15 @@ class StudentProfile extends React.Component {
                 <h1 className="subtitle">{this.state.username}</h1>
 
                 <h1 className="location">
-                    <input type="text" value={this.state.user.location} onChange={this.handleLocationChange.bind(this)} />
+                    <input placeholder="Location..." type="text" value={this.state.user.location} onChange={this.handleLocationChange.bind(this)} />
                 </h1>
                 <h1 className="looking-for">
-                    Looking for: <input type="text" value={this.state.user.looking_for.join(', ')} onChange={this.handleLookingChange.bind(this)} />
+                    Looking for:
+                    <input placeholder="Job type..." type="text" value={this.state.user.looking_for.join(', ')} onChange={this.handleLookingChange.bind(this)} />
                 </h1>
                 <h1 className="skills">
-                    Skills: <input type="text" value={this.state.user.skills.join(', ')} onChange={this.handleSkillsChange.bind(this)} />
+                    Skills:
+                    <input placeholder="Add skills (comma separated)..." type="text" value={this.state.user.skills.join(', ')} onChange={this.handleSkillsChange.bind(this)} />
                 </h1>
             </div>
         )
@@ -103,7 +125,7 @@ class StudentProfile extends React.Component {
                     Skills: {this.state.showSkills ? (
                         this.state.user.skills ? this.state.user.skills.join(', '): 'Add skills...'
                     ) : (
-                        <span style={{cursor: "pointer"}} onClick={this.toggleSkills}> Show skills... </span>
+                        <span style={{cursor: "pointer"}} onClick={this.toggleSkills}> show skills... </span>
                     )}
                 </h1>
             </div>
