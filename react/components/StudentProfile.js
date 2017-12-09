@@ -32,7 +32,7 @@ class StudentProfile extends React.Component {
     getMatches() {
         const options = {
             method: 'GET',
-            type: 'cors'
+            mode: 'cors'
         }
 
         fetch(baseUrl + '/v1/candidate/' + this.state.username + '/getMatches', options)
@@ -51,8 +51,9 @@ class StudentProfile extends React.Component {
             baseUrl + '/v1/editStudentProfile/' + this.state.username,
             {
                 method: 'POST',
-                mode: 'no-cors',
+                headers: new Headers({"Content-Type": 'application/json'}),
                 body: JSON.stringify(profile),
+                mode: 'cors'
             })
             .then(response => response.json())
             .then((user_profile) => {
@@ -101,11 +102,11 @@ class StudentProfile extends React.Component {
                 </h1>
                 <h1 className="looking-for">
                     Looking for:
-                    <input placeholder="Job type..." type="text" value={this.state.user.looking_for.join(', ')} onChange={this.handleLookingChange.bind(this)} />
+                    <input placeholder="Job type..." type="text" value={this.state.user.looking_for.length > 1? this.state.user.looking_for.join(', ') : this.state.user.looking_for[0]} onChange={this.handleLookingChange.bind(this)} />
                 </h1>
                 <h1 className="skills">
                     Skills:
-                    <input placeholder="Add skills (comma separated)..." type="text" value={this.state.user.skills.join(', ')} onChange={this.handleSkillsChange.bind(this)} />
+                    <input placeholder="Add skills (comma separated)..." type="text" value={this.state.user.skills.length > 1? this.state.user.skills.join(', ') : this.state.user.skills[0]} onChange={this.handleSkillsChange.bind(this)} />
                 </h1>
             </div>
         )
@@ -121,12 +122,12 @@ class StudentProfile extends React.Component {
                 <h1 className="name">{this.state.user.first_name} {this.state.user.last_name}</h1>
                 <h1 className="subtitle">{this.state.username}</h1>
                 <h1 className="location">{this.state.user.location || "Add a location..."}</h1>
-                <h1 className="looking-for">Looking for: {this.state.user.looking_for.join(', ')}</h1>
+                <h1 className="looking-for">Looking for: {this.state.user.looking_for ? this.state.user.looking_for.join(', ') : ''}</h1>
                 <h1 className="skills">
                     Skills: {this.state.showSkills ? (
                         this.state.user.skills ? this.state.user.skills.join(', '): 'Add skills...'
                     ) : (
-                        <span style={{cursor: "pointer"}} onClick={this.toggleSkills}> show skills... </span>
+                        <span style={{cursor: "pointer", color: '#cccccc'}} onClick={this.toggleSkills}> show skills... </span>
                     )}
                 </h1>
             </div>
