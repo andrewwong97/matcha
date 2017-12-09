@@ -58,8 +58,6 @@ class StudentProfile extends React.Component {
             .then((user_profile) => {
                 this.setState({user: user_profile});
                 user_profile['account_type'] = 'student';
-                console.log(user_profile)
-                console.log(JSON.stringify(user_profile))
                 localStorage.setItem('profile', JSON.stringify(user_profile));
             })
             .catch(error => {
