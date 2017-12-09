@@ -51,7 +51,7 @@ class StudentProfile extends React.Component {
             baseUrl + '/v1/editStudentProfile/' + this.state.username,
             {
                 method: 'POST',
-                mode: 'cors',
+                mode: 'no-cors',
                 body: JSON.stringify(profile),
             })
             .then(response => response.json())
