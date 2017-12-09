@@ -387,7 +387,7 @@ def hide_account(employer):
 
 @app.route('/v1/listings/all', methods=['GET'])
 def get_all_listings():
-    return dumps(Listing.query.all()), 200
+    return dumps([listing_to_dict(l) for l in Listing.query.all()]), 200
 
 
 @app.route('/v1/skills/all', methods=['GET'])
