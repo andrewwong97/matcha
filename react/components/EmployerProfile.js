@@ -85,20 +85,20 @@ class EmployerProfile extends React.Component {
 
         return (
             <div className="EmployerProfile">
-                <button
-                    className="btn"
-                    style={{float: "right"}}
-                    onClick={this.toggleEditing.bind(this)}
-                >
-                    {this.state.isEditing ? 'Done editing' : 'Edit profile'}
-                </button>
-                <div className="logo-placeholder"></div>
+                {/*<button*/}
+                    {/*className="btn"*/}
+                    {/*style={{float: "right"}}*/}
+                    {/*onClick={this.toggleEditing.bind(this)}*/}
+                {/*>*/}
+                    {/*{this.state.isEditing ? 'Done editing' : 'Edit profile'}*/}
+                {/*</button>*/}
+                <div className="logo-placeholder" />
                 {this.renderUserDetails()}
 
                 <button
                     className="btn btn-add-listing"
                     onClick={this.toggleAddListing}
-                >{this.state.showAddListing ? 'Hide Add Listing': 'Add Listing'}</button>
+                >{this.state.showAddListing ? 'Finish Adding': 'Add Listing'}</button>
                 { this.state.showAddListing ? <AddListing profile={this.state.profile} /> : '' }
 
                 <h1>Matches</h1>
