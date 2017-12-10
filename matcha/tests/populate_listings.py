@@ -13,10 +13,13 @@ def populate():
 	for l in listings:
 		db.Listing.insert({
 			'title': l['name'],
+			'description': '',
 			'employer': l['employer'],
 			'salary': l['salary'],
 			'desired_skills': list(l['desired_skills']),
-			'job_type': list(l['job_type'])
+			'job_type': [l['job_type']],
+			'student_matches': list(),
+			'location': 'New York'
 			})
 
 if __name__ == '__main__':
