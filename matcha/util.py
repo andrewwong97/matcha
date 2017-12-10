@@ -34,15 +34,15 @@ def dict_to_student(d):
     :return: Student object
     """
     st_obj = Student()
-    st_obj.username = d['username']  # each student has a unique username
+    st_obj.username = d['username'] if 'username' in d else ''  # each student has a unique username
     st_obj.first_name = d['first_name'] if 'first_name' in d else ''
     st_obj.last_name = d['last_name'] if 'last_name' in d else ''
     st_obj.email = d['email']
     st_obj.password = d['password']
-    st_obj.linkedin_token = d['linkedin_token'] if 'linkedin_token' else ''
-    st_obj.github_token = d['github_token'] if 'github_token' else ''
+    st_obj.linkedin_token = d['linkedin_token'] if 'linkedin_token' in d else ''
+    st_obj.github_token = d['github_token'] if 'github_token' in d else ''
     st_obj.skills = d['skills'] if 'skills' in d else []  # list of strings
-    st_obj.need_visa = d['need_visa'] if 'need_visa' in d else False  # boolean
+    st_obj.need_visa = d['need_visa'] if 'need_visa' in d else 'no'  # boolean STRING
     st_obj.location = d['location'] if 'location' in d else 'New York'  # string
     st_obj.looking_for = d['looking_for'] if 'looking_for' in d else ['Internship', 'Full-Time', 'Co-op']  # list
     st_obj.job_matches = d['job_matches'] if 'job_matches' in d else []  # list
@@ -118,20 +118,24 @@ def dict_to_listing(d):
     ls = Listing()
     ls.title = d['title'] if 'title' in d else ''
     ls.description = d['description'] if 'description' in d else ''
+    ls.employer = d['employer'] if 'employer' in d else ''
     ls.student_matches = d['student_matches'] if 'student_matches' in d else []
     ls.salary = float(d['salary']) if 'salary' in d else 0
     ls.location = d['location'] if 'location' in d else ''
     ls.desired_skills = d['desired_skills'] if 'desired_skills' in d else []
-    ls.job_type = d['job_type'] if 'job_type' in d else ''
+    ls.job_type = d['job_type'] if 'job_type' in d else ['Internship', 'Full-Time']
     return ls
 
   
-def matcher(student, listing):
-    rating = 0
+def skills_matcher(student, listing):
+    same_job_type = False
     for i in student.looking_for:
-        if listing.job_type.lower() == i:
-            return 0
+        if i in listing.job_type:
+            same_job_type = True
+    if not same_job_type:
+        return 0
 
+    rating = 0
     for skill in student.skills:
         for desired in listing.desired_skills:
             if skill.lower() == desired.lower():

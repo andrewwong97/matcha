@@ -12,6 +12,7 @@ from mongoalchemy.fields import *
 #         super_schema = super(MatchField, self).schema_json()
 #         return dict(**super_schema)
 
+
 class Student(mongo.Document):
     username = mongo.StringField()
     first_name = mongo.StringField()

@@ -4,7 +4,7 @@ from models import Student, Employer, Listing
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
 from util import listing_to_dict, dict_to_listing
-from util import matcher
+from util import skills_matcher
 from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, linkedin_to_skills_list
 
 
@@ -228,7 +228,7 @@ def compute_matches(username):
         new_matches = st_obj.job_matches
 
         for listing_obj in Listing.query.all():  # loop through all listings
-            rating = matcher(st_obj, listing_obj)  # determine if there's a match
+            rating = skills_matcher(st_obj, listing_obj)  # determine if there's a match
             if rating > 0:
                 if listing_obj.mongo_id not in st_obj.declined_jobs:  # if the listing isn't already in declined jobs
 
