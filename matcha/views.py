@@ -119,6 +119,11 @@ def logout():
 @app.route('/v1/createStudentProfile', methods=['POST'])
 def create_student_profile():
     req_data = request.get_json()
+
+    if 'skills' in req_data:
+        skills = [i.lower() for i in req_data['skills']]
+        req_data['skills'] = skills
+
     student_obj = dict_to_student(req_data)
 
     account_exists = Student.query.filter(Student.username == req_data['username']).first()
