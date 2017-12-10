@@ -57,7 +57,7 @@ Navigate to `localhost:3000` on your favorite browser.
 ## Running Tests
 
 1. Navigate to top level matcha directory
-2. Run `nosetests`
+2. Run `nosetests --with-coverage --cover-package matcha`
 
 ## DB Access - MongoDB
 
@@ -71,7 +71,8 @@ pass: matcha17
 
 ### DB User Details
 ```
-dbname: matcha
+https://mlab.com/databases/matcha2
+dbname: matcha2
 db user: matcha
 password: letmein
 ```
