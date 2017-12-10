@@ -3,16 +3,22 @@
 ## Iteration 5 - 2017-12-08
 
 ### Added
-- LinkedIn token refresh
-- More robust Listing functionality: 
+- Automatic skill population based on your most recent Linkedin profile fetch
+- Linkedin token refresh
+- Listing endpoints: 
   - create job
   - favorite job
   - decline job
   - get current jobs
   - edit job
+- Add listing from employer profile
+- Edit student profile
+- Fixed random 404s popping up after login/register
+ 
 
 ### Changed
-
+- Better loaders
+- If logged in, home page redirects to profile
 
 ### Removed
 
