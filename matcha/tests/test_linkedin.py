@@ -6,6 +6,16 @@ import urlparse
 from matcha.linkedin import config_dict
 
 
+def setup():
+    import nltk
+    nltk.download('punkt')
+    nltk.download('stopwords')
+
+
+def teardown():
+    pass
+
+
 def test_li_config_dict():
     cfg = config_dict()
     assert 'linkedin_client_id' in cfg and 'linkedin_client_secret' in cfg
@@ -40,6 +50,7 @@ def test_invalid_linkedin_profile_dict_access():
     assert profile['firstName'] and profile['lastName']
 
 
+@with_setup(setup, teardown)
 def test_linkedin_to_skills_list():
     current_dir = os.path.dirname(os.path.realpath(__file__))
     data = json.loads(open(os.path.join(current_dir, 'sample_linkedin_response.json'), 'r').read())
