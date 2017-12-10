@@ -120,8 +120,6 @@ class Register extends Component {
                 alert("Error creating account. Please check for duplicate emails.");
                 console.log(`Error ${error}`);
             });
-
-
     }
 
 

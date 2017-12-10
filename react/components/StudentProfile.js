@@ -1,8 +1,8 @@
 import React from 'react';
 import Router from 'next/router';
-import classNames from 'classnames';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import withAuth from '../util/withAuth';
+import Loading from './Loading';
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -137,10 +137,7 @@ class StudentProfile extends React.Component {
     render() {
         if (!this.state.user) {
             return (
-                <h1 className="user-details">
-                    Loading User Details...
-                    <div className="loading-pulse" />
-                </h1>
+                <Loading />
             );
         }
 

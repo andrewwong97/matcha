@@ -122,7 +122,14 @@ def dict_to_listing(d):
     ls.student_matches = d['student_matches'] if 'student_matches' in d else []
     ls.salary = float(d['salary']) if 'salary' in d else 0
     ls.location = d['location'] if 'location' in d else ''
-    ls.desired_skills = d['desired_skills'] if 'desired_skills' in d else []
+    if 'desired_skills' in d:
+        if type(d['desired_skills']) == 'str':
+            skills = d['desired_skills'].strip().split(',')
+            ls.desired_skills = [i.strip() for i in skills]
+        else:
+            ls.desired_skills = d['desired_skills']
+    else:
+        ls.desired_skills = []
     ls.job_type = d['job_type'] if 'job_type' in d else ['Internship', 'Full-Time']
     return ls
 
