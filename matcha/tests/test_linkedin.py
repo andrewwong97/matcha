@@ -1,7 +1,14 @@
 from nose.tools import *
 from matcha.views import *
-import json, os
+import json
+import os
 import urlparse
+from matcha.linkedin import config_dict
+
+
+def test_li_config_dict():
+    cfg = config_dict()
+    assert 'linkedin_client_id' in cfg and 'linkedin_client_secret' in cfg
 
 
 def test_li_redirect_uri():

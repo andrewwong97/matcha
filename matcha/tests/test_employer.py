@@ -97,7 +97,7 @@ def test_employer_profile_incomplete():
     em_obj.company_name = rand_uname
     # no description
     em_obj.num_employees = 0
-    em_obj.email = 'email'
+    # no email
     em_obj.password = 'password'
     em_obj.location = 'location'
     em_obj.save()
