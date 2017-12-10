@@ -19,6 +19,9 @@ pip install docker-compose
 docker-compose up -d --build    # deployed on port 3000
 ```
 
+To see active container logs, run `docker ps` to find the names of your containers.
+Then run `docker logs -f <CONTAINER_NAME>`.
+
 If you are running Docker from AWS, make sure you allow traffic to port 3000 or change this line in `docker-compose.yml`:
 ```
 FROM: - "3000:3000"
