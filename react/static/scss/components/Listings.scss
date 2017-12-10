@@ -39,12 +39,25 @@
             .company {
                 font-size: 16pt;
             }
-            .name, .salary {
+            .name, .salary, .skills {
                 display: block;
                 font-size: 13pt;
                 font-weight: 300;
             }
         }
 
+    }
+}
+
+.add-listing-control {
+    display: flex;
+    max-width: 70%;
+    flex-flow: row wrap;
+    input {
+        flex: 1 30%;
+    }
+
+    .Select {
+        flex: 0 50%;
     }
 }

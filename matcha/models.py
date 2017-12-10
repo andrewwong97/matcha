@@ -44,8 +44,8 @@ class Listing(mongo.Document):
     description = mongo.StringField()
     employer = mongo.StringField()
     student_matches = mongo.ListField(mongo.StringField())
-    salary = mongo.IntField()
+    salary = mongo.FloatField()
     location = mongo.StringField()
     desired_skills = mongo.ListField(mongo.StringField())
-    job_type = mongo.StringField()
+    job_type = mongo.ListField(mongo.StringField())
 
