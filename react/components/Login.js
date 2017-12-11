@@ -63,16 +63,14 @@ class Login extends React.Component {
 					type="password"
 					onEnter={this.handleLogin}
 				/>
-				<div className="login-buttons">
+				<div className="social-login">
 					<button className="btn btn-li" onClick={this.linkedinLogin}>
                     Login via LinkedIn
                 </button>
 				<button className="btn btn-submitLogin" onClick={this.handleLogin}>Submit</button>
-				<Link href="/register"><a>Need an account? Register here</a></Link>
-
-				{ this.state.badLogin ? <p style={{'color': '#ed441e'}}>
-					Error: please check that you have correctly entered username and/or password</p> : ''
-				}
+				</div>
+				<div className="extra-wrapper">
+					<Link href="/register"><a>Need an account? Register here</a></Link>
 				</div>
 			</div>
 		);

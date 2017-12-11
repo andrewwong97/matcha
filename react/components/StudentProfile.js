@@ -1,8 +1,10 @@
 import React from 'react';
 import Router from 'next/router';
+import Select from 'react-select';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import withAuth from '../util/withAuth';
 import Loading from './Loading';
+import { strTransform } from "../util/fieldFormat";
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -10,6 +12,18 @@ const getOptions = {
     method: 'GET',
     mode: 'cors'
 };
+
+const jobTypes = [
+    {'value': 'Internship', 'label': 'Internship'},
+    {'value': 'Co-op', 'label': 'Co-op'},
+    {'value': 'Full-Time', 'label': 'Full-Time'},
+];
+
+/**
+ * Convert array of strings to respective Select object
+ * @param arr Array of strings
+ */
+const arrToSelectObj = (arr) => arr.map(label => ({value: label, label }));
 
 class StudentProfile extends React.Component {
     constructor(props){
@@ -33,8 +47,14 @@ class StudentProfile extends React.Component {
         if (localStorage.profile) {
             const user = JSON.parse(localStorage.profile);
             this.setState({ user });
+            this.state.looking_for = arrToSelectObj(this.state.user.looking_for);
+            this.state.skills = arrToSelectObj(this.state.user.skills);
         }
         this.getMatches();
+         fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
+            .then(res => res.json())
+            .then(data => data.map(s => ({label: strTransform(s), value: strTransform(s) })))
+            .then(skills => this.setState({ allSkills: skills.sort() }));
     }
 
     /**
@@ -86,6 +106,7 @@ class StudentProfile extends React.Component {
                 this.setState({user: user_profile});
                 user_profile['account_type'] = 'student';
                 localStorage.setItem('profile', JSON.stringify(user_profile));
+                this.computeMatches();
             })
             .catch(error => {
                 console.log(`Error ${error}`);
@@ -108,14 +129,14 @@ class StudentProfile extends React.Component {
         this.setState({user: this.state.user});
     }
 
-    handleLookingChange(event) {
-        this.state.user.looking_for = event.target.value.split(', ');
-        this.setState({user: this.state.user});
+    handleJobSelect(selected_types) {
+        this.state.user.looking_for = selected_types.map(i => i.value);
+	    this.setState({user: this.state.user, looking_for: selected_types });
     }
 
-    handleSkillsChange(event) {
-        this.state.user.skills = event.target.value.split(', ');
-        this.setState({user: this.state.user});
+    handleSkillSelect(selected_skills) {
+        this.state.user.skills = selected_skills.map(i => i.value);
+        this.setState({user: this.state.user, skills: selected_skills });
     }
 
     renderUserDetailsEditing() {
@@ -125,24 +146,32 @@ class StudentProfile extends React.Component {
                 <h1 className="subtitle">{this.state.username}</h1>
 
                 <h1 className="location">
-                    <input placeholder="Location..." type="text"
+                    <input placeholder="Location..."
+                           type="text"
+                           style={{width: "40%"}}
                            value={this.state.user.location}
                            onChange={this.handleLocationChange.bind(this)} />
                 </h1>
-                <h1 className="looking-for">
-                    Looking for:
-                    <input
-                        placeholder="Job type (comma separated)"
-                        type="text"
-                        value={this.state.user.looking_for.length > 1 ? this.state.user.looking_for.join(', ') : this.state.user.looking_for[0]}
-                        onChange={this.handleLookingChange.bind(this)} />
-                </h1>
-                <h1 className="skills">
-                    Skills:
-                    <input placeholder="Add skills (comma separated)..." type="text"
-                           value={this.state.user.skills.length > 1? this.state.user.skills.join(', ') : this.state.user.skills[0]}
-                           onChange={this.handleSkillsChange.bind(this)} />
-                </h1>
+                <h1 className="looking-for">Looking for:</h1>
+                <Select
+                        name="looking_for"
+                        style={{width: "40%"}}
+                        multi={true}
+                        value={this.state.looking_for}
+                        placeholder="Job Type"
+                        options={jobTypes}
+                        onChange={this.handleJobSelect.bind(this)}
+                    />
+                <h1 className="skills">Skills:</h1>
+                <Select
+                    name="skills"
+                    style={{width: "40%", marginBottom: "20px"}}
+                    value={this.state.skills}
+                    placeholder="Skills"
+                    options={this.state.allSkills}
+                    onChange={this.handleSkillSelect.bind(this)}
+                    multi={true}
+                />
             </div>
         )
     }

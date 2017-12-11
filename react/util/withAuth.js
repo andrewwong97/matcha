@@ -2,6 +2,7 @@
 import React, {Component} from 'react'
 import AuthService from './AuthService'
 import Router from 'next/router'
+import Loading from '../components/Loading';
 
 
 export default function withAuth(AuthComponent) {
@@ -29,7 +30,7 @@ export default function withAuth(AuthComponent) {
 
                 <div>
                     {this.state.isLoading ? (
-                        <div className="loading" />
+                        <Loading />
                     ) : (
                         <AuthComponent {...this.props}  auth={Auth} />
                     )}
