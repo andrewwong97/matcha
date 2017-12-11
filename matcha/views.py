@@ -213,23 +213,49 @@ def edit_employer_profile(username):
         return dumps({}), 404
 
 
+def job_matches_to_dict(match_list):
+    """
+    Helper function for writing JSON output match tuple lists
+    :param match_list: Student job_matches field
+    :return: dictionary of listings, in order of highest to lowest match
+    """
+    sorted_matches = sorted(match_list, key=lambda x: x[1], reverse=True)
+    out_json = []
+    for m in sorted_matches:
+        listing = Listing.query.get(m[0])
+        out_json.append(dumps(listing))
+
+
+def listing_matches_to_dict(match_list):
+    """
+    Similar to job_matches_to_dict, but for listing matches
+    :param match_list: Listing student_matches field
+    :return: dictionary of students, in order of highest to lowest match
+    """
+    sorted_matches = sorted(match_list, key=lambda x: x[1], reverse=True)
+    out_json = []
+    for m in sorted_matches:
+        student = Student.query.filter(Student.username == m[0])
+        out_json.append(dumps(student))
+
+
 @app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
-def get_matches(username):
+def get_student_matches(username):
+    """ Return existing matches """
+    st_obj = Student.query.filter(Student.username == username).first()
 
-    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
-
-    if st_obj is not None:
-        return dumps(st_obj.job_matches)
+    if st_obj:
+        return dumps(job_matches_to_dict(st_obj.job_matches))
     else:
-        return 'Username Not Found'  # TODO: improve error handling
+        return dumps({"reason": "Student not found"}), 404
 
 
 @app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
 def compute_matches(username):
-
+    """ Calculate new matches and return them """
     st_obj = Student.query.filter(Student.username == username).first()
 
-    if st_obj is not None:
+    if st_obj:
         new_matches = st_obj.job_matches
 
         # compare student to all listings
@@ -248,7 +274,7 @@ def compute_matches(username):
         st_obj.job_matches = list(set(new_matches))
         st_obj.save()
 
-        return dumps(new_matches), 200
+        return dumps(job_matches_to_dict(st_obj.job_matches)), 200
     else:
         return dumps({"reason": "Student not found"}), 404
 
@@ -258,18 +284,17 @@ def decline_job(username, job_id):
 
     st_obj = Student.query.filter(Student.username == username).first()
 
-    if st_obj is not None: # TODO: add error handling
+    if st_obj:
 
         for job_match in st_obj.job_matches:
 
-            if (job_match == job_id):
-
-                st_obj.job_matches.remove(job_id)
+            if job_match == job_id:
+                st_obj.job_matches.remove(job_id)  # not sure if pass by object??
                 st_obj.declined_jobs.append(job_id)
 
         for fav_job in st_obj.favorited_jobs:
 
-            if (job_match == job_id):
+            if job_match == job_id:
 
                 st_obj.favorited_jobs.remove(job_id)
                 st_obj.declined_jobs.append(job_id)
