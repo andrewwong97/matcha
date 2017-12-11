@@ -241,8 +241,9 @@ def new_job(employer):
     listing_obj = dict_to_listing(req_data)
     listing_obj.employer = employer
     listing_obj.save()
-
-    return dumps(listing_to_dict(listing_obj)), 200
+    listing_dict = listing_to_dict(listing_obj)
+    listing_dict['_id'] = str(listing_obj.mongo_id)
+    return dumps(listing_dict), 200
 
 
 @app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
@@ -324,8 +325,27 @@ def get_listing_matches(listing_id):
         return dumps({"reason": "Listing {} not found".format(listing_id)}), 404
 
 
+@app.route('/v1/employer/<string:listing_id>/computeMatches', methods=['GET'])
+def compute_listing_matches(listing_id):
+    """ Calculate and return new matches for a listing """
+    lst = Listing.query.get(listing_id)
+
+    if lst:
+        for st in Student.query.all():
+            if st:
+                ratio = student_listing_matcher(st, lst)
+                if ratio > 0 and str(st.username) not in lst.student_matches:
+                    lst.student_matches.append((str(st.username), ratio))
+        lst.student_matches = list(set(lst.student_matches))
+        lst.save()
+
+        return dumps(listing_matches_to_dict(lst.student_matches)), 200
+    else:
+        return dumps({"reason": "Listing {} not found".format(listing_id)}), 404
+
+
 @app.route('/v1/candidate/<string:username>/computeMatches', methods=['GET'])
-def compute_matches(username):
+def compute_student_matches(username):
     """ Calculate new matches and return them """
     st_obj = Student.query.filter(Student.username == username).first()
     if st_obj:
@@ -344,7 +364,7 @@ def compute_matches(username):
 
             listing_obj.student_matches = list(set(listing_obj.student_matches))
             listing_obj.save()  # update listing with new student match
-            print 'match made: {}'.format(listing_obj.title)
+            print 'match made: {}'.format(listing_obj.title.encode('utf8'))
 
         st_obj.job_matches = list(set(new_matches))
         st_obj.save()

@@ -70,7 +70,7 @@ class EmployerProfile extends React.Component {
     render() {
         if (!this.state.profile) {
             return (
-                <Loading title="User Details" />
+                <Loading title="employer details" />
             );
         }
 

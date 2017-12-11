@@ -66,7 +66,6 @@ class StudentProfile extends React.Component {
             .then(res => res.json())
             .then((matches) => {
                 this.setState({ matches, computingMatches: false });
-                console.log(matches)
             })
             .catch(error => {
                 console.log(`Error ${error}`);
