@@ -61,6 +61,7 @@ class StudentProfile extends React.Component {
      * Will always recompute matches and return the result to state.
      */
     computeMatches() {
+        this.setState({ computingMatches: true });
         fetch(baseUrl + '/v1/candidate/' + this.state.username + '/computeMatches', getOptions)
             .then(res => res.json())
             .then((matches) => {
@@ -195,7 +196,7 @@ class StudentProfile extends React.Component {
                     <TableHeaderColumn dataField='employer'>Company Name</TableHeaderColumn>
                     <TableHeaderColumn dataField='job_type'>Job Type</TableHeaderColumn>
                 </BootstrapTable>
-                <span style={{cursor: "pointer", color: "#cccccc", fontWeight: "300"}} onClick={this.computeMatches}>Refresh Matches</span>
+                <button className="btn" onClick={this.computeMatches}>Refresh Matches</button>
             </div>
         )
     }

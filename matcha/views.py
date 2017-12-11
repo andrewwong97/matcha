@@ -226,8 +226,11 @@ def get_current_jobs(employer):
     jobs = []
     for l in Listing.query.all():
         if l.employer == employer:
+            l.desired_skills = [i.strip() for i in l.desired_skills]  # clean any bad data
+            l.save()
             listing_dict = listing_to_dict(l)
-            listing_dict['_id'] = l.mongo_id
+            listing_dict['_id'] = str(l.mongo_id)
+            listing_dict['student_matches'] = [i[0] for i in l.student_matches]
             jobs.append(listing_dict)
     return dumps(jobs), 200
 
@@ -294,7 +297,7 @@ def listing_matches_to_dict(match_list):
         student = Student.query.filter(Student.username == m[0])
         if student:
             student_dict = student_to_dict(student)
-            student_dict['_id'] = student.username
+            student_dict['_id'] = str(student.username)
             out_json.append(student_dict)
     return out_json
 
@@ -339,6 +342,7 @@ def compute_matches(username):
                 if st_obj.username not in listing_obj.student_matches:
                     listing_obj.student_matches.append((st_obj.username, ratio))
 
+            listing_obj.student_matches = list(set(listing_obj.student_matches))
             listing_obj.save()  # update listing with new student match
             print 'match made: {}'.format(listing_obj.title)
 
@@ -349,6 +353,7 @@ def compute_matches(username):
     else:
         print 'Error: Student not found'
         return dumps({"reason": "Student not found"}), 404
+
 
 # FAVORITE/DECLINE JOB ENDPOINTS
 
@@ -462,6 +467,7 @@ def get_all_listings():
 def get_all_skills():
     all_skills = []
     for listing in Listing.query.all():
+        listing.desired_skills = [i.strip() for i in listing.desired_skills]
         all_skills += listing.desired_skills
     return dumps(sorted(set(all_skills))), 200
 
