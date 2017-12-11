@@ -52,7 +52,7 @@ def test_create_student_profile():
     st_obj.need_visa = 'need_visa'  # boolean
     st_obj.location = 'location'  # string
     st_obj.looking_for = ['job1', 'job2']  # list
-    st_obj.job_matches = ['match1', 'match2']  # list
+    st_obj.job_matches = [('match1', .33), ('match2', .44)]
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
     st_obj.declined_jobs = []
     st_obj.save()
@@ -71,8 +71,8 @@ def test_create_student_profile():
     assert st_test.location == 'location'
     assert st_test.looking_for[0] == 'job1'
     assert st_test.looking_for[1] == 'job2'
-    assert st_test.job_matches[0] == 'match1'
-    assert st_test.job_matches[1] == 'match2'
+    assert st_test.job_matches[0][0] == 'match1'
+    assert st_test.job_matches[1][0] == 'match2'
     assert st_test.favorited_jobs[0] == 'fav1'
     assert st_test.favorited_jobs[1] == 'fav2'
     assert st_test.declined_jobs == []
@@ -94,7 +94,7 @@ def test_create_student_profile_mismatch():
     st_obj.need_visa = 'need_visa'  # boolean
     st_obj.location = 'location'  # string
     st_obj.looking_for = ['job1', 'job2']  # list
-    st_obj.job_matches = ['match1', 'match2']  # list
+    st_obj.job_matches = [('match1', .33), ('match2', .55)]  # list
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
     st_obj.declined_jobs = []
     st_obj.save()
@@ -134,7 +134,7 @@ def test_edit_student_profile():
     st_obj.need_visa = 'need_visa'  # boolean
     st_obj.location = 'location'  # string
     st_obj.looking_for = ['job1', 'job2']  # list
-    st_obj.job_matches = ['match1', 'match2']  # list
+    st_obj.job_matches = [('match1',.33), ('match2',.55)]  # list
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
     st_obj.declined_jobs = []
     st_obj.save()
@@ -169,7 +169,7 @@ def test_edit_student_profile_mismatch():
     st_obj.need_visa = 'need_visa'  # boolean
     st_obj.location = 'location'  # string
     st_obj.looking_for = ['job1', 'job2']  # list
-    st_obj.job_matches = ['match1', 'match2']  # list
+    st_obj.job_matches = [('match1', .33), ('match2', .55)]  # list
     st_obj.favorited_jobs = ['fav1', 'fav2']  # list
     st_obj.declined_jobs = []
     st_obj.save()

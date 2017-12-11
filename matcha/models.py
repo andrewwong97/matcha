@@ -1,17 +1,6 @@
 from app import mongo
 from mongoalchemy.fields import *
 
-# class MatchField(TupleField):
-#     def __init__(self, **kwargs):
-#         ''' :param item_types: instances of :class:`Field`, in the order they \
-#                     will appear in the tuples.
-#             :param kwargs: arguments for :class:`Field`
-#         '''
-#         super(MatchField, self).__init__(FloatField(), StringField(), **kwargs)
-#     def schema_json(self):
-#         super_schema = super(MatchField, self).schema_json()
-#         return dict(**super_schema)
-
 
 class Student(mongo.Document):
     username = mongo.StringField()
@@ -25,7 +14,7 @@ class Student(mongo.Document):
     location = mongo.StringField()
     need_visa = mongo.StringField()
     looking_for = mongo.ListField(mongo.StringField())  # list
-    job_matches = mongo.ListField(mongo.StringField())
+    job_matches = mongo.ListField(mongo.TupleField(mongo.StringField(), mongo.FloatField())) # [(match_id1, .33), (match_id2, .5)]
     favorited_jobs = mongo.ListField(mongo.StringField())  # list
     declined_jobs = mongo.ListField(mongo.StringField())  # list
 
@@ -44,7 +33,7 @@ class Listing(mongo.Document):
     title = mongo.StringField()
     description = mongo.StringField()
     employer = mongo.StringField()
-    student_matches = mongo.ListField(mongo.StringField())
+    student_matches = mongo.ListField(mongo.TupleField(mongo.StringField(), mongo.FloatField()))
     salary = mongo.FloatField()
     location = mongo.StringField()
     desired_skills = mongo.ListField(mongo.StringField())

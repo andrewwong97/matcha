@@ -26,12 +26,6 @@ def test_listing_required_fields():
     assert listing_to_dict(l)['title'] == '' and listing_to_dict(l)['account_type'] == 'Listing'
 
 
-def test_matcher():
-    student = dict_to_student({'skills': ['reactjs', 'python'], 'email': 'a', 'password': 'p', 'looking_for': ['Internship']})
-    listing = dict_to_listing({'desired_skills': ['reactjs', 'python', 'django', 'javascript']})
-    assert skills_matcher(student, listing) > 0
-
-
 def test_li_to_student():
     sample_linkedin_response = json.loads(open(join(dirname(realpath(__file__)), './sample_linkedin_response.json'), 'r').read())
     sample_linkedin_response['emailAddress'] = 'sample-username-that-will-be-deleted'

@@ -4,7 +4,7 @@ from models import Student, Employer, Listing
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
 from util import listing_to_dict, dict_to_listing
-from util import skills_matcher
+from util import student_listing_matcher
 from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, linkedin_to_skills_list
 
 
@@ -13,6 +13,8 @@ from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profi
 @app.route('/<path:path>')
 def index(path):
     return render_template('index.html')
+
+# LOGIN/LOGOUT ENDPOINTS
 
 
 @app.route('/v1/getLinkedinURI', methods=['GET'])
@@ -115,6 +117,8 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('index')), 200
 
+# STUDENT ENDPOINTS
+
 
 @app.route('/v1/createStudentProfile', methods=['POST'])
 def create_student_profile():
@@ -167,6 +171,8 @@ def edit_student_profile(username):
     else:
         return dumps({'reason': 'Student account does not exist'}), 404
 
+# EMPLOYER ENDPOINTS
+
 
 @app.route('/v1/createEmployerProfile', methods=['POST'])
 def create_employer_profile():
@@ -202,7 +208,7 @@ def edit_employer_profile(username):
     new_data = request.get_json()  # dictionary with data from user
     em_obj = Employer.query.filter(Employer.username == username).first()
 
-    if em_obj is not None:
+    if em_obj:
 
         for key in new_data:
             setattr(em_obj, key, new_data[key])
@@ -212,66 +218,182 @@ def edit_employer_profile(username):
     else:
         return dumps({}), 404
 
+# ADD/DELETE/SHOW JOBS ENDPOINTS
 
-@app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
-def get_matches(username):
 
-    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+@app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
+def get_current_jobs(employer):
+    jobs = []
+    for l in Listing.query.all():
+        if l.employer == employer:
+            l.desired_skills = [i.strip() for i in l.desired_skills]  # clean any bad data
+            l.save()
+            listing_dict = listing_to_dict(l)
+            listing_dict['_id'] = str(l.mongo_id)
+            listing_dict['student_matches'] = [i[0] for i in l.student_matches]
+            jobs.append(listing_dict)
+    return dumps(jobs), 200
 
-    if st_obj is not None:
-        return dumps(st_obj.job_matches)
+
+@app.route('/v1/employer/<string:employer>/newJob', methods=['POST'])
+def new_job(employer):
+    req_data = request.get_json()
+    listing_obj = dict_to_listing(req_data)
+    listing_obj.employer = employer
+    listing_obj.save()
+    listing_dict = listing_to_dict(listing_obj)
+    listing_dict['_id'] = str(listing_obj.mongo_id)
+    return dumps(listing_dict), 200
+
+
+@app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
+def edit_job(employer, job_id):
+    new_data = request.get_json()  # dictionary with data from user
+    ls_obj = Listing.query.filter(Listing.mongo_id == job_id).first()
+
+    if ls_obj is not None:
+
+        for key in new_data:
+            setattr(ls_obj, key, new_data[key])
+
+        ls_obj.save()
+        return 'Success'  # TODO: change return value as needed
     else:
         return 'Username Not Found'  # TODO: improve error handling
 
 
-@app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
-def compute_matches(username):
+# START MATCHES ENDPOINTS
 
-    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
 
-    if st_obj is not None:
+def job_matches_to_dict(match_list):
+    """
+    Helper function for writing JSON output match tuple lists
+    :param match_list: Student job_matches field
+    :return: dictionary of listings, in order of highest to lowest match
+    """
+    if len(match_list) == 0:
+        return []
+    sorted_matches = sorted(match_list, key=lambda x: x[1], reverse=True)
+    out_json = []
+    for m in sorted_matches:
+        listing = Listing.query.get(m[0])
+        if listing:
+            listing_dict = listing_to_dict(listing)
+            listing_dict['_id'] = str(listing.mongo_id)
+            out_json.append(listing_dict)
+    return out_json
+
+
+def listing_matches_to_dict(match_list):
+    """
+    Similar to job_matches_to_dict, but for listing matches
+    :param match_list: Listing student_matches field
+    :return: dictionary of students, in order of highest to lowest match
+    """
+    if len(match_list) == 0:
+        return []
+    sorted_matches = sorted(match_list, key=lambda x: x[1], reverse=True)
+    out_json = []
+    for m in sorted_matches:
+        student = Student.query.filter(Student.username == m[0])
+        if student:
+            student_dict = student_to_dict(student)
+            student_dict['_id'] = str(student.username)
+            out_json.append(student_dict)
+    return out_json
+
+
+@app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
+def get_student_matches(username):
+    """ Return existing matches for a given student (username) """
+    st_obj = Student.query.filter(Student.username == username).first()
+
+    if st_obj:
+        return dumps(job_matches_to_dict(st_obj.job_matches)), 200
+    else:
+        return dumps({"reason": "Student not found"}), 404
+
+
+@app.route('/v1/employer/<string:listing_id>/getMatches', methods=['GET'])
+def get_listing_matches(listing_id):
+    """ Return existing matches for a given listing id """
+    listing_obj = Listing.query.get(listing_id)
+
+    if listing_obj:
+        return dumps(listing_matches_to_dict(listing_obj.student_matches)), 200
+    else:
+        return dumps({"reason": "Listing {} not found".format(listing_id)}), 404
+
+
+@app.route('/v1/employer/<string:listing_id>/computeMatches', methods=['GET'])
+def compute_listing_matches(listing_id):
+    """ Calculate and return new matches for a listing """
+    lst = Listing.query.get(listing_id)
+
+    if lst:
+        for st in Student.query.all():
+            if st:
+                ratio = student_listing_matcher(st, lst)
+                if ratio > 0 and str(st.username) not in lst.student_matches:
+                    lst.student_matches.append((str(st.username), ratio))
+        lst.student_matches = list(set(lst.student_matches))
+        lst.save()
+
+        return dumps(listing_matches_to_dict(lst.student_matches)), 200
+    else:
+        return dumps({"reason": "Listing {} not found".format(listing_id)}), 404
+
+
+@app.route('/v1/candidate/<string:username>/computeMatches', methods=['GET'])
+def compute_student_matches(username):
+    """ Calculate new matches and return them """
+    st_obj = Student.query.filter(Student.username == username).first()
+    if st_obj:
         new_matches = st_obj.job_matches
 
-        for listing_obj in Listing.query.all():  # loop through all listings
-            rating = skills_matcher(st_obj, listing_obj)  # determine if there's a match
-            if rating > 0:
-                if listing_obj.mongo_id not in st_obj.declined_jobs:  # if the listing isn't already in declined jobs
+        # compare student to all listings
+        for listing_obj in Listing.query.all():
+            ratio = student_listing_matcher(st_obj, listing_obj)
+            if ratio > 0:
+                if str(listing_obj.mongo_id) not in st_obj.declined_jobs and \
+                                str(listing_obj.mongo_id) not in st_obj.favorited_jobs:
+                    new_matches.append((str(listing_obj.mongo_id), ratio))
 
-                    if listing_obj.mongo_id not in st_obj.favorited_jobs:  # or if listing isn't in favorited jobs
+                if st_obj.username not in listing_obj.student_matches:
+                    listing_obj.student_matches.append((st_obj.username, ratio))
 
-                        new_matches.append(str(listing_obj.mongo_id))  # add it to the matches list in Student
-
-                        if st_obj.username not in listing_obj.student_matches: # if not already in Employer's matches add it too
-
-                            listing_obj.student_matches.append(st_obj.username)
-
-            listing_obj.save()
+            listing_obj.student_matches = list(set(listing_obj.student_matches))
+            listing_obj.save()  # update listing with new student match
+            print 'match made: {}'.format(listing_obj.title.encode('utf8'))
 
         st_obj.job_matches = list(set(new_matches))
         st_obj.save()
 
-        return dumps(new_matches), 200
+        return dumps(job_matches_to_dict(st_obj.job_matches)), 200
     else:
-        return 'Username Not Found'  # TODO: improve error handling
+        print 'Error: Student not found'
+        return dumps({"reason": "Student not found"}), 404
+
+
+# FAVORITE/DECLINE JOB ENDPOINTS
 
 
 @app.route('/v1/candidate/<string:username>/declineJob/<string:job_id>', methods=['POST'])
 def decline_job(username, job_id):
 
-    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+    st_obj = Student.query.filter(Student.username == username).first()
 
-    if st_obj is not None: # TODO: add error handling
+    if st_obj:
 
         for job_match in st_obj.job_matches:
 
-            if (job_match == job_id):
-
-                st_obj.job_matches.remove(job_id)
+            if job_match == job_id:
+                st_obj.job_matches.remove(job_id)  # not sure if pass by object??
                 st_obj.declined_jobs.append(job_id)
 
         for fav_job in st_obj.favorited_jobs:
 
-            if (job_match == job_id):
+            if job_match == job_id:
 
                 st_obj.favorited_jobs.remove(job_id)
                 st_obj.declined_jobs.append(job_id)
@@ -326,51 +448,14 @@ def get_authorization(employer):
     return dumps(employers)  # TODO: change return value as needed
 
 
-@app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
-def get_current_jobs(employer):
-    return dumps([listing_to_dict(l) for l in Listing.query.all() if l.employer == employer]), 200
-
-
 @app.route('/v1/employer/<string:employer>/favoriteCandidate/<string:candidate>/<string:job_name>', methods=['POST'])
 def favorite_candidate(employer, job_name, candidate):
     # TODO: search employer job listing to favorite candidate
     return 'Success'
 
 
-@app.route('/v1/employer/<string:employer>/newJob', methods=['POST'])
-def new_job(employer):
-    req_data = request.get_json()
-    listing_obj = dict_to_listing(req_data)
-    listing_obj.employer = employer
-    listing_obj.save()
-
-    return dumps(listing_to_dict(listing_obj)), 200
-
-
-@app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
-def edit_job(employer, job_id):
-    new_data = request.get_json()  # dictionary with data from user
-    ls_obj = Listing.query.filter(Listing.mongo_id == job_id).first()
-
-    if ls_obj is not None:
-
-        for key in new_data:
-            setattr(ls_obj, key, new_data[key])
-
-        ls_obj.save()
-        return 'Success'  # TODO: change return value as needed
-    else:
-        return 'Username Not Found'  # TODO: improve error handling
-
-
 @app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
 def delete_job(employer):
-    # TODO: delete job
-    return 'Success'
-
-
-@app.route('/v1/employer/<string:employer>/getJobMatches/<string:job_name>', methods=['DELETE'])
-def get_job_matches(employer, job_name):
     # TODO: delete job
     return 'Success'
 
@@ -402,6 +487,7 @@ def get_all_listings():
 def get_all_skills():
     all_skills = []
     for listing in Listing.query.all():
+        listing.desired_skills = [i.strip() for i in listing.desired_skills]
         all_skills += listing.desired_skills
     return dumps(sorted(set(all_skills))), 200
 
