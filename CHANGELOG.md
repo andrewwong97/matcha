@@ -19,6 +19,7 @@
 ### Changed
 - Better loaders
 - If logged in, home page redirects to profile
+- New matching algorithm uses sorted fuzzy string matching, good for subset comparison (when some of a student's skills matches all of a listing's desired skills)
 
 ### Removed
 
