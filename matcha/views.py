@@ -223,7 +223,13 @@ def edit_employer_profile(username):
 
 @app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
 def get_current_jobs(employer):
-    return dumps([listing_to_dict(l) for l in Listing.query.all() if l.employer == employer]), 200
+    jobs = []
+    for l in Listing.query.all():
+        if l.employer == employer:
+            listing_dict = listing_to_dict(l)
+            listing_dict['_id'] = l.mongo_id
+            jobs.append(listing_dict)
+    return dumps(jobs), 200
 
 
 @app.route('/v1/employer/<string:employer>/newJob', methods=['POST'])
@@ -283,7 +289,7 @@ def listing_matches_to_dict(match_list):
 
 @app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
 def get_student_matches(username):
-    """ Return existing matches """
+    """ Return existing matches for a given student (username) """
     st_obj = Student.query.filter(Student.username == username).first()
 
     if st_obj:
@@ -294,6 +300,7 @@ def get_student_matches(username):
 
 @app.route('/v1/employer/<string:listing_id>/getMatches', methods=['GET'])
 def get_listing_matches(listing_id):
+    """ Return existing matches for a given listing id """
     listing_obj = Listing.query.get(listing_id)
 
     if listing_obj:
