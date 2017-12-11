@@ -16,6 +16,9 @@ def student_listing_matcher(student, listing):
     if not same_job_type:
         return 0
 
+    if len(student.skills) == 0:
+        return 0
+
     skill_ratio = matcher.match(student.skills, listing.desired_skills)
     return skill_ratio
 

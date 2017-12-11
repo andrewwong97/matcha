@@ -19,6 +19,11 @@ const jobTypes = [
     {'value': 'Full-Time', 'label': 'Full-Time'},
 ];
 
+/**
+ * Convert array of strings to respective Select object
+ * @param arr Array of strings
+ */
+const arrToSelectObj = (arr) => arr.map(label => ({value: label, label }));
 
 class StudentProfile extends React.Component {
     constructor(props){
@@ -42,6 +47,8 @@ class StudentProfile extends React.Component {
         if (localStorage.profile) {
             const user = JSON.parse(localStorage.profile);
             this.setState({ user });
+            this.state.looking_for = arrToSelectObj(this.state.user.looking_for);
+            this.state.skills = arrToSelectObj(this.state.user.skills);
         }
         this.getMatches();
          fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
@@ -124,12 +131,12 @@ class StudentProfile extends React.Component {
 
     handleJobSelect(selected_types) {
         this.state.user.looking_for = selected_types.map(i => i.value);
-	    this.setState({user: this.state.user, looking_for: this.state.user.looking_for });
+	    this.setState({user: this.state.user, looking_for: selected_types });
     }
 
     handleSkillSelect(selected_skills) {
         this.state.user.skills = selected_skills.map(i => i.value);
-        this.setState({user: this.state.user, skills: this.state.user.skills });
+        this.setState({user: this.state.user, skills: selected_skills });
     }
 
     renderUserDetailsEditing() {
