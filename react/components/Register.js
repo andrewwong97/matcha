@@ -52,8 +52,8 @@ class Register extends Component {
 	componentDidMount() {
 	    fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
             .then(res => res.json())
-            .then(data => this.setState({ allSkills: data.map(s => ({label: strTransform(s), value: strTransform(s)})) }));
-	    this.setState({ allSkills: this.state.allSkills.sort() });
+            .then(data => data.map(s => ({label: strTransform(s), value: strTransform(s) })))
+            .then(skills => this.setState({ allSkills: skills.sort() }));
     }
 
 	handleChange(event) {
