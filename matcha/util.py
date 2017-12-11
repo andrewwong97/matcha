@@ -136,6 +136,12 @@ def dict_to_listing(d):
 
   
 def student_listing_matcher(student, listing):
+    """
+    Match student to listing by student fields and desired listing fields
+    :param student: Student obj
+    :param listing: Listing obj
+    :return: ratio between 0 and 1
+    """
     same_job_type = False
     for i in student.looking_for:
         if i in listing.job_type:

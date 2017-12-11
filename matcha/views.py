@@ -227,38 +227,36 @@ def get_matches(username):
 @app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
 def compute_matches(username):
 
-    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+    st_obj = Student.query.filter(Student.username == username).first()
 
     if st_obj is not None:
         new_matches = st_obj.job_matches
 
-        for listing_obj in Listing.query.all():  # loop through all listings
-            rating = skills_matcher(st_obj, listing_obj)  # determine if there's a match
-            if rating > 0:
-                if listing_obj.mongo_id not in st_obj.declined_jobs:  # if the listing isn't already in declined jobs
+        # compare student to all listings
+        for listing_obj in Listing.query.all():
+            ratio = student_listing_matcher(st_obj, listing_obj)
+            if ratio > 0.33:
+                if listing_obj.mongo_id not in st_obj.declined_jobs and \
+                                listing_obj.mongo_id not in st_obj.favorited_jobs:
+                    new_matches.append((str(listing_obj.mongo_id), ratio))
 
-                    if listing_obj.mongo_id not in st_obj.favorited_jobs:  # or if listing isn't in favorited jobs
+                if st_obj.username not in listing_obj.student_matches:
+                    listing_obj.student_matches.append((st_obj.username, ratio))
 
-                        new_matches.append(str(listing_obj.mongo_id))  # add it to the matches list in Student
-
-                        if st_obj.username not in listing_obj.student_matches: # if not already in Employer's matches add it too
-
-                            listing_obj.student_matches.append(st_obj.username)
-
-            listing_obj.save()
+            listing_obj.save()  # update listing with new student match
 
         st_obj.job_matches = list(set(new_matches))
         st_obj.save()
 
         return dumps(new_matches), 200
     else:
-        return 'Username Not Found'  # TODO: improve error handling
+        return dumps({"reason": "Student not found"}), 404
 
 
 @app.route('/v1/candidate/<string:username>/declineJob/<string:job_id>', methods=['POST'])
 def decline_job(username, job_id):
 
-    st_obj = Student.query.filter(Student.username == username).first()  # TODO: fix so not case sensitive
+    st_obj = Student.query.filter(Student.username == username).first()
 
     if st_obj is not None: # TODO: add error handling
 
