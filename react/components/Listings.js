@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { numberWithCommas } from '../util/fieldFormat';
+import Loading from './Loading';
+import withAuth from '../util/withAuth';
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -17,12 +18,11 @@ class Listings extends Component {
 			this.state.listings.map((listing) =>
 				(
 					<li className="job-listing">
-						<div className="logo-placeholder"></div>
+						<div className="logo-placeholder" />
 						<div className="listing-text">
-							<p className="company">{listing.company_name}</p>
+							<p className="company">{listing.employer}</p>
 							<p className="name">{listing.title}</p>
 							<p className="salary">Salary: {listing.salary}</p>
-							<p className="skills">Skills: {listing.desired_skills.join(', ')}</p>
 						</div>
 					</li>
 				)
@@ -38,6 +38,11 @@ class Listings extends Component {
 	}
 
 	render() {
+		if (this.state.listings.length === 0) {
+			return (
+				<Loading title="listings"/>
+			)
+		}
 		return (
 			<div className="Listings">
 				<h1>Listings</h1>
@@ -49,4 +54,4 @@ class Listings extends Component {
 	}
 }
 
-export default Listings;
+export default withAuth(Listings);
