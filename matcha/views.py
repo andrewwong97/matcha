@@ -349,7 +349,7 @@ def compute_student_matches(username):
     """ Calculate new matches and return them """
     st_obj = Student.query.filter(Student.username == username).first()
     if st_obj:
-        new_matches = st_obj.job_matches
+        new_matches = []
 
         # compare student to all listings
         for listing_obj in Listing.query.all():
