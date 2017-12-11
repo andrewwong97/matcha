@@ -17,4 +17,3 @@ def test_match_more_than_half():
 
 def test_matcher_fuzzy_partial():
     assert fuzzy_partial('yes', 'no') < .5
-

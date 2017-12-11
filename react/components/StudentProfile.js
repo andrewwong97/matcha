@@ -6,12 +6,18 @@ import Loading from './Loading';
 
 const baseUrl = require('../vars.json').baseUrl;
 
+const getOptions = {
+    method: 'GET',
+    mode: 'cors'
+};
+
 class StudentProfile extends React.Component {
     constructor(props){
         super(props);
 
         this.state = {
             matches: [],
+            computingMatches: false, // toggle to display Loading component
             user: JSON.parse(localStorage.profile),
             username: Router.asPath.slice(Router.asPath.indexOf('student/')+8),
             showSkills: false,
@@ -19,6 +25,8 @@ class StudentProfile extends React.Component {
         };
 
         this.toggleSkills = this.toggleSkills.bind(this);
+        this.getMatches = this.getMatches.bind(this);
+        this.computeMatches = this.computeMatches.bind(this);
     }
 
     componentDidMount() {
@@ -26,19 +34,38 @@ class StudentProfile extends React.Component {
             const user = JSON.parse(localStorage.profile);
             this.setState({ user });
         }
-        this.getMatches()
+        this.getMatches();
     }
 
+    /**
+     * Displays existing matches, also asynchronously computes matches in the background.
+     */
     getMatches() {
-        const options = {
-            method: 'GET',
-            mode: 'cors'
-        }
+        this.setState({ computingMatches: true });
+        fetch(baseUrl + '/v1/candidate/' + this.state.username + '/getMatches', getOptions)
+            .then(res => res.json())
+            .then(matches => {
+                if (matches.length === 0) {
+                    this.computeMatches();
+                } else {
+                    this.setState({ matches });
+                    this.computeMatches();
+                }
+            })
+            .catch(error => {
+                console.log(`Error ${error}`);
+            });
+    }
 
-        fetch(baseUrl + '/v1/candidate/' + this.state.username + '/getMatches', options)
-            .then((response) => response.json())
+    /**
+     * Will always recompute matches and return the result to state.
+     */
+    computeMatches() {
+        fetch(baseUrl + '/v1/candidate/' + this.state.username + '/computeMatches', getOptions)
+            .then(res => res.json())
             .then((matches) => {
-                this.setState({ matches });
+                this.setState({ matches, computingMatches: false });
+                console.log(matches)
             })
             .catch(error => {
                 console.log(`Error ${error}`);
@@ -77,17 +104,17 @@ class StudentProfile extends React.Component {
     }
 
     handleLocationChange(event) {
-        this.state.user.location = event.target.value
+        this.state.user.location = event.target.value;
         this.setState({user: this.state.user});
     }
 
     handleLookingChange(event) {
-        this.state.user.looking_for = event.target.value.split(', ')
+        this.state.user.looking_for = event.target.value.split(', ');
         this.setState({user: this.state.user});
     }
 
     handleSkillsChange(event) {
-        this.state.user.skills = event.target.value.split(', ')
+        this.state.user.skills = event.target.value.split(', ');
         this.setState({user: this.state.user});
     }
 
@@ -98,15 +125,23 @@ class StudentProfile extends React.Component {
                 <h1 className="subtitle">{this.state.username}</h1>
 
                 <h1 className="location">
-                    <input placeholder="Location..." type="text" value={this.state.user.location} onChange={this.handleLocationChange.bind(this)} />
+                    <input placeholder="Location..." type="text"
+                           value={this.state.user.location}
+                           onChange={this.handleLocationChange.bind(this)} />
                 </h1>
                 <h1 className="looking-for">
                     Looking for:
-                    <input placeholder="Job type..." type="text" value={this.state.user.looking_for.length > 1? this.state.user.looking_for.join(', ') : this.state.user.looking_for[0]} onChange={this.handleLookingChange.bind(this)} />
+                    <input
+                        placeholder="Job type (comma separated)"
+                        type="text"
+                        value={this.state.user.looking_for.length > 1 ? this.state.user.looking_for.join(', ') : this.state.user.looking_for[0]}
+                        onChange={this.handleLookingChange.bind(this)} />
                 </h1>
                 <h1 className="skills">
                     Skills:
-                    <input placeholder="Add skills (comma separated)..." type="text" value={this.state.user.skills.length > 1? this.state.user.skills.join(', ') : this.state.user.skills[0]} onChange={this.handleSkillsChange.bind(this)} />
+                    <input placeholder="Add skills (comma separated)..." type="text"
+                           value={this.state.user.skills.length > 1? this.state.user.skills.join(', ') : this.state.user.skills[0]}
+                           onChange={this.handleSkillsChange.bind(this)} />
                 </h1>
             </div>
         )
@@ -152,13 +187,15 @@ class StudentProfile extends React.Component {
                 </button>
                 { this.renderUserDetails() }
 
+                { this.state.computingMatches ? <Loading title="and computing new matches" /> : '' }
+
                 <BootstrapTable data={ this.state.matches }>
-                    <TableHeaderColumn dataField='id' isKey={ true }>ID</TableHeaderColumn>
-                    <TableHeaderColumn dataField='name'>Job Title</TableHeaderColumn>
+                    <TableHeaderColumn dataField='_id' isKey={ true }>ID</TableHeaderColumn>
+                    <TableHeaderColumn dataField='title'>Job Title</TableHeaderColumn>
                     <TableHeaderColumn dataField='employer'>Company Name</TableHeaderColumn>
                     <TableHeaderColumn dataField='job_type'>Job Type</TableHeaderColumn>
                 </BootstrapTable>
-                <span style={{cursor: "pointer"}} onClick={this.getMatches.bind(this)}>Refresh Matches</span>
+                <span style={{cursor: "pointer", color: "#cccccc", fontWeight: "300"}} onClick={this.computeMatches}>Refresh Matches</span>
             </div>
         )
     }

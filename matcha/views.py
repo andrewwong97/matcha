@@ -267,11 +267,17 @@ def job_matches_to_dict(match_list):
     :param match_list: Student job_matches field
     :return: dictionary of listings, in order of highest to lowest match
     """
+    if len(match_list) == 0:
+        return []
     sorted_matches = sorted(match_list, key=lambda x: x[1], reverse=True)
     out_json = []
     for m in sorted_matches:
         listing = Listing.query.get(m[0])
-        out_json.append(dumps(listing))
+        if listing:
+            listing_dict = listing_to_dict(listing)
+            listing_dict['_id'] = str(listing.mongo_id)
+            out_json.append(listing_dict)
+    return out_json
 
 
 def listing_matches_to_dict(match_list):
@@ -280,11 +286,17 @@ def listing_matches_to_dict(match_list):
     :param match_list: Listing student_matches field
     :return: dictionary of students, in order of highest to lowest match
     """
+    if len(match_list) == 0:
+        return []
     sorted_matches = sorted(match_list, key=lambda x: x[1], reverse=True)
     out_json = []
     for m in sorted_matches:
         student = Student.query.filter(Student.username == m[0])
-        out_json.append(dumps(student))
+        if student:
+            student_dict = student_to_dict(student)
+            student_dict['_id'] = student.username
+            out_json.append(student_dict)
+    return out_json
 
 
 @app.route('/v1/candidate/<string:username>/getMatches', methods=['GET'])
@@ -293,7 +305,7 @@ def get_student_matches(username):
     st_obj = Student.query.filter(Student.username == username).first()
 
     if st_obj:
-        return dumps(job_matches_to_dict(st_obj.job_matches))
+        return dumps(job_matches_to_dict(st_obj.job_matches)), 200
     else:
         return dumps({"reason": "Student not found"}), 404
 
@@ -309,32 +321,33 @@ def get_listing_matches(listing_id):
         return dumps({"reason": "Listing {} not found".format(listing_id)}), 404
 
 
-@app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
+@app.route('/v1/candidate/<string:username>/computeMatches', methods=['GET'])
 def compute_matches(username):
     """ Calculate new matches and return them """
     st_obj = Student.query.filter(Student.username == username).first()
-
     if st_obj:
         new_matches = st_obj.job_matches
 
         # compare student to all listings
         for listing_obj in Listing.query.all():
             ratio = student_listing_matcher(st_obj, listing_obj)
-            if ratio > 0.33:
-                if listing_obj.mongo_id not in st_obj.declined_jobs and \
-                                listing_obj.mongo_id not in st_obj.favorited_jobs:
+            if ratio > 0:
+                if str(listing_obj.mongo_id) not in st_obj.declined_jobs and \
+                                str(listing_obj.mongo_id) not in st_obj.favorited_jobs:
                     new_matches.append((str(listing_obj.mongo_id), ratio))
 
                 if st_obj.username not in listing_obj.student_matches:
                     listing_obj.student_matches.append((st_obj.username, ratio))
 
             listing_obj.save()  # update listing with new student match
+            print 'match made: {}'.format(listing_obj.title)
 
         st_obj.job_matches = list(set(new_matches))
         st_obj.save()
 
         return dumps(job_matches_to_dict(st_obj.job_matches)), 200
     else:
+        print 'Error: Student not found'
         return dumps({"reason": "Student not found"}), 404
 
 # FAVORITE/DECLINE JOB ENDPOINTS

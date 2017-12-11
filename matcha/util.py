@@ -2,6 +2,24 @@ from models import Student, Employer, Listing
 import matcher
 
 
+def student_listing_matcher(student, listing):
+    """
+    Match student to listing by student fields and desired listing fields
+    :param student: Student obj
+    :param listing: Listing obj
+    :return: ratio between 0 and 1
+    """
+    same_job_type = False
+    for i in student.looking_for:
+        if i in listing.job_type:
+            same_job_type = True
+    if not same_job_type:
+        return 0
+
+    skill_ratio = matcher.match(student.skills, listing.desired_skills)
+    return skill_ratio
+
+
 def student_to_dict(st):
     """
     Convert MongoAlchemy Student fields to dictionary
@@ -133,24 +151,6 @@ def dict_to_listing(d):
         ls.desired_skills = []
     ls.job_type = d['job_type'] if 'job_type' in d else ['Internship', 'Full-Time']
     return ls
-
-  
-def student_listing_matcher(student, listing):
-    """
-    Match student to listing by student fields and desired listing fields
-    :param student: Student obj
-    :param listing: Listing obj
-    :return: ratio between 0 and 1
-    """
-    same_job_type = False
-    for i in student.looking_for:
-        if i in listing.job_type:
-            same_job_type = True
-    if not same_job_type:
-        return 0
-
-    skill_ratio = matcher.match(student.skills, listing.desired_skills)
-    return skill_ratio
 
 
 def li_to_student(d):

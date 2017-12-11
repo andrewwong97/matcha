@@ -7,10 +7,12 @@ export default class Loading extends Component {
 
     render() {
         return (
-            <h1 className="Loading">
-                Loading {this.props.title || ''}...
+            <div className="Loading">
+                <h1 className="loading-title">
+                    Loading {this.props.title || ''}...
+                </h1>
                 <div className="loading-pulse" />
-            </h1>
+            </div>
         )
     }
 }
