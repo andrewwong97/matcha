@@ -1,5 +1,5 @@
 from models import Student, Employer, Listing
-import . from matcher
+import matcher
 
 
 def student_to_dict(st):
@@ -135,24 +135,16 @@ def dict_to_listing(d):
     return ls
 
   
-def skills_matcher(student, listing):
+def student_listing_matcher(student, listing):
     same_job_type = False
     for i in student.looking_for:
         if i in listing.job_type:
             same_job_type = True
     if not same_job_type:
         return 0
-    
-    #rating = 0
-    #for skill in student.skills:
-    #    for desired in listing.desired_skills:
-    #        if skill.lower() == desired.lower():
-    # add fuzzy matching here
-    #            rating += 1
-    skills_string = matcher.stringify(student.skills)
-    desired_skills_string = matcher.stringify(listing.desired_skills)
-    ratio = matcher.match(skills_string, desired_skills_string)
-    return ratio
+
+    skill_ratio = matcher.match(student.skills, listing.desired_skills)
+    return skill_ratio
 
 
 def li_to_student(d):

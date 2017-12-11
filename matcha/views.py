@@ -4,7 +4,7 @@ from models import Student, Employer, Listing
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
 from util import listing_to_dict, dict_to_listing
-from util import skills_matcher
+from util import student_listing_matcher
 from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profile, linkedin_to_skills_list
 
 
