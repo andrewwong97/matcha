@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Select from 'react-select';
 import Router from 'next/router';
 import AuthService from "../util/AuthService";
+import { strTransform } from "../util/fieldFormat";
 
 
 const baseUrl = require('../vars.json').baseUrl;
@@ -51,8 +52,8 @@ class Register extends Component {
 	componentDidMount() {
 	    fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
             .then(res => res.json())
-            .then(data => this.setState({ allSkills: data.map(s => ({label: s, value: s})) }));
-
+            .then(data => this.setState({ allSkills: data.map(s => ({label: strTransform(s), value: strTransform(s)})) }));
+	    this.setState({ allSkills: this.state.allSkills.sort() });
     }
 
 	handleChange(event) {
@@ -206,17 +207,12 @@ class Register extends Component {
                      <button className="btn btn-li" onClick={this.registerWithLinkedIn}>
                         Login via LinkedIn
                     </button>
-
-                    <button className="btn">
-                        Login via Github Placeholder
-                    </button>
-                </div>
-				<div className="submit-wrapper">
-					<button
+                    <button
 						className="btn btn-submitRegister"
 						onClick={this.register.bind(this)}
 					>Sign Up</button>
-
+                </div>
+				<div className="extra-wrapper">
                     <Link href="/login"><a>Have an account? Login here</a></Link>
 				</div>
 

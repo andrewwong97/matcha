@@ -43,6 +43,7 @@ export default class Layout extends React.Component {
         return (
             <ul className="Nav">
                 <li><a href={this.state.profileLink}>Profile</a></li>
+                <li><Link href="/listings"><a>Listings</a></Link></li>
                 <li><a className="logout" onClick={this.logout}>Logout</a></li>
             </ul>
         )

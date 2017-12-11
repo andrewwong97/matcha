@@ -103,6 +103,7 @@ def linkedin_login():
             new_student = li_to_student(profile_dict)
             new_student.linkedin_token = token
             new_student.skills = linkedin_to_skills_list(profile_dict)
+            new_student.looking_for = ['Internship', 'Full-Time']
             new_student.save()
             stu = Student.query.filter(Student.linkedin_token == token).first()
 
