@@ -14,6 +14,8 @@ from linkedin import linkedin_redirect_uri, linkedin_token, linkedin_basic_profi
 def index(path):
     return render_template('index.html')
 
+# LOGIN/LOGOUT ENDPOINTS
+
 
 @app.route('/v1/getLinkedinURI', methods=['GET'])
 def get_linkedin_uri():
@@ -115,6 +117,8 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('index')), 200
 
+# STUDENT ENDPOINTS
+
 
 @app.route('/v1/createStudentProfile', methods=['POST'])
 def create_student_profile():
@@ -167,6 +171,8 @@ def edit_student_profile(username):
     else:
         return dumps({'reason': 'Student account does not exist'}), 404
 
+# EMPLOYER ENDPOINTS
+
 
 @app.route('/v1/createEmployerProfile', methods=['POST'])
 def create_employer_profile():
@@ -202,7 +208,7 @@ def edit_employer_profile(username):
     new_data = request.get_json()  # dictionary with data from user
     em_obj = Employer.query.filter(Employer.username == username).first()
 
-    if em_obj is not None:
+    if em_obj:
 
         for key in new_data:
             setattr(em_obj, key, new_data[key])
@@ -211,6 +217,42 @@ def edit_employer_profile(username):
         return dumps(employer_to_dict(em_obj)), 200
     else:
         return dumps({}), 404
+
+# ADD/DELETE/SHOW JOBS ENDPOINTS
+
+
+@app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
+def get_current_jobs(employer):
+    return dumps([listing_to_dict(l) for l in Listing.query.all() if l.employer == employer]), 200
+
+
+@app.route('/v1/employer/<string:employer>/newJob', methods=['POST'])
+def new_job(employer):
+    req_data = request.get_json()
+    listing_obj = dict_to_listing(req_data)
+    listing_obj.employer = employer
+    listing_obj.save()
+
+    return dumps(listing_to_dict(listing_obj)), 200
+
+
+@app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
+def edit_job(employer, job_id):
+    new_data = request.get_json()  # dictionary with data from user
+    ls_obj = Listing.query.filter(Listing.mongo_id == job_id).first()
+
+    if ls_obj is not None:
+
+        for key in new_data:
+            setattr(ls_obj, key, new_data[key])
+
+        ls_obj.save()
+        return 'Success'  # TODO: change return value as needed
+    else:
+        return 'Username Not Found'  # TODO: improve error handling
+
+
+# START MATCHES ENDPOINTS
 
 
 def job_matches_to_dict(match_list):
@@ -250,6 +292,16 @@ def get_student_matches(username):
         return dumps({"reason": "Student not found"}), 404
 
 
+@app.route('/v1/employer/<string:listing_id>/getMatches', methods=['GET'])
+def get_listing_matches(listing_id):
+    listing_obj = Listing.query.get(listing_id)
+
+    if listing_obj:
+        return dumps(listing_matches_to_dict(listing_obj.student_matches)), 200
+    else:
+        return dumps({"reason": "Listing {} not found".format(listing_id)}), 404
+
+
 @app.route('/v1/candidate/<string:username>/computeMatches', methods=['POST'])
 def compute_matches(username):
     """ Calculate new matches and return them """
@@ -277,6 +329,8 @@ def compute_matches(username):
         return dumps(job_matches_to_dict(st_obj.job_matches)), 200
     else:
         return dumps({"reason": "Student not found"}), 404
+
+# FAVORITE/DECLINE JOB ENDPOINTS
 
 
 @app.route('/v1/candidate/<string:username>/declineJob/<string:job_id>', methods=['POST'])
@@ -349,51 +403,14 @@ def get_authorization(employer):
     return dumps(employers)  # TODO: change return value as needed
 
 
-@app.route('/v1/employer/<string:employer>/getCurrentJobs', methods=['GET'])
-def get_current_jobs(employer):
-    return dumps([listing_to_dict(l) for l in Listing.query.all() if l.employer == employer]), 200
-
-
 @app.route('/v1/employer/<string:employer>/favoriteCandidate/<string:candidate>/<string:job_name>', methods=['POST'])
 def favorite_candidate(employer, job_name, candidate):
     # TODO: search employer job listing to favorite candidate
     return 'Success'
 
 
-@app.route('/v1/employer/<string:employer>/newJob', methods=['POST'])
-def new_job(employer):
-    req_data = request.get_json()
-    listing_obj = dict_to_listing(req_data)
-    listing_obj.employer = employer
-    listing_obj.save()
-
-    return dumps(listing_to_dict(listing_obj)), 200
-
-
-@app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
-def edit_job(employer, job_id):
-    new_data = request.get_json()  # dictionary with data from user
-    ls_obj = Listing.query.filter(Listing.mongo_id == job_id).first()
-
-    if ls_obj is not None:
-
-        for key in new_data:
-            setattr(ls_obj, key, new_data[key])
-
-        ls_obj.save()
-        return 'Success'  # TODO: change return value as needed
-    else:
-        return 'Username Not Found'  # TODO: improve error handling
-
-
 @app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
 def delete_job(employer):
-    # TODO: delete job
-    return 'Success'
-
-
-@app.route('/v1/employer/<string:employer>/getJobMatches/<string:job_name>', methods=['DELETE'])
-def get_job_matches(employer, job_name):
     # TODO: delete job
     return 'Success'
 
