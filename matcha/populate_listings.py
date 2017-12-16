@@ -3,11 +3,11 @@
 import pymongo
 import json
 import os
-import config
+from matcha.config import MONGOALCHEMY_CONNECTION_STRING
 
 
 def populate():
-    client = pymongo.MongoClient(config.MONGOALCHEMY_CONNECTION_STRING)
+    client = pymongo.MongoClient(MONGOALCHEMY_CONNECTION_STRING)
 
     db = client.matcha2
 

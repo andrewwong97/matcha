@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask.ext.mongoalchemy import MongoAlchemy
-import config
+from matcha.config import MONGOALCHEMY_CONNECTION_STRING
 
 app = Flask(__name__)
 app.secret_key = 'matcha'
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     try:
         import pymongo
         from populate_listings import populate
-        db = pymongo.MongoClient(config.MONGOALCHEMY_CONNECTION_STRING).matcha2
+        db = pymongo.MongoClient(MONGOALCHEMY_CONNECTION_STRING).matcha2
         first = db.Listing.find()[0]
     except IndexError:
         populate()
