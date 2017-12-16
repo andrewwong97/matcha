@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
     flask:
         build:
@@ -8,6 +8,11 @@ services:
         - "5000:5000"
         volumes:
         - .:/code
+        links:
+        - db
+        depends_on:
+        - db
+        container_name: matcha_flask
     web:
         build:
           context: .
@@ -16,10 +21,16 @@ services:
         - "3000:3000"
         volumes:
         - .:/code
-        links:
-        - mongodb
-    mongodb:
+        depends_on:
+        - flask
+        - db
+        container_name: matcha_react
+    db:
         image: mongo:3.4.10
         ports:
         - "27017:27017"
-        container_name: mongodb_container
+        container_name: matcha_mongo
+        environment:
+        - MONGO_INITDB_ROOT_USERNAME=matcha
+        - MONGO_INITDB_ROOT_PASSWORD=letmein
+        - MONGO_INITDB_DATABASE=matcha2
