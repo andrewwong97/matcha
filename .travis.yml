@@ -33,4 +33,4 @@ script:
     - docker ps # debug
     
     # run python tests
-    - nosetests --with-coverage --cover-package matcha
+    - docker exec -it matcha_flask bash -c "nosetests --with-coverage --cover-package matcha"

@@ -12,7 +12,7 @@ A platform that seamlessly connects employers and qualified candidates with matc
 - `pip`
 - `Docker`
 
-## To run a dockerized production build:
+## To run a dockerized build:
 
 ```
 pip install docker-compose
@@ -25,6 +25,11 @@ Then run `docker logs -f <CONTAINER_NAME>`.
 2. Each service (flask, react, db) can freely access each other via docker aliases (e.g. Flask can communicate with the database by using the alias 'matcha_mongo' to find the db port).
 
 3. You can step into each container by entering the following command: `docker exec -it <CONTAINER_NAME> bash`. The `-i` flag means interactive mode, and `-t` flag allows you to name a container.
+
+## Tests:
+
+Run `docker exec -it matcha_flask bash -c "nosetests --with-coverage --cover-package matcha"` once you have the containers stood up.
+
 
 ## To run dev:
 
@@ -54,16 +59,7 @@ cd react && yarn dev            # run react app in another tab
 Navigate to `localhost:3000` on your favorite browser.
 
 
-## Running Tests
-
-1. Navigate to top level matcha directory
-2. Run `nosetests --with-coverage --cover-package matcha`
-
-## DB Access - MongoDB
-
-We have a MongoDB instance hosted on mLab, see db access details here. Since it's configured inside `app.py`, you will likely not need to access the db much. 
-
-### mLab Login Details
+### mLab Login Details (use on **DEV** only)
 ```
 user: oose-matcha
 pass: matcha17
