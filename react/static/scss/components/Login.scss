@@ -9,16 +9,6 @@
 	input[type="text"], input[type="password"] {
 		flex: 1 30%;
 		margin: 1% 35%;
-		padding: 20px;
-		font-size: 14pt;
-		font-weight: 200;
-		border: 1px #ccc solid;
-		transition: border-color 150ms ease-in;
-
-		&:focus {
-			outline: none;
-			border: 1px #1cbd6a solid;
-		}
 	}
 
 	.Select {
@@ -34,32 +24,16 @@
 		margin: 10px 35%;
 	}
 
-    .social-login {
-      display: flex;
-      flex-flow: row wrap;
-      .btn {
-        display: block;
-      }
-    }
-
-	.submit-wrapper {
-		flex: 1 100%;
-		margin: 10px 35%;
+    .social-login, .extra-wrapper {
+		flex: 0 100%;
+		align-self: center;
+		display: block;
+		margin: 5px 35%;
 	}
 }
 
 .logout {
 	&:hover {
 		cursor: pointer;
-	}
-}
-
-.login-buttons {
-	margin: 10px 35%;
-	display: flex;
-	flex-flow: row wrap;
-	button {
-		flex: 0 40%;
-
 	}
 }

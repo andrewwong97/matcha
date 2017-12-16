@@ -33,3 +33,20 @@ a {
 .hide {
 	display: none !important;
 }
+
+input[type="text"], input[type="password"] {
+	flex-grow: 1;
+
+	padding: 15px;
+	margin-right: 20px;
+	margin-bottom: 10px;
+	font-size: 14pt;
+	font-weight: 200;
+	border: 1px #ccc solid;
+	transition: border-color 150ms ease-in;
+
+	&:focus {
+		outline: none;
+		border: 1px #1cbd6a solid;
+	}
+}

@@ -19,6 +19,9 @@ pip install docker-compose
 docker-compose up -d --build    # deployed on port 3000
 ```
 
+To see active container logs, run `docker ps` to find the names of your containers.
+Then run `docker logs -f <CONTAINER_NAME>`.
+
 If you are running Docker from AWS, make sure you allow traffic to port 3000 or change this line in `docker-compose.yml`:
 ```
 FROM: - "3000:3000"
@@ -57,7 +60,7 @@ Navigate to `localhost:3000` on your favorite browser.
 ## Running Tests
 
 1. Navigate to top level matcha directory
-2. Run `nosetests`
+2. Run `nosetests --with-coverage --cover-package matcha`
 
 ## DB Access - MongoDB
 
@@ -71,7 +74,8 @@ pass: matcha17
 
 ### DB User Details
 ```
-dbname: matcha
-db user: oose
+https://mlab.com/databases/matcha2
+dbname: matcha2
+db user: matcha
 password: letmein
 ```

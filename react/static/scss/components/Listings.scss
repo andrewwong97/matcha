@@ -9,17 +9,12 @@
     .job-listing {
         list-style: none;
         flex: 1 0 30%;
-        margin: 1%;
         padding-top: 10px;
         padding-bottom: 10px;
+        margin-bottom: 5px;
 
         border-radius: 5px;
         height: 300px;
-        //transition: box-shadow 200ms ease-in-out;
-        //
-        //&:hover {
-        //    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        //}
 
         display: flex;
         align-items: center;
@@ -38,13 +33,28 @@
             text-align: center;
             .company {
                 font-size: 16pt;
+                margin: 5px;
             }
-            .name, .salary {
+            .name, .salary, .skills {
                 display: block;
                 font-size: 13pt;
                 font-weight: 300;
+                margin: 5px;
             }
         }
 
+    }
+}
+
+.add-listing-control {
+    display: flex;
+    max-width: 70%;
+    flex-flow: row wrap;
+    input {
+        flex: 1 30%;
+    }
+
+    .Select {
+        flex: 0 50%;
     }
 }

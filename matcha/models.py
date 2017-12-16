@@ -14,8 +14,9 @@ class Student(mongo.Document):
     location = mongo.StringField()
     need_visa = mongo.StringField()
     looking_for = mongo.ListField(mongo.StringField())  # list
-    job_matches = mongo.ListField(mongo.StringField())  # list
+    job_matches = mongo.ListField(mongo.TupleField(mongo.StringField(), mongo.FloatField())) # [(match_id1, .33), (match_id2, .5)]
     favorited_jobs = mongo.ListField(mongo.StringField())  # list
+    declined_jobs = mongo.ListField(mongo.StringField())  # list
 
 
 class Employer(mongo.Document):
@@ -28,11 +29,13 @@ class Employer(mongo.Document):
     location = mongo.StringField()
 
 
-class listings(mongo.Document):
-    name = mongo.StringField()
-    salary = mongo.IntField()
-    # num_employees = mongo.NumberField()
-    employer = mongo.StringField()  # change to mongo.ObjectIdField()
-    # location = mongo.StringField()
+class Listing(mongo.Document):
+    title = mongo.StringField()
+    description = mongo.StringField()
+    employer = mongo.StringField()
+    student_matches = mongo.ListField(mongo.TupleField(mongo.StringField(), mongo.FloatField()))
+    salary = mongo.FloatField()
+    location = mongo.StringField()
     desired_skills = mongo.ListField(mongo.StringField())
-    job_type = mongo.StringField()
+    job_type = mongo.ListField(mongo.StringField())
+

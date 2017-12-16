@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Loading from './Loading';
+import withAuth from '../util/withAuth';
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -11,15 +13,16 @@ class Listings extends Component {
 	}
 
 	renderListings() {
-		return this.state.listings == null ? 'Loading listings...' :
+		return !this.state.listings ?
+			<div className="loader"><h1 className="thin">Loading listings...</h1><div className="loading-pulse" /></div> :
 			this.state.listings.map((listing) =>
 				(
 					<li className="job-listing">
-						<div className="logo-placeholder"></div>
+						<div className="logo-placeholder" />
 						<div className="listing-text">
 							<p className="company">{listing.employer}</p>
-							<p className="name">{listing.name}</p>
-							<p className="salary">{listing.salary}</p>
+							<p className="name">{listing.title}</p>
+							<p className="salary">Salary: {listing.salary}</p>
 						</div>
 					</li>
 				)
@@ -35,6 +38,11 @@ class Listings extends Component {
 	}
 
 	render() {
+		if (this.state.listings.length === 0) {
+			return (
+				<Loading title="listings"/>
+			)
+		}
 		return (
 			<div className="Listings">
 				<h1>Listings</h1>
@@ -46,4 +54,4 @@ class Listings extends Component {
 	}
 }
 
-export default Listings;
+export default withAuth(Listings);

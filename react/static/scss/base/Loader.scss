@@ -4,6 +4,27 @@ $alt-loading-color: rgba($main-loading-color, 0.2);
 $spin-duration: 1s;
 $pulse-duration: 750ms;
 
+.Loading {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+
+  .loading-title {
+    flex: 0 100%;
+    font-weight: 300;
+    font-size: 22pt;
+  }
+
+  .loading-pulse {
+    margin-left: 50%;
+    margin-bottom: 20px;
+  }
+}
+
+
+
 // Adapted from Alan Shortis https://codepen.io/alanshortis/pen/eJLVXr
 
 @keyframes spin {

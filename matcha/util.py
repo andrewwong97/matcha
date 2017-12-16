@@ -1,4 +1,26 @@
-from models import Student, Employer, listings
+from models import Student, Employer, Listing
+import matcher
+
+
+def student_listing_matcher(student, listing):
+    """
+    Match student to listing by student fields and desired listing fields
+    :param student: Student obj
+    :param listing: Listing obj
+    :return: ratio between 0 and 1
+    """
+    same_job_type = False
+    for i in student.looking_for:
+        if i in listing.job_type:
+            same_job_type = True
+    if not same_job_type:
+        return 0
+
+    if len(student.skills) == 0:
+        return 0
+
+    skill_ratio = matcher.match(student.skills, listing.desired_skills)
+    return skill_ratio
 
 
 def student_to_dict(st):
@@ -21,6 +43,8 @@ def student_to_dict(st):
     st_dict['looking_for'] = st.looking_for  # list
     st_dict['job_matches'] = st.job_matches  # list
     st_dict['favorited_jobs'] = st.favorited_jobs  # list
+    st_dict['declined_jobs'] = st.declined_jobs  # list
+    st_dict['account_type'] = 'Student'
 
     return st_dict
 
@@ -32,19 +56,20 @@ def dict_to_student(d):
     :return: Student object
     """
     st_obj = Student()
-    st_obj.username = d['username']  # each student has a unique username
-    st_obj.first_name = d['first_name']
-    st_obj.last_name = d['last_name']
+    st_obj.username = d['username'] if 'username' in d else ''  # each student has a unique username
+    st_obj.first_name = d['first_name'] if 'first_name' in d else ''
+    st_obj.last_name = d['last_name'] if 'last_name' in d else ''
     st_obj.email = d['email']
     st_obj.password = d['password']
-    st_obj.linkedin_token = d['linkedin_token']
-    st_obj.github_token = d['github_token']
-    st_obj.skills = d['skills']  # list of strings
-    st_obj.need_visa = d['need_visa']  # boolean
-    st_obj.location = d['location']  # string
-    st_obj.looking_for = d['looking_for']  # list
-    st_obj.job_matches = d['job_matches']  # list
-    st_obj.favorited_jobs = d['favorited_jobs']  # list
+    st_obj.linkedin_token = d['linkedin_token'] if 'linkedin_token' in d else ''
+    st_obj.github_token = d['github_token'] if 'github_token' in d else ''
+    st_obj.skills = d['skills'] if 'skills' in d else []  # list of strings
+    st_obj.need_visa = d['need_visa'] if 'need_visa' in d else 'no'  # boolean STRING
+    st_obj.location = d['location'] if 'location' in d else 'New York'  # string
+    st_obj.looking_for = d['looking_for'] if 'looking_for' in d else ['Internship', 'Full-Time', 'Co-op']  # list
+    st_obj.job_matches = d['job_matches'] if 'job_matches' in d else []  # list
+    st_obj.favorited_jobs = d['favorited_jobs'] if 'favorited_jobs' in d else []  # list
+    st_obj.declined_jobs = d['declined_jobs'] if 'declined_jobs' in d else []  # list
 
     return st_obj
 
@@ -63,6 +88,7 @@ def employer_to_dict(em):
     em_dict['email'] = em.email
     em_dict['password'] = em.password
     em_dict['location'] = ''
+    em_dict['account_type'] = 'Employer'
 
     return em_dict
 
@@ -74,61 +100,60 @@ def dict_to_employer(d):
     :return: Employer object
     """
     em_obj = Employer()
-    em_obj.company_name = d['company_name']  # each student has a unique username
-    em_obj.description = ''
-    em_obj.num_employees = 0
+    em_obj.company_name = d['company_name'] if 'company_name' in d else ''
+    em_obj.description = d['description'] if 'description' in d else ''
+    em_obj.num_employees = d['num_employees'] if 'num_employees' in d else 0
     em_obj.username = d['email']
     em_obj.email = d['email']
     em_obj.password = d['password']
-    em_obj.location = ''  # string
+    em_obj.location = d['location'] if 'location' in d else ''
 
     return em_obj
 
 
-def listing_to_dict(obj):
+def listing_to_dict(ls_obj):
     """
     Convert MongoAlchemy listing fields to dictionary
     :param st: listing object
     :return: dictionary with keys as field name and value as field value
     """
-    listing_dict = dict()
-    listing_dict['name'] = obj.name
-    listing_dict['salary'] = obj.salary
-    listing_dict['employer'] = obj.employer
-    listing_dict['desired_skills'] = obj.desired_skills
-    listing_dict['job_type'] = obj.job_type
+    ls_dict = dict()
+    ls_dict['title'] = ls_obj.title
+    ls_dict['description'] = ls_obj.description
+    ls_dict['employer'] = ls_obj.employer
+    ls_dict['student_matches'] = ls_obj.student_matches
+    ls_dict['salary'] = ls_obj.salary
+    ls_dict['location'] = ls_obj.location
+    ls_dict['desired_skills'] = ls_obj.desired_skills
+    ls_dict['job_type'] = ls_obj.job_type
+    ls_dict['account_type'] = 'Listing'
 
-    return listing_dict
+    return ls_dict
 
-
+  
 def dict_to_listing(d):
     """
     Convert dictionary to listing object
     :param d: dictionary
     :return: listing object
     """
-    l = listings()
-    l.name = d['name']
-    l.salary = d['salary']
-    l.employer = d['employer']
-    l.desired_skills = d['desired_skills']
-    l.job_type = d['job_type']
-    return l
-
-
-def matcher(student, listing):
-    rating = 0
-    for i in student.looking_for:
-        if listing.job_type.lower() == i:
-            return 0
-
-    for skill in student.skills:
-        for desired in listing.desired_skills:
-            if skill.lower() == desired.lower():
-                # add fuzzy matching here
-                rating += 1
-
-    return 1.0 * rating / (len(student.skills) + len(listing.desired_skills))
+    ls = Listing()
+    ls.title = d['title'] if 'title' in d else ''
+    ls.description = d['description'] if 'description' in d else ''
+    ls.employer = d['employer'] if 'employer' in d else ''
+    ls.student_matches = d['student_matches'] if 'student_matches' in d else []
+    ls.salary = float(d['salary']) if 'salary' in d else 0
+    ls.location = d['location'] if 'location' in d else ''
+    if 'desired_skills' in d:
+        if type(d['desired_skills']) == 'str':
+            skills = d['desired_skills'].strip().split(',')
+            ls.desired_skills = [i.strip() for i in skills]
+        else:
+            ls.desired_skills = d['desired_skills']
+    else:
+        ls.desired_skills = []
+    ls.job_type = d['job_type'] if 'job_type' in d else ['Internship', 'Full-Time']
+    return ls
 
 
 def li_to_student(d):
@@ -152,5 +177,6 @@ def li_to_student(d):
     st_obj.looking_for = []
     st_obj.job_matches = []
     st_obj.favorited_jobs = []
+    st_obj.declined_jobs = []
 
     return st_obj
