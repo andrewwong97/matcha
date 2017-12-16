@@ -7,7 +7,6 @@ python:
 
 services:  
     - docker
-    - mongodb
 
 install:
     - pip install -r requirements.txt
