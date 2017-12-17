@@ -163,7 +163,7 @@ class StudentProfile extends React.Component {
                         onChange={this.handleJobSelect.bind(this)}
                     />
                 <h1 className="skills">Skills:</h1>
-                <Select
+                <Select.Creatable
                     name="skills"
                     style={{width: "40%", marginBottom: "20px"}}
                     value={this.state.skills}

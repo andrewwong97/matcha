@@ -193,7 +193,7 @@ class Register extends Component {
                     onChange={this.handleSelect.bind(this)}
                 />
 
-                <Select
+                <Select.Creatable
                     name="skills"
                     value={this.state.skills}
                     placeholder="Skills"
