@@ -51,7 +51,7 @@ class StudentProfile extends React.Component {
             this.state.skills = arrToSelectObj(this.state.user.skills);
         }
         this.getMatches();
-         fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
+        fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
             .then(res => res.json())
             .then(data => data.map(s => ({label: strTransform(s), value: strTransform(s) })))
             .then(skills => this.setState({ allSkills: skills.sort() }));
@@ -189,10 +189,11 @@ class StudentProfile extends React.Component {
                 <h1 className="looking-for">Looking for: {this.state.user.looking_for ? this.state.user.looking_for.join(', ') : ''}</h1>
                 <h1 className="skills">
                     Skills: {this.state.showSkills ? (
-                        this.state.user.skills ? this.state.user.skills.join(', '): 'Add skills...'
+                        this.state.user.skills
                     ) : (
                         <span style={{cursor: "pointer", color: '#cccccc'}} onClick={this.toggleSkills}> show skills... </span>
                     )}
+                    {this.state.showSkills ? <span style={{cursor: "pointer", color: '#cccccc'}} onClick={this.toggleSkills}> (hide skills) </span> : null}
                 </h1>
             </div>
         )
