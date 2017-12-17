@@ -13,7 +13,6 @@ install:
 
 env:  
     - DOCKER_COMPOSE_VERSION=1.17.0
-    - DEV=1
 
 before_install:  
     # reinstall docker-compose at specific version
