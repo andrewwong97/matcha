@@ -20,7 +20,7 @@ export default function withAuth(AuthComponent) {
             if (!Auth.loggedIn()) {
                 Router.push('/');
             } else if (window.location.pathname === '/') {
-                Router.push(`/profile/${Auth.getProfile().account_type.toLowerCase()}/${Auth.getProfile().username}`);
+                Router.push(`/profile/${Auth.getProfile().account_type}/${Auth.getProfile().username}`);
             }
             this.setState({ isLoading: false })
         }
