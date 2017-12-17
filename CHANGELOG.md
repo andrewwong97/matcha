@@ -1,5 +1,17 @@
 # Changelog
 
+## Iteration 6 - 2017-12-20
+
+### Added
+- Skills as far as the eye can see - Skill collection in MongoDB allows us to persist a default listing of skills as well as additional ones from job listings
+ 
+
+### Changed
+- Fixed toLowerCase issue
+
+
+### Removed
+
 ## Iteration 5 - 2017-12-08
 
 ### Added
