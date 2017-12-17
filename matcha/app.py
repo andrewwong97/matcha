@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask.ext.mongoalchemy import MongoAlchemy
-from matcha.config import MONGOALCHEMY_CONNECTION_STRING
+from config import MONGOALCHEMY_CONNECTION_STRING
 
 app = Flask(__name__)
 app.secret_key = 'matcha'

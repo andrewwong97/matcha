@@ -3,7 +3,7 @@
 import pymongo
 import json
 import os
-from matcha.config import MONGOALCHEMY_CONNECTION_STRING
+from config import MONGOALCHEMY_CONNECTION_STRING
 
 
 def populate():
