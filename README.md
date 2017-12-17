@@ -35,7 +35,7 @@ Run `docker exec -it matcha_flask bash -c "nosetests --with-coverage --cover-pac
 
 Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS.
 
-Setup:
+#### Setup:
 ```
 git clone this repository to your local
 cd 2017-group-16
@@ -49,12 +49,16 @@ cd react
 yarn
 ```
 
-Run:
+#### Run:
 ```
-python matcha/app.py            # run flask server in current tab
-cd react && yarn dev            # run react app in another tab
+DEV=1 python matcha/app.py            # run flask server in current tab
+cd react && yarn dev                  # run react app in another tab
 ```
-**Ensure** that you are using the correct MongoDB URI string (i.e. for dev, use mlab. for prod, use the local docker connection. 
+
+#### Tests:
+```
+DEV=1 nosetests --with-coverage --cover-package matcha
+```
 
 Navigate to `localhost:3000` on your favorite browser.
 
