@@ -39,3 +39,6 @@ class Listing(mongo.Document):
     desired_skills = mongo.ListField(mongo.StringField())
     job_type = mongo.ListField(mongo.StringField())
 
+
+class Skill(mongo.Document):
+    name = mongo.StringField()
