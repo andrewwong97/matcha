@@ -33,7 +33,7 @@ class Login extends React.Component {
         auth.login(this.state.email, this.state.password)
 			.then(data => {
 				// page under pages/, browser url form
-				setTimeout(Router.push(`/profile/${data.account_type.toLowerCase()}/${data.email}`), 1000);
+				setTimeout(Router.push(`/profile/${data.account_type}/${data.email}`), 1000);
 			});
 	}
 
