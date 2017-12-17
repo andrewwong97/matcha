@@ -222,6 +222,7 @@ class StudentProfile extends React.Component {
                     <TableHeaderColumn dataField='_id' isKey={ true }>ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='title'>Job Title</TableHeaderColumn>
                     <TableHeaderColumn dataField='employer'>Company Name</TableHeaderColumn>
+                    <TableHeaderColumn dataField='desired_skills'>Skills Matched</TableHeaderColumn>
                     <TableHeaderColumn dataField='job_type'>Job Type</TableHeaderColumn>
                 </BootstrapTable>
                 <button className="btn" onClick={this.computeMatches}>Refresh Matches</button>
