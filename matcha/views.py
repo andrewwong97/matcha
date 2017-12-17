@@ -1,6 +1,6 @@
 from bson.json_util import dumps
 from flask import (render_template, session, request,redirect, url_for)
-from models import Student, Employer, Listing
+from models import Student, Employer, Listing, Skill
 from app import app, mongo
 from util import student_to_dict, dict_to_student, employer_to_dict, dict_to_employer, li_to_student
 from util import listing_to_dict, dict_to_listing
@@ -430,18 +430,6 @@ def favorite_job(username, job_id):
     return 'Success'
 
 
-@app.route('/v1/candidate/<string:username>/createReminder', methods=['POST'])
-def create_reminder(username):
-    # TODO: add code to create a reminder
-    return 'Success'
-
-
-@app.route('/v1/candidate/<string:username>/deleteReminder/<string:reminder>', methods=['DELETE'])
-def delete_reminder(username, reminder):
-    # TODO: add code to delete reminder
-    return 'Success'
-
-
 @app.route('/v1/employer/<string:employer>/getAuthorization', methods=['GET'])
 def get_authorization(employer):
     employers = mongo.db.employers.find({'employer': employer})  # get list of employers
@@ -461,24 +449,6 @@ def delete_job(employer):
     return 'Success'
 
 
-@app.route('/v1/admin/authorizeEmployer/<string:employer>', methods=['POST'])
-def authorize_employer(employer):
-    # TODO: authorize employer
-    return 'Success'
-
-
-@app.route('/v1/admin/deauthorizeEmployer/<string:employer>', methods=['POST'])
-def deauthorize_employer(employer):
-    # TODO: deauthorize employer
-    return 'Success'
-
-
-@app.route('/v1/admin/hideAccount/<string:employer>', methods=['POST'])
-def hide_account(employer):
-    # TODO: hide account
-    return 'Success'
-
-
 @app.route('/v1/listings/all', methods=['GET'])
 def get_all_listings():
     return dumps([listing_to_dict(l) for l in Listing.query.all()]), 200
@@ -486,10 +456,12 @@ def get_all_listings():
 
 @app.route('/v1/skills/all', methods=['GET'])
 def get_all_skills():
-    all_skills = []
+    all_skills = [skill.name for skill in Skill.query.all()]
+
     for listing in Listing.query.all():
         listing.desired_skills = [i.strip() for i in listing.desired_skills]
         all_skills += listing.desired_skills
+
     return dumps(sorted(set(all_skills))), 200
 
 

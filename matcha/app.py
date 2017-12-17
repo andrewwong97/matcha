@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask.ext.mongoalchemy import MongoAlchemy
-from config import MONGOALCHEMY_CONNECTION_STRING
+
 
 app = Flask(__name__)
 app.secret_key = 'matcha'
@@ -14,14 +14,23 @@ from views import *
 
 if __name__ == '__main__':
     import nltk
+    from fixtures import *
+    import pymongo
+    from config import MONGOALCHEMY_CONNECTION_STRING
+
     nltk.download('punkt')
     nltk.download('stopwords')
+    db = pymongo.MongoClient(MONGOALCHEMY_CONNECTION_STRING).matcha2
+
     try:
-        import pymongo
-        from populate_listings import populate
-        db = pymongo.MongoClient(MONGOALCHEMY_CONNECTION_STRING).matcha2
-        first = db.Listing.find()[0]
+        has_listing = db.Listing.find()[0]
     except IndexError:
-        populate()
+        populate_listings()
+
+    try:
+        has_skill = db.Skill.find()[0]
+    except IndexError:
+        populate_skills()
+
     app.run(host='0.0.0.0')
 
