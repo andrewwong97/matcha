@@ -12,23 +12,23 @@ A platform that seamlessly connects employers and qualified candidates with matc
 - `pip`
 - `Docker`
 
-## To run a dockerized production build:
+## To run a dockerized build:
 
 ```
 pip install docker-compose
-docker-compose up -d --build    # deployed on port 3000
+docker-compose up --build    # deployed on port 3000
 ```
 
-To see active container logs, run `docker ps` to find the names of your containers.
+1. To see active container logs, run `docker ps` to find the names of your containers.
 Then run `docker logs -f <CONTAINER_NAME>`.
 
-If you are running Docker from AWS, make sure you allow traffic to port 3000 or change this line in `docker-compose.yml`:
-```
-FROM: - "3000:3000"
-TO: - "80:3000"
-```
+2. Each service (flask, react, db) can freely access each other via docker aliases (e.g. Flask can communicate with the database by using the alias 'matcha_mongo' to find the db port).
 
-If the server isn't running, try switching off of Hopkins network since it tends to block requests from mLab, where we host our MongoDB instance. In future iterations, we plan to deploy a local Dockerized Mongo instance.
+3. You can step into each container by entering the following command: `docker exec -it <CONTAINER_NAME> bash`. The `-i` flag means interactive mode, and `-t` flag allows you to name a container.
+
+## Tests:
+
+Run `docker exec -it matcha_flask bash -c "nosetests --with-coverage --cover-package matcha"` once you have the containers stood up.
 
 
 ## To run dev:
@@ -54,19 +54,12 @@ Run:
 python matcha/app.py            # run flask server in current tab
 cd react && yarn dev            # run react app in another tab
 ```
+**Ensure** that you are using the correct MongoDB URI string (i.e. for dev, use mlab. for prod, use the local docker connection. 
+
 Navigate to `localhost:3000` on your favorite browser.
 
 
-## Running Tests
-
-1. Navigate to top level matcha directory
-2. Run `nosetests --with-coverage --cover-package matcha`
-
-## DB Access - MongoDB
-
-We have a MongoDB instance hosted on mLab, see db access details here. Since it's configured inside `app.py`, you will likely not need to access the db much. 
-
-### mLab Login Details
+### mLab Login Details (use on **DEV** only)
 ```
 user: oose-matcha
 pass: matcha17
