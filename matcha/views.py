@@ -335,7 +335,7 @@ def compute_listing_matches(listing_id):
         for st in Student.query.all():
             if st:
                 ratio = student_listing_matcher(st, lst)
-                if ratio > 0 and str(st.username) not in lst.student_matches:
+                if ratio > .5 and str(st.username) not in lst.student_matches:
                     lst.student_matches.append((str(st.username), ratio))
         lst.student_matches = list(set(lst.student_matches))
         lst.save()
@@ -355,7 +355,7 @@ def compute_student_matches(username):
         # compare student to all listings
         for listing_obj in Listing.query.all():
             ratio = student_listing_matcher(st_obj, listing_obj)
-            if ratio > 0:
+            if ratio > 0.5:
                 if str(listing_obj.mongo_id) not in st_obj.declined_jobs and \
                                 str(listing_obj.mongo_id) not in st_obj.favorited_jobs:
                     new_matches.append((str(listing_obj.mongo_id), ratio))

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
+import {strTransform} from "../util/fieldFormat";
 
 const baseUrl = require('../vars.json').baseUrl;
 
@@ -18,8 +19,14 @@ export default class AddListing extends Component {
         this.state = {
             title: '',
             jobType: null,
-            desired_skills: ''
         }
+    }
+
+    componentDidMount() {
+         fetch(baseUrl + '/v1/skills/all', {method: 'GET', type: 'cors'})
+            .then(res => res.json())
+            .then(data => data.map(s => ({label: strTransform(s), value: strTransform(s) })))
+            .then(skills => this.setState({ allSkills: skills.sort() }));
     }
 
 
@@ -31,6 +38,10 @@ export default class AddListing extends Component {
 	    this.setState({[option.name]: option.value});
     }
 
+    handleSkillSelect(selected_skills) {
+        this.setState({ desired_skills: selected_skills.map(i => i.value) });
+    }
+
     submitListing() {
         fetch(baseUrl + '/v1/employer/' + this.props.profile.company_name + '/newJob',
             {
@@ -40,7 +51,7 @@ export default class AddListing extends Component {
                     title: this.state.title,
                     salary: this.state.salary,
                     job_type: [this.state.jobType],
-                    desired_skills: this.state.desired_skills.split(',')
+                    desired_skills: this.state.desired_skills
                 })
             })
             .then(res => res.json())
@@ -48,9 +59,9 @@ export default class AddListing extends Component {
                 alert('Added listing.');
                 fetch(baseUrl + '/v1/employer/' + data._id + '/computeMatches', { method: 'GET', mode: 'cors' })
                 .then(res => res.json())
-                    .then(data => data)
-                this.setState({ title: '', salary: '', desired_skills: '' });
-            })
+                    .then(data => data);
+                this.setState({ title: '', salary: '' });
+            });
     }
 
     render() {
@@ -69,11 +80,13 @@ export default class AddListing extends Component {
                        placeholder="Salary"
                        onChange={this.handleChange}
                 />
-                 <input type="text"
-                       name="desired_skills"
-                       value={this.state.desired_skills}
-                       placeholder="Skills (comma separated)"
-                       onChange={this.handleChange}
+                 <Select.Creatable
+                    name="skills"
+                    value={this.state.desired_skills}
+                    placeholder="Skills"
+                    options={this.state.allSkills}
+                    onChange={this.handleSkillSelect.bind(this)}
+                    multi={true}
                 />
                 <Select
                         name="jobType"
