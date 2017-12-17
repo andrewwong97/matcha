@@ -14,8 +14,6 @@ install:
 env:  
     - DOCKER_COMPOSE_VERSION=1.17.0
     - DEV=1
-    global:
-        - DEV=1
 
 before_install:  
     # reinstall docker-compose at specific version
@@ -31,7 +29,7 @@ before_script:
 
 script:  
     # ensure build works
-    - docker-compose up -d --build
+    - DEV=1 docker-compose up -d --build
     - docker ps # debug
     
     # run python tests
