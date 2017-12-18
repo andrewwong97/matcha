@@ -58,7 +58,7 @@ export default class Layout extends React.Component {
         return (
             <div className="Layout">
                 <Head>
-                    <meta charset="utf-8" />
+                    <meta charSet="utf-8" />
                     <title>{ this.props.title } | Matcha - an intelligent job matching platform</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css" />

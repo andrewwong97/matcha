@@ -14,7 +14,7 @@ export default class AuthCallback extends Component {
         // auto handles refreshes
         auth.linkedinLogin(this.props.url.query.code)
             .then(data => {
-                window.location.replace(`${window.location.origin}/profile/${data.profile.account_type.toLowerCase()}/${data.profile.username}`)
+                window.location.replace(`${window.location.origin}/profile/${data.profile.account_type}/${data.profile.username}`)
             })
             .catch(e => console.log(e));
     }
