@@ -9,16 +9,16 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def populate_listings():
-    listings = json.loads(open(os.path.join(current_dir, 'listing_fixtures.json'), 'r').read())
+    listings = json.loads(open(os.path.join(current_dir, 'engineering.json'), 'r').read())
 
     for l in listings:
         db.Listing.insert({
-            'title': l['name'],
+            'title': l['title'],
             'description': '',
             'employer': l['employer'],
-            'salary': l['salary'],
-            'desired_skills': list(l['desired_skills']),
-            'job_type': [l['job_type']],
+            'salary': float(l['salary']),
+            'desired_skills': l['desired_skills'],
+            'job_type': l['job_type'],
             'student_matches': list(),
             'location': 'New York'
         })
