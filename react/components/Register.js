@@ -39,12 +39,12 @@ class Register extends Component {
 		this.state = {
 			email: '',
 			password: '',
-      jobType: '',
-      expertise: '',
-      visaStatus: '',
-      city: '',
-      skills: [],
-      allSkills: []
+            jobType: '',
+            expertise: '',
+            visaStatus: '',
+            city: '',
+            skills: [],
+            allSkills: []
 		}
 
 	}
@@ -74,12 +74,17 @@ class Register extends Component {
 	    this.setState({ skills })
     }
 
+    handle404(reason) {
+        alert("404: " + reason);
+    }
+
     registerWithLinkedIn() {
         fetch(baseUrl + '/v1/getLinkedinURI')
             .then((res) => res.json())
             .then((data) => {
                 if (data.reason) {
-                    alert('404: ' + data.reason);
+                    this.handle404(data.reason);
+                    return;
                 }
 
                 window.location.replace(data.uri);
@@ -119,9 +124,10 @@ class Register extends Component {
             .then((response) => response.json())
             .then((data) => {
                 if (data.reason) {
-                    alert('404: ' + data.reason);
+                    this.handle404(data.reason);
+                    return;
                 }
-                
+
                 const email = this.state.email;
                 this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
                 auth.setProfile(data);

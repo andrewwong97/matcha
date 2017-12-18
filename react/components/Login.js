@@ -13,7 +13,6 @@ class Login extends React.Component {
 		this.state = {
 			email: '',
 			password: '',
-			badLogin: false
 		};
 
 		this.handleLogin = this.handleLogin.bind(this);
@@ -29,11 +28,20 @@ class Login extends React.Component {
 	    });
 	}
 
+    handle404(reason) {
+        this.setState({
+			email: '',
+			password: '',
+		});
+        alert('404: ' + reason);
+    }
+
 	handleLogin() {
         auth.login(this.state.email, this.state.password)
 			.then(data => {
                 if (data.reason) {
-                    alert('404: ' + data.reason);
+                    this.handle404(data.reason);
+                    return;
                 }
 				// page under pages/, browser url form
 				setTimeout(Router.push(`/profile/${data.account_type}/${data.email}`), 1000);
@@ -44,8 +52,10 @@ class Login extends React.Component {
         fetch(baseUrl + '/v1/getLinkedinURI')
             .then((res) => res.json())
             .then((data) => {
+                console.log(data);
                 if (data.reason) {
-                    alert('404: ' + data.reason);
+                    this.handle404(data.reason);
+                    return;
                 }
 
                 window.location.replace(data.uri);
