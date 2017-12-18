@@ -33,7 +33,7 @@ class StudentProfile extends React.Component {
             matches: [],
             computingMatches: false, // toggle to display Loading component
             user: JSON.parse(localStorage.profile),
-            username: Router.asPath.slice(Router.asPath.indexOf('student/')+8),
+            username: Router.asPath.slice(Router.asPath.indexOf('student/') +8),
             showSkills: false,
             isEditing: false
         };
