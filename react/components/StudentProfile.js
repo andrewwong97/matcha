@@ -189,7 +189,7 @@ class StudentProfile extends React.Component {
                 <h1 className="looking-for">Looking for: {this.state.user.looking_for ? this.state.user.looking_for.join(', ') : ''}</h1>
                 <h1 className="skills">
                     Skills: {this.state.showSkills ? (
-                        this.state.user.skills
+                        this.state.user.skills ? this.state.user.skills.join(', '): 'No skills... edit to add some.'
                     ) : (
                         <span style={{cursor: "pointer", color: '#cccccc'}} onClick={this.toggleSkills}> show skills... </span>
                     )}
