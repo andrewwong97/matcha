@@ -48,7 +48,6 @@ def login():
                 if 'password' in employer_dict:
                     del employer_dict['password']
                 print employer_dict
-                employer_dict['account_type'] = 'Employer'
                 return dumps(employer_dict), 200
             else:
                 return dumps({"reason": "No account exists for this username"}), 404
@@ -57,7 +56,6 @@ def login():
             if 'password' in student_dict:
                 del student_dict['password']
             print student_dict
-            student_dict['account_type'] = 'Student'
             return dumps(student_dict), 200
 
 
@@ -84,7 +82,6 @@ def linkedin_login():
     if stu:
         # if token is not expired/invalid, return student
         profile = student_to_dict(stu)
-        profile['account_type'] = 'Student'
         print 'student found: \n {}'.format(profile)
         return dumps({'linkedin_token': token, 'profile': profile}), 200
     else:
@@ -95,7 +92,6 @@ def linkedin_login():
         if account_exists:
             account_exists.linkedin_token = token  # update token
             profile = student_to_dict(account_exists)
-            profile['account_type'] = 'Student'
             print 'student found: \n {}'.format(profile)
             return dumps({'linkedin_token': token, 'profile': profile}), 200
         else:
@@ -108,7 +104,6 @@ def linkedin_login():
             stu = Student.query.filter(Student.linkedin_token == token).first()
 
             profile = student_to_dict(stu)
-            profile['account_type'] = 'Student'
             print 'student created: \n {}'.format(profile)
             return dumps({'linkedin_token': token, 'profile': profile}), 200
 
@@ -126,7 +121,7 @@ def create_student_profile():
     req_data = request.get_json()
 
     if 'skills' in req_data:
-        skills = [i.lower() for i in req_data['skills']]
+        skills = [i for i in req_data['skills']]
         req_data['skills'] = skills
 
     student_obj = dict_to_student(req_data)
@@ -141,7 +136,6 @@ def create_student_profile():
     else:
         student_obj.save()
         st_dict = student_to_dict(student_obj)
-        st_dict['account_type'] = 'Student'
         return dumps(st_dict), 200
 
 
@@ -151,7 +145,6 @@ def get_student_profile(username):
 
     if st_obj is not None:
         student_dict = student_to_dict(st_obj)
-        student_dict['account_type'] = 'Student'
         return dumps(student_dict), 200
     else:
         return dumps({}), 404
@@ -247,20 +240,36 @@ def new_job(employer):
     return dumps(listing_dict), 200
 
 
-@app.route('/v1/employer/<string:employer>/editJob/<string:job_id>', methods=['POST'])
-def edit_job(employer, job_id):
+@app.route('/v1/employer/editJob/<string:job_id>', methods=['POST'])
+def edit_job(job_id):
     new_data = request.get_json()  # dictionary with data from user
-    ls_obj = Listing.query.filter(Listing.mongo_id == job_id).first()
-
+    ls_obj = Listing.query.get(job_id)
+    print ls_obj.mongo_id
     if ls_obj is not None:
 
-        for key in new_data:
-            setattr(ls_obj, key, new_data[key])
+        ls_obj.title = new_data['title']
+        try:
+            ls_obj.salary = float(new_data['salary'])
+            ls_obj.desired_skills = [i.strip() for i in new_data['desired_skills']]
+            ls_obj.job_type = new_data['job_type']
+        except Exception as e:
+            print new_data
+            return dumps({"reason": e.message}), 404
 
+        ls_obj.student_matches = sorted(ls_obj.student_matches, key=lambda x: x[1], reverse=True)
         ls_obj.save()
-        return 'Success'  # TODO: change return value as needed
+        listing_dict = listing_to_dict(ls_obj)
+        listing_dict['_id'] = str(ls_obj.mongo_id)
+        print 'listing edited: {}'.format(listing_dict)
+        return dumps(listing_dict), 200
     else:
-        return 'Username Not Found'  # TODO: improve error handling
+        return dumps({"reason": "listing not found"}), 404
+
+
+@app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
+def delete_job(employer):
+    # TODO: delete job
+    return 'Success'
 
 
 # START MATCHES ENDPOINTS
@@ -440,12 +449,6 @@ def get_authorization(employer):
 @app.route('/v1/employer/<string:employer>/favoriteCandidate/<string:candidate>/<string:job_name>', methods=['POST'])
 def favorite_candidate(employer, job_name, candidate):
     # TODO: search employer job listing to favorite candidate
-    return 'Success'
-
-
-@app.route('/v1/employer/<string:employer>/deleteJob/<string:job_name>', methods=['DELETE'])
-def delete_job(employer):
-    # TODO: delete job
     return 'Success'
 
 
