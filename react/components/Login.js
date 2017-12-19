@@ -13,7 +13,6 @@ class Login extends React.Component {
 		this.state = {
 			email: '',
 			password: '',
-			badLogin: false
 		};
 
 		this.handleLogin = this.handleLogin.bind(this);
@@ -29,9 +28,21 @@ class Login extends React.Component {
 	    });
 	}
 
+    handle404(reason) {
+        this.setState({
+			email: '',
+			password: '',
+		});
+        alert('404: ' + reason);
+    }
+
 	handleLogin() {
         auth.login(this.state.email, this.state.password)
 			.then(data => {
+                if (data.reason) {
+                    this.handle404(data.reason);
+                    return;
+                }
 				// page under pages/, browser url form
 				setTimeout(Router.push(`/profile/${data.account_type}/${data.email}`), 1000);
 			});
@@ -40,25 +51,33 @@ class Login extends React.Component {
 	linkedinLogin() {
         fetch(baseUrl + '/v1/getLinkedinURI')
             .then((res) => res.json())
-            .then((data) => window.location.replace(data.uri));
+            .then((data) => {
+                console.log(data);
+                if (data.reason) {
+                    this.handle404(data.reason);
+                    return;
+                }
+
+                window.location.replace(data.uri);
+            });
     }
 
 	render() {
 		return (
 			<div className="Login">
 				<h1>Login</h1>
-				<input 
-					onChange={this.handleChange.bind(this)} 
-					name="email" 
-					placeholder="Email" 
-					value={this.state.email} 
-					type="text" 
+				<input
+					onChange={this.handleChange.bind(this)}
+					name="email"
+					placeholder="Email"
+					value={this.state.email}
+					type="text"
 				/>
 
-				<input 
-					onChange={this.handleChange.bind(this)} 
-					name="password" 
-					placeholder="Password" 
+				<input
+					onChange={this.handleChange.bind(this)}
+					name="password"
+					placeholder="Password"
 					value={this.state.password}
 					type="password"
 					onEnter={this.handleLogin}

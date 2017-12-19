@@ -32,6 +32,10 @@ export default class RegisterEmployer extends Component {
         this.setState({[option.name]: option.value});
     }
 
+    handle404(reason) {
+        alert("404: " + reason);
+    }
+
     register() {
         const options = {
             method: 'POST',
@@ -47,14 +51,14 @@ export default class RegisterEmployer extends Component {
             .then(response => response.json())
             .then(data => {
                 if (data.reason) {
-                    // error
-                    alert(data.reason);
-                } else {
-                    const email = this.state.email;
-                    this.setState({ company_name: '', email: '', password: '' });
-                    auth.setProfile(data);
-                    Router.push(`/profile/employer/${email}`);
+                    this.handle404(data.reason);
+                    return;
                 }
+
+                const email = this.state.email;
+                this.setState({ company_name: '', email: '', password: '' });
+                auth.setProfile(data);
+                Router.push(`/profile/employer/${email}`);
             });
     }
 

@@ -39,12 +39,12 @@ class Register extends Component {
 		this.state = {
 			email: '',
 			password: '',
-      jobType: '',
-      expertise: '',
-      visaStatus: '',
-      city: '',
-      skills: [],
-      allSkills: []
+            jobType: '',
+            expertise: '',
+            visaStatus: '',
+            city: '',
+            skills: [],
+            allSkills: []
 		}
 
 	}
@@ -74,10 +74,21 @@ class Register extends Component {
 	    this.setState({ skills })
     }
 
+    handle404(reason) {
+        alert("404: " + reason);
+    }
+
     registerWithLinkedIn() {
         fetch(baseUrl + '/v1/getLinkedinURI')
             .then((res) => res.json())
-            .then((data) => window.location.replace(data.uri));
+            .then((data) => {
+                if (data.reason) {
+                    this.handle404(data.reason);
+                    return;
+                }
+
+                window.location.replace(data.uri);
+            });
     }
 
     register() {
@@ -112,6 +123,11 @@ class Register extends Component {
         fetch(baseUrl + '/v1/createStudentProfile', options)
             .then((response) => response.json())
             .then((data) => {
+                if (data.reason) {
+                    this.handle404(data.reason);
+                    return;
+                }
+
                 const email = this.state.email;
                 this.setState({email: '', password: '', jobType: '', expertise: '', visaStatus: '', city: '' });
                 auth.setProfile(data);
@@ -145,20 +161,20 @@ class Register extends Component {
                 />
 
 
-				<input 
-					onChange={this.handleChange.bind(this)} 
-					name="email" 
-					placeholder="Email" 
-					value={this.state.email} 
-					type="text" 
+				<input
+					onChange={this.handleChange.bind(this)}
+					name="email"
+					placeholder="Email"
+					value={this.state.email}
+					type="text"
 				/>
 
-				<input 
-					onChange={this.handleChange.bind(this)} 
-					name="password" 
-					placeholder="Password" 
+				<input
+					onChange={this.handleChange.bind(this)}
+					name="password"
+					placeholder="Password"
 					value={this.state.password}
-					type="password" 
+					type="password"
 				/>
 
                 <Select
@@ -176,7 +192,7 @@ class Register extends Component {
                     options={selectExpertise}
                     onChange={this.handleSelect.bind(this)}
                 />
-                
+
                 <Select
                     name="visaStatus"
                     value={this.state.visaStatus}
