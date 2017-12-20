@@ -92,6 +92,7 @@ class EmployerProfile extends React.Component {
                 if (data.reason) {
                     alert('404: ' + data.reason);
                 }
+                this.updateListings();
             });
     }
 
@@ -118,8 +119,9 @@ class EmployerProfile extends React.Component {
                     className="btn btn-add-listing"
                     onClick={this.toggleAddListing}
                 >{this.state.showAddListing ? 'Finish Adding': 'Add Listing'}</button>
-                { this.state.showAddListing ? <AddListing profile={this.state.profile} /> : '' }
+                { this.state.showAddListing ? <AddListing profile={this.state.profile} onSubmit={this.toggleAddListing} /> : '' }
 
+                {!this.state.listings ? <Loading title="listings" /> : ''}
                 <h1>Matches</h1>
                 <BootstrapTable data={ this.state.listings } striped>
                     <TableHeaderColumn dataField='_id' isKey={ true }>ID</TableHeaderColumn>

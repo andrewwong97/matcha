@@ -14,7 +14,7 @@ services:
         - db
         container_name: matcha_flask
         environment:
-        - DEV  # pass DEV environment variable to container
+        - DEV=1  # pass DEV environment variable to container
     web:
         build:
           context: .
