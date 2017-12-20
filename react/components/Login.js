@@ -33,6 +33,7 @@ class Login extends React.Component {
 			email: '',
 			password: '',
 		});
+        localStorage.clear();
         alert('404: ' + reason);
     }
 
