@@ -5,22 +5,36 @@ JHU Object Oriented Software Engineering - Fall 2017
 
 A platform that seamlessly connects employers and qualified candidates with matching that runs deeper than the run-of-the-mill capacity planning tools or jobs marketplaces -- autoplay for recruiting.
 
-## Prerequisites
+# UI
 
-- `NodeJS`
-- `npm`
+## Home
+![home](https://user-images.githubusercontent.com/7339169/34233890-d04bf866-e5b5-11e7-9d61-0fad27c9fc01.png)
+
+## Student
+![student](https://user-images.githubusercontent.com/7339169/34233905-e6aab1f6-e5b5-11e7-9929-bffca05d0e7e.png)
+
+## Employer
+![employer](https://user-images.githubusercontent.com/7339169/34233863-b170b472-e5b5-11e7-9824-9769b78b85b8.png)
+
+# Prerequisites
+
+- `NodeJS`/`npm`
 - `pip`
 - `Docker`
 
-## To run a dockerized build:
+## To run Docker build:
 
 ```
 pip install docker-compose
 docker-compose up --build    # deployed on port 3000
 ```
 
+## Troubleshooting:
+
 1. To see active container logs, run `docker ps` to find the names of your containers.
 Then run `docker logs -f <CONTAINER_NAME>`.
+
+**If for some reason Flask fails to connect to DB**: in `docker-compose.yml` remove the line containing `DEV=1`. The application will instead run on a local instance of MongoDB.
 
 2. Each service (flask, react, db) can freely access each other via docker aliases (e.g. Flask can communicate with the database by using the alias 'matcha_mongo' to find the db port).
 
@@ -31,11 +45,11 @@ Then run `docker logs -f <CONTAINER_NAME>`.
 Run `docker exec -it matcha_flask bash -c "nosetests --with-coverage --cover-package matcha"` once you have the containers stood up.
 
 
-## To run dev:
+# For Developers:
 
 Note: this assumes you have the required dependencies to create virtual environments, Python Django, and NodeJS.
 
-#### Setup:
+### Setup:
 ```
 git clone this repository to your local
 cd 2017-group-16
@@ -49,13 +63,13 @@ cd react
 yarn
 ```
 
-#### Run:
+### Run:
 ```
 DEV=1 python matcha/app.py            # run flask server in current tab
 cd react && yarn dev                  # run react app in another tab
 ```
 
-#### Tests:
+### Tests:
 ```
 DEV=1 nosetests --with-coverage --cover-package matcha
 ```
