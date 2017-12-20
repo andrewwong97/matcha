@@ -69,7 +69,11 @@ export default class AuthService {
 
 
     setProfile(profile){
-        localStorage.setItem('profile', JSON.stringify(profile))
+        if (profile.reason) {
+            alert("404: " + profile.reason);
+        } else {
+            localStorage.setItem('profile', JSON.stringify(profile));
+        }
     }
 
     getProfile(){
