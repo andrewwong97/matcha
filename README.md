@@ -5,8 +5,6 @@ JHU Object Oriented Software Engineering - Fall 2017
 
 A platform that seamlessly connects employers and qualified candidates with matching that runs deeper than the run-of-the-mill capacity planning tools or jobs marketplaces -- autoplay for recruiting.
 
-# UI
-
 ## Home
 ![home](https://user-images.githubusercontent.com/7339169/34233890-d04bf866-e5b5-11e7-9d61-0fad27c9fc01.png)
 
