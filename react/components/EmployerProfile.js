@@ -121,6 +121,7 @@ class EmployerProfile extends React.Component {
                 >{this.state.showAddListing ? 'Finish Adding': 'Add Listing'}</button>
                 { this.state.showAddListing ? <AddListing profile={this.state.profile} onSubmit={this.toggleAddListing} /> : '' }
 
+                {!this.state.listings ? <Loading title="listings" /> : ''}
                 <h1>Matches</h1>
                 <BootstrapTable data={ this.state.listings } striped>
                     <TableHeaderColumn dataField='_id' isKey={ true }>ID</TableHeaderColumn>
