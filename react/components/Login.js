@@ -16,6 +16,7 @@ class Login extends React.Component {
 		};
 
 		this.handleLogin = this.handleLogin.bind(this);
+		this.handleEnter = this.handleEnter.bind(this);
 	}
 
 	handleChange(event) {
@@ -40,10 +41,6 @@ class Login extends React.Component {
 	handleLogin() {
         auth.login(this.state.email, this.state.password)
 			.then(data => {
-                if (data.reason) {
-                    this.handle404(data.reason);
-                    return;
-                }
 				// page under pages/, browser url form
 				setTimeout(Router.push(`/profile/${data.account_type}/${data.email}`), 1000);
 			});
@@ -63,6 +60,12 @@ class Login extends React.Component {
             });
     }
 
+    handleEnter(event) {
+		if (event.key === 'Enter') {
+			this.handleLogin();
+		}
+	}
+
 	render() {
 		return (
 			<div className="Login">
@@ -81,7 +84,7 @@ class Login extends React.Component {
 					placeholder="Password"
 					value={this.state.password}
 					type="password"
-					onEnter={this.handleLogin}
+					onKeyPress={this.handleEnter}
 				/>
 				<div className="social-login">
 					<button className="btn btn-li" onClick={this.linkedinLogin}>

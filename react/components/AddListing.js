@@ -56,11 +56,11 @@ export default class AddListing extends Component {
             })
             .then(res => res.json())
             .then(data => {
-                alert('Added listing.');
                 fetch(baseUrl + '/v1/employer/' + data._id + '/computeMatches', { method: 'GET', mode: 'cors' })
                 .then(res => res.json())
                     .then(data => data);
                 this.setState({ title: '', salary: '' });
+                this.props.onSubmit(data);
             });
     }
 
