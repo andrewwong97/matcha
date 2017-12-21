@@ -4,12 +4,16 @@
 
 ### Added
 - Skills as far as the eye can see - Skill collection in MongoDB allows us to persist a default listing of skills as well as additional ones from job listings
-- Improve matching algorithm based on similarity hyperparameters
-- Ability to create Skill tags
+- Improve matching algorithm based on similarity parameters
+- Ability to create Skill tags in register and profiles
+- Asynchronous fetching of matches
+- Deployed on server
 
 
 ### Changed
 - Fixed toLowerCase issue
+- Improved UX workflow and state updating
+- Handle 404s gracefully on front end
 
 
 ### Removed
