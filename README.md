@@ -78,7 +78,7 @@ Navigate to `localhost:3000` on your favorite browser.
 ### mLab Login Details (use on **DEV** only)
 ```
 user: oose-matcha
-pass: matcha17
+pass: <ask @andrewwong97 for password>
 ```
 
 ### DB User Details
